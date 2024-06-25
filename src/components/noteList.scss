@@ -1,0 +1,114 @@
+
+
+  .note-list-container {
+    $gap: 1rem;
+    grid-area: var(--list-area);
+    max-width: var(--note-list-width);
+    max-height: 100%;
+    overflow-y: auto;
+    padding-bottom: 3rem;
+    box-shadow: 1px 0 0 var(--n-300);
+    flex: 1;
+    display: contents;
+    @include tabletUp {
+      display: grid;
+      grid-template-rows: var(--toolbar-height) 1fr;
+    }
+    .list-header {
+      background-color: var(--black);
+      position: sticky;
+      top: var(--list-header-top);
+      align-items: center;
+      display: flex;
+      place-self: center start;
+      gap: .5rem;
+      padding: 0 1rem;
+      justify-content: space-between;
+      width: 100%;
+      height: 3rem;
+      box-sizing: border-box;
+      border-bottom: 1px solid var(--n-400);
+      z-index: 1;
+    }
+    .header {
+      text-transform: uppercase;
+      font-size: .75rem;
+      font-weight: 700;
+    }
+    .list-options {
+      display: flex;
+    }
+    .to-notes-btn {
+      gap: .125rem;
+    }
+    .list {
+      width: 100%;
+      height: 100%;
+      background-color: var(--black);
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow-x: hidden;
+      overflow-y:auto;
+      list-style: none;
+      padding: 0 0 3rem 0;
+      margin: 0;
+      scroll-snap-type: y mandatory;
+    }
+    .list-item-container {
+      scroll-snap-align: start;
+      &:not(:last-child) {
+        box-shadow: 0 1px 0 var(--n-300);
+      }
+      &:active {
+        &,
+        .list-item-content:after {
+          background-color: var(--n-100);
+        }
+      }
+    }
+    .list-item {
+      background-color: transparent;
+      border: none;
+      display: grid;
+      gap: .325rem;
+      line-height: 1.375;
+      padding: 1rem;
+      place-content: start start;
+      text-align: left;
+      width: 100%;
+      height: min-content;
+      position: relative;
+    }
+    .list-item-header {
+      font-size: var(--list-item-font-size);
+      font-weight: 700;
+    }
+    .list-item-content {
+      color: hsl(0, 0%, 64%);
+      font-size: var(--list-item-font-size);
+      line-height: var(--list-item-line-height);
+      max-height: calc(var(--list-item-line-height) * 4);
+      overflow: hidden;
+      white-space-collapse: break-spaces;
+      position: relative;
+      &:after {
+        content: "...";
+        display: block;
+        letter-spacing: .125rem;
+        position: absolute;
+        padding-left: .5rem;
+        height: var(--list-item-line-height);
+        width: 100%;
+        background: #000;
+        top: calc(var(--list-item-line-height) * 3);
+        right: 0;
+      }
+    }
+    .list-item-date {
+      margin-top: .5rem;
+      font-size: .625rem;
+      color: var(--n-400);
+    }
+  }
+  

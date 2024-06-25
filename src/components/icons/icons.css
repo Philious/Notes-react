@@ -1,0 +1,41 @@
+:where(.icn) {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: var(--n-500);
+}
+
+.add-note {
+  fill: transparent;
+  stroke: var(--n-500);
+  stroke-width: 2;
+}
+
+
+.check {
+  stroke: var(--n-500);
+  stroke-width: 2px;
+  fill: transparent;
+}
+
+.context-options {
+  fill: var(--n-500);
+}
+
+.list {
+  width: 1rem;
+  height: 1rem;
+}
+
+.list .path {
+  fill: transparent;
+  stroke: var(--n-500);
+  stroke-width: 1.5;
+}
+
+.list .circle  {
+  fill:var(--n-500);
+}
+
+.remove {
+  transform: rotate(45deg);
+}

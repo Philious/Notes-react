@@ -1,0 +1,10 @@
+#loading-screen {
+  display: grid;
+  place-items: center;
+  position: fixed;
+  inset: 0;
+  background: var(--n-200);
+  letter-spacing: .125rem;
+  z-index: 1;
+}
+.message { width: 4.625rem; white-space: nowrap; } 

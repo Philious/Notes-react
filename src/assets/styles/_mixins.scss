@@ -1,0 +1,11 @@
+@mixin base-btn {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+@mixin tabletUp {
+  @media (min-width: 40rem) {
+    @content;
+  }
+}
