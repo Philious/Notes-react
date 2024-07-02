@@ -8,13 +8,14 @@ import afternoon from '@/assets/images/afternoon.png';
 import evening from '@/assets/images/evening.png';
 import IconButton from "@/components/IconButton";
 
-import { useDialog } from '@/utils/helpers';
+import { useLoginState, useOverlay } from '@/hooks/providerHooks';
 
 export function DayInfo() {
   const [timeOfDay, setTimeOfDay] = useState<{ greeting: string, img: string }>({ greeting: '', img: '' });
   const [date, setDate] = useState('');
+  const { logout } = useLoginState();
 
-  const { openDialog } = useDialog();
+  const { setDialog } = useOverlay();
 
   const getState = () => {
     setDate(new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}));
@@ -34,23 +35,23 @@ export function DayInfo() {
     );
   }
   
-  const logout = () => openDialog(
-    'Logout?',
-    '',
-    [
+  const logoutMenu = () => setDialog({
+    title: 'Logout?',
+    content: '',
+    actions: [
       {
         name: 'Yes',
-        action: () => {},
+        action: logout,
       },
       {
         name: 'No',
         action: () => {},
       },
     ]
-  );
+});
 
   const IBProps = {
-    type: ButtonType.Default, icon: Icon.LogOut, action: logout
+    type: ButtonType.Default, icon: Icon.LogOut, action: logoutMenu
   }
 
   useEffect(() => {

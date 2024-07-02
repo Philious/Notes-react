@@ -1,3 +1,8 @@
+export enum Page {
+  LOGIN = '/',
+  MAIN = '/main',
+}
+
 export enum ButtonType {
   Default = 'default',
   Filled = 'filled',

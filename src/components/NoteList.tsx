@@ -3,28 +3,28 @@ import { Icon, ButtonType } from "@/types/enums";
 import { Note } from "@/types/types"
 import IconButton from "@/components/IconButton";
 import toast from "@/services/toastService";
-import { useContextMenu, useDatabase} from "@/utils/helpers";
+import { useOverlay } from "@/hooks/providerHooks";
 import PreviewNote from "./PreviewNote";
-
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const NoteList: React.FC = () => {
-  const { database, newActiveNote, setActiveNote } = useDatabase();
-  const { openContextMenu, closeMenu } = useContextMenu();
-  
+  const database = useSelector((state: RootState) => state.database.database);
+  const { setContextMenu, setActiveNote, newActiveNote } = useOverlay();
+
   const getNote = (id: string) => {
-    const note = database.get(id);
+    const note = database[id];
     note ? setActiveNote(note) :  newNote();
     toast('Get Note: ' + id)
   };
 
   const newNote = () => {
-    toast('New Note');
     newActiveNote();
+    toast('New Note');
   }
   
   const setLetterSize = () => {
-    closeMenu();
-    const menu = [
+    setContextMenu([
       {
         label: 'Larger',
         action: () => document.body.parentElement?.setAttribute('style', 'font-size: larger')
@@ -38,12 +38,12 @@ const NoteList: React.FC = () => {
         label: 'Small',
         action: () => document.body.parentElement?.setAttribute('style', 'font-size: small')
       },
-    ];
-    openContextMenu([...menu]);
+    ]);
   }
 
   const letterSizeIcon = { type: ButtonType.Border, icon: Icon.LetterSize, action: setLetterSize }
   const addIcon = { type: ButtonType.Border, icon: Icon.Add, action: newNote }
+
   return(
     <div className="note-list-container">
       <div className="list-header">
@@ -54,7 +54,7 @@ const NoteList: React.FC = () => {
         </div>
       </div>
       <ul className="list">
-        {[...database.values()].map((note: Note) =>
+        { Object.values(database).map((note: Note) =>
           <PreviewNote note={ note } getNote={ getNote } key={note.id} />
         )}
       </ul>

@@ -3,57 +3,57 @@ import { useState } from "react"
 import { ButtonType, Icon } from "@/types/enums"
 import IconButton from "@/components/IconButton";
 import { dateFormat } from '@/utils/sharedUtils';
-import { useContextMenu, useDatabase, useDialog } from "@/utils/helpers";
+import { useOverlay } from "@/hooks/providerHooks";
 import toast from '@/services/toastService';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { useDatabaseFunctions } from '@/hooks/databaseFunctionsHook';
 
-const Note:  React.FC = () => {
+const Note: React.FC = () => {
 
-  const { activeNote, clearActiveNote, setActiveNote, database, dataBaseCalls } = useDatabase();
-  const { openContextMenu, closeMenu } = useContextMenu();
-  const { openDialog } = useDialog();
-  const [ initialNote ] = useState(database.get(activeNote?.id ?? ''));
+  const { activeNote, clearActiveNote, setActiveNote, setDialog, setContextMenu } = useOverlay();
+  const fn = useDatabaseFunctions()
+  const database = useSelector((state: RootState) => state.database.database);
+
+  const [ initialNote ] = useState(database[activeNote?.id ?? '']);
   const updateTitle = (title: string) => setActiveNote({...activeNote!, title });
   const updateBody = (body: string) => setActiveNote({...activeNote!, body });
 
   const saveNote = () => {
-    if (activeNote) database?.has(activeNote.id) ? dataBaseCalls?.updateNote(activeNote) : dataBaseCalls?.setNote(activeNote); 
+    if (activeNote) database[activeNote.id] ? fn?.updateNote(activeNote) : fn?.addNote(activeNote); 
     clearActiveNote();
   }
 
   const close = () => {
-    if (activeNote?.title === initialNote?.title && activeNote?.body === initialNote || !initialNote?.title && !initialNote?.body)  { clearActiveNote();
+    if (activeNote?.title === initialNote?.title && activeNote?.body === initialNote.body || !initialNote?.title && !initialNote?.body)  { clearActiveNote();
     } else {
-      openDialog('Save before closing?', '', [
-        {
-          name: 'Cancel',
-          action: () => {}
-        }, 
-        {
-          name: 'No',
-          action: clearActiveNote,
-        }, {
-          name: 'Yes',
-          action: saveNote
-        },
-      ])
+      setDialog({
+        title: 'Save before closing?',
+        content: '',
+        actions: [
+          { name: 'Cancel', action: () => {} }, 
+          { name: 'No', action: clearActiveNote },
+          { name: 'Yes', action: saveNote }
+        ]
+      })
     }
   };
 
   const remove = (() => {
-    openDialog('Remove permanently', '', [
-      {
-        name: 'No',
-        action: () => {}
-      },
-      {
-        name: 'Yes',
-        action: () => { if (activeNote?.id) {
-            dataBaseCalls?.removeNote(activeNote.id);
-            clearActiveNote();
+    setDialog({
+      title: 'Remove permanently', 
+      content: '',
+      actions: [
+        { name: 'No', action: () => {} },
+        { name: 'Yes', action: () => { 
+          if (activeNote?.id) {
+              fn?.deleteNote(activeNote.id);
+              clearActiveNote();
+            }
           }
         }
-      }
-    ])
+      ]
+    })
   });
 
   const save = () => {
@@ -62,27 +62,17 @@ const Note:  React.FC = () => {
   }
 
   const setLetterSize = () => {
-    closeMenu();
-    const menu = [
-      {
-        label: 'Larger',
-        action: () => document.body.parentElement?.setAttribute('style', 'font-size: larger')
-      }, {
-        label: 'Large',
-        action: () => document.body.parentElement?.setAttribute('style', 'font-size: large')
-      }, {
-        label: 'Medium',
-        action: () => document.body.parentElement?.setAttribute('style', 'font-size: medium')
-      }, {
-        label: 'Small',
-        action: () => document.body.parentElement?.setAttribute('style', 'font-size: small')
-      },
-    ];
-    openContextMenu([...menu]);
+    setContextMenu();
+    setContextMenu([
+      { label: 'Larger', action: () => document.body.parentElement?.setAttribute('style', 'font-size: larger') },
+      { label: 'Large', action: () => document.body.parentElement?.setAttribute('style', 'font-size: large') },
+      { label: 'Medium',  action: () => document.body.parentElement?.setAttribute('style', 'font-size: medium') },
+      { label: 'Small', action: () => document.body.parentElement?.setAttribute('style', 'font-size: small') },
+    ]);
   }
 
   const options = () => {
-    openContextMenu([
+    setContextMenu([
       {
         label: 'Letter size',
         icon: Icon.LetterSize,
@@ -142,7 +132,7 @@ const Note:  React.FC = () => {
       </div>
   </div> 
   )
- return ( activeNote?.id && noteFragment() )
+ return ( fn && activeNote?.id && noteFragment() )
 }
 
 export default Note

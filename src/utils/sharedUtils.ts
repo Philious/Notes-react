@@ -37,3 +37,5 @@ export const createNode = (nodeType: string, attributes: Record<string, string>)
 export const uid = (): string => {
 	return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
+
+export const isFirebase = () => import.meta.env.VITE_DATABASE === 'firebase';

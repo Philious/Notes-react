@@ -26,7 +26,9 @@ export type ContextMenuItem = {
   action: () => void
 }
 
-export type DataBaseNotes = Map<string, Note>
+export type DataBaseNotes = Record<string, Note>
+
+export type CustomComponent<T> = { Component: React.FC } & Record<string, T>;
 
 export type Tab = {
   id: string;
@@ -83,7 +85,7 @@ export type DataBaseContextType = {
   activeNote: Note | undefined;
   token: string | undefined;
   loading: boolean;
-  dataBaseCalls: DatabaseCalls | undefined;
+  dataBaseCalls: DatabaseFunctions | undefined;
   loginWithGoogle: () => void;
   logout: () => void;
   getActiveNote: () => Note | undefined;
@@ -101,9 +103,17 @@ export type ActiveNoteFunctions = {
   newActiveNote: (note?: Partial<Note>) => void;
 }
 
-export type DatabaseCalls = {
-  getAllNotes: () => void;
-  setNote: (note: Note) => void;
+export type DatabaseFunctions = {
+  fetchDatabase: () => void;
+  addNote: (note: Note) => void;
   updateNote: (note: Note) => void;
-  removeNote: (noteId: string) => void;
+  deleteNote: (noteId: string) => void;
+}
+
+export type LoginStateFunctions = {
+  redirectSignIn: () => void;
+  passwordSignIn: (name: string, password: string) => void;
+  logout: () => void;
+  forgotPassword: () => void;
+  newUser: () => void;
 }

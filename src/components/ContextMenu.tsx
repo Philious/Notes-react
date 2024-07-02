@@ -1,9 +1,8 @@
 import '@/components/contextMenu.scss';
-import { useContextMenu } from "@/utils/helpers";
 import { ContextMenuItem as ContextMenuItemType } from '@/types/types';
 import { useEffect, useState } from "react";
 import Icon from "./icons/Icon";
-import { debounce } from '@/utils/sharedUtils';
+import { useOverlay } from '@/hooks/providerHooks';
 
 const ContextMenuItem: React.FC<ContextMenuItemType> = (props) => {
   const click = (e:  React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -20,33 +19,28 @@ const ContextMenuItem: React.FC<ContextMenuItemType> = (props) => {
   )
 }
 
-interface ContextMenuType extends React.HTMLAttributes<HTMLElement> { context: ContextMenuItemType[] }
-const ContextMenu: React.FC<ContextMenuType> = (d) => {
+const ContextMenu: React.FC = () => {
+  const { setContextMenu, contextMenu} = useOverlay()
+  const [ contextMenuRef, setContextMenuRef ] = useState<ContextMenuItemType[]>();
+  useEffect(() => { 
+    if (contextMenu) {
+      setTimeout(() => { 
+        setContextMenuRef(contextMenu)
+      }, 1);
+    } else {
+      setTimeout(() => { setContextMenuRef(contextMenu)}, 250);
+    }
+  });
 
-  const { closeMenu } = useContextMenu();
-  const [ loaded, setLoaded ] = useState(false);
-
-  const unLoad = async () =>  {
-    setLoaded(false);
-    setTimeout(() => closeMenu(), 250)
+  if (contextMenu || contextMenuRef) {
+    return (
+      <div className={`context-menu-container ${contextMenuRef && contextMenu ? 'show' : ''}`} onClick={() => setContextMenu()}>
+        <ul className="context-menu">
+          {(contextMenu ?? contextMenuRef!).map((menuItem: ContextMenuItemType) => ContextMenuItem(menuItem))}
+        </ul>
+      </div>
+    );
   }
-
-  const onLoad = debounce(() => {
-    setLoaded(true);
-  }, 1);
-
-  useEffect(() => {
-    onLoad();
-    return () => {};
-  }, []);
-
-  return (
-    <div className={`context-menu-container ${loaded ? 'loaded' : ''}`} onClick={unLoad}>
-      <ul className="context-menu">
-        {d.context.map((menuItem: ContextMenuItemType) => ContextMenuItem(menuItem))}
-      </ul>
-    </div>
-  );
 }
 
 export default ContextMenu
