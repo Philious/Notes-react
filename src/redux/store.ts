@@ -1,11 +1,9 @@
-import activeNoteSlice from '@/slices/activeNoteSlice'
-import databaseSlice from '@/slices/databaseSlice'
-import loginStateSlice from '@/slices/loginStateSlice'
+import activeNoteSlice from '@/redux/activeNoteSlice'
+import databaseSlice from '@/redux/databaseSlice'
 import { configureStore } from '@reduxjs/toolkit'
 
 const store = configureStore({
   reducer: {
-    loginState: loginStateSlice,
     activeNote: activeNoteSlice,
     database: databaseSlice,
   },

@@ -1,12 +1,11 @@
 import { DatabaseDispatch } from "@/redux/store";
 import { Note } from "@/types/types";
-import { getActiveNote as _getActiveNote, setActiveNote as _setActiveNote, updateActiveNote as _updateActiveNote, clearActiveNote as _clearActiveNote, newActiveNote as _newActiveNote } from "@/slices/activeNoteSlice";
-import { addNote as _addNote, updateNote as _updateNote, deleteNote as _deleteNote, clearDatabase as _clearDatabase, fetchDatabase as _fetchDatabase } from '@/slices/databaseSlice';
+import { setActiveNote as _setActiveNote, updateActiveNote as _updateActiveNote, clearActiveNote as _clearActiveNote, newActiveNote as _newActiveNote } from "@/redux/activeNoteSlice";
+import { addNote as _addNote, updateNote as _updateNote, deleteNote as _deleteNote, clearDatabase as _clearDatabase, fetchDatabase as _fetchDatabase } from '@/redux/databaseSlice';
 
 export const activeNoteDispatchers = (dispatch: DatabaseDispatch) => ({
-  getActiveNote: () => dispatch(_getActiveNote()),
   setActiveNote: (note: Note) => dispatch(_setActiveNote({ note })),
-  updateActiveNote: (note: Partial<Note>) => dispatch(_updateActiveNote({ note })),
+  updateActiveNote: (note: Partial<Note>) => dispatch(_updateActiveNote(note)),
   clearActiveNote: () => dispatch(_clearActiveNote()),
   newActiveNote: () => dispatch(_newActiveNote()),
 });

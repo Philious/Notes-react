@@ -1,62 +1,79 @@
-import { firebaseConfig } from "@/firebaseConfig";
 import toast from "@/services/toastService";
-import { clearActiveNote } from "@/slices/activeNoteSlice";
-import { clearDatabase } from '@/slices/databaseSlice'
-import { isFirebase } from "@/utils/sharedUtils";
-import { initializeApp } from "firebase/app";
-import { Auth, getAuth, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut, User } from "firebase/auth";
-import { createContext, ReactNode, useState } from "react";
+import { clearActiveNote } from "@/redux/activeNoteSlice";
+import { clearDatabase, fetchDatabase } from '@/redux/databaseSlice'
+import { hasFirebase } from "@/utils/sharedUtils";
+import { Auth, getAuth, getRedirectResult, onAuthStateChanged, signInWithRedirect, signOut, User } from "firebase/auth";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { DatabaseDispatch } from "@/redux/store";
+import { Loader } from "@/components/Loader";
+import { GoogleAuthProvider } from "firebase/auth/web-extension";
+import { Note } from "@/types/types";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "@/firebaseConfig";
 
 export type LoginStateContextType = {
-  loading: boolean;
-  user?: User;
-  setLoader: (update: boolean) => void;
   redirectSignIn: () => void;
   logout: () => void;
   passwordSignIn: (name: string, password: string) => void;
   newUser: () => void;
   forgotPassword: () => void;
+  user?: User;
 }
+
+const passwordSignIn = (name: string, password: string) => {
+  name;
+  password;
+  console.log('Might show up later, ');
+}
+const newUser = () => toast('Not at this time')
+const forgotPassword = () => toast('Good');
+
+
 
 export const LoginStateContext = createContext<LoginStateContextType | undefined>(undefined);
 
 export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const setLoader = (update: boolean) => setLoading(update);
-  const [user, setUser] = useState<User | undefined>();
-  
-  const passwordSignIn = (name: string, password: string) => {
-    name;
-    password;
-    console.log('Might show up later, ');
-  }
-  const newUser = () => toast('Not at this time')
-  const forgotPassword = () => toast('Good');
-
   const dispatch = useDispatch<DatabaseDispatch>();
-  
-  if (isFirebase()) {
-    
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    
-    onAuthStateChanged(auth as Auth, (authUser) => {
-      setLoading(true);
-      if (authUser) {
-        setUser(authUser);
-      } else {
-        setUser(undefined);
-        setLoading(false);
-      }
-    });
+  const [ auth, setAuth ] = useState<Auth>();
+  const [ user, setUser ] = useState<User>();
+  const [ provider, setProvider ] = useState<GoogleAuthProvider>();
+
+  useEffect(() => {
+    if (hasFirebase()) {
+      const app = initializeApp(firebaseConfig);
+      const _auth = getAuth(app);
+      const _provider = new GoogleAuthProvider();
+
+      setAuth(_auth);
+      setProvider(_provider);
+      onAuthStateChanged(_auth as Auth, (authUser) => {
+        if (authUser) {
+          setUser(authUser);
+          const uid = authUser.uid;
+          const db = getDatabase();
+          const userDataRef = ref(db, `users/${uid}`);
+          onValue(userDataRef, (snapshot) => {
+            const data = snapshot.val().notes as Record<string, Note>;
+            dispatch(fetchDatabase(Object.values(data)))
+          });
+        } else {
+          dispatch(clearDatabase());
+        }
+      });
+    } else {
+      const localData = localStorage.getItem('notesTestData');
+      const data = (localData ? JSON.parse(localData) : []) as Note[];
+      dispatch(fetchDatabase(Object.values(data)));
+    }
+  }, [setAuth, dispatch]);
+
+  if (hasFirebase() && auth && provider) {
 
     const redirectSignIn = () => {
 
-      if (auth) {
+      if (auth && provider) {
         signInWithRedirect(auth, provider);
         getRedirectResult(auth).then((result) => {
 
@@ -71,66 +88,55 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
           const errorCode: string | undefined = error.code;
           const message : string | undefined = error.message;
           const errorMessage = errorCode ? `Last known error\nError code: ${errorCode}\nError: ${message}` : `Error: ${message}`;
-          setLoading(false);
         
           if (message) toast(errorMessage, { duration: 5000, align: 'left'});
         });
       }
     }
-  
+        
     const logout = () => {
       if (auth)
       signOut(auth).then(() => {
         setUser(undefined);
         dispatch(clearDatabase());
-        clearActiveNote();
+        dispatch(clearActiveNote());
       }).catch(() => {
         console.error('Error logging out')
       });
     }
 
     return (
-      <>
+      <> 
       <LoginStateContext.Provider value={{
-        loading,
-        user,
-        setLoader,
-        redirectSignIn,
-        passwordSignIn,
-        logout,
-        newUser,
-        forgotPassword,
+        user, redirectSignIn, logout, passwordSignIn, newUser, forgotPassword
       }}>
         {children}
       </LoginStateContext.Provider>
       </>
     );
+  } else if (hasFirebase()) {
+    /* Waiting on firebase */
+    return (<Loader />);
   } else {
-    
+    /* localstore */
+
     const redirectSignIn = () => {
       console.log('No Google login in localStorage mode');
       toast('No Google login in localStorage mode')
     };
 
     const logout = () => {
-      clearDatabase();
-      clearActiveNote()
+      dispatch(clearDatabase());
+      dispatch(clearActiveNote());
     }
-
     return (
-      <>
+      <> 
       <LoginStateContext.Provider value={{
-        loading,
-        setLoader,
-        redirectSignIn,
-        passwordSignIn,
-        logout,
-        newUser,
-        forgotPassword,
+        user, redirectSignIn, logout, passwordSignIn, newUser, forgotPassword
       }}>
         {children}
       </LoginStateContext.Provider>
       </>
     );
   }
-};
+}

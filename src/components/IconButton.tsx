@@ -2,7 +2,7 @@ import '@/components/iconButton.scss';
 import { Icon as IconEnum, ButtonType } from "@/types/enums";
 import Icon from '@/components/icons/Icon';
 
-type IconButtonType = { type: ButtonType, icon: IconEnum, action: () => void }
+type IconButtonType = { type: ButtonType, icon: IconEnum, action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void }
 
 const IconButton: React.FC<IconButtonType> = (props) => {
 

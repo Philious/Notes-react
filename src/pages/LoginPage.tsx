@@ -4,9 +4,8 @@ import IconButton from "@/components/IconButton";
 import { Icon, ButtonType, Page } from "@/types/enums";
 import googleIcon from '@/assets/images/GoogleIcon.svg';
 import { useLoginState } from '@/hooks/providerHooks';
-import { isFirebase } from '@/utils/sharedUtils';
 import { useNavigate } from 'react-router-dom';
-
+import { hasFirebase } from '@/utils/sharedUtils';
 
 const LoginPage = () => {
   const { redirectSignIn, passwordSignIn, newUser, forgotPassword } = useLoginState();
@@ -15,7 +14,7 @@ const LoginPage = () => {
   const [ userName, setUsername ] = useState('test@test.test');
   const navigate = useNavigate();
   const passwordLogin = () => {
-    if (!isFirebase()) {
+    if (!hasFirebase()) {
       navigate(Page.MAIN);
       console.log('login main');
     }
@@ -23,7 +22,7 @@ const LoginPage = () => {
   }
 
   const redirectLogin = () => {
-    if (!isFirebase()) navigate(Page.MAIN)
+    if (!hasFirebase()) navigate(Page.MAIN)
     redirectSignIn()
   }
   return (

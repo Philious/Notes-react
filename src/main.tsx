@@ -15,9 +15,9 @@ root.render(
     <>
       <Provider store={store}>
         <LoginStateProvider>
-          <OverlayProvider>
-            <App />    
-          </OverlayProvider>
+            <OverlayProvider>
+              <App />    
+            </OverlayProvider>
         </LoginStateProvider>
       </Provider>
     </>

@@ -5,16 +5,19 @@ import IconButton from "@/components/IconButton";
 import toast from "@/services/toastService";
 import { useOverlay } from "@/hooks/providerHooks";
 import PreviewNote from "./PreviewNote";
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { DatabaseDispatch, RootState } from '@/redux/store';
+import { activeNoteDispatchers } from '@/redux/customDispatchers';
 
 const NoteList: React.FC = () => {
   const database = useSelector((state: RootState) => state.database.database);
-  const { setContextMenu, setActiveNote, newActiveNote } = useOverlay();
+  const dispatch = useDispatch<DatabaseDispatch>();
+  const { setContextMenu } = useOverlay();
+  const { setActiveNote, newActiveNote } = activeNoteDispatchers(dispatch);
 
   const getNote = (id: string) => {
     const note = database[id];
-    note ? setActiveNote(note) :  newNote();
+    note ? setActiveNote(note) : newNote();
     toast('Get Note: ' + id)
   };
 
@@ -55,7 +58,7 @@ const NoteList: React.FC = () => {
       </div>
       <ul className="list">
         { Object.values(database).map((note: Note) =>
-          <PreviewNote note={ note } getNote={ getNote } key={note.id} />
+          note.id !== 'scratch' && <PreviewNote note={ note } getNote={ getNote } key={note.id} />
         )}
       </ul>
     </div>

@@ -15,12 +15,11 @@ const activeNoteSlice = createSlice({
   name: 'activeNote',
   initialState,
   reducers: {
-    getActiveNote: (state) => state,
-    setActiveNote: (state, action: PayloadAction<{  note: Note  }>) => {
-      state = action.payload.note;
+    setActiveNote: (_state, action: PayloadAction<{  note: Note  }>) => {
+      return action.payload.note;
     },
-    updateActiveNote: (state,  action: PayloadAction<{  note: Partial<Note>  }>) => {
-      return { ...state, ...action.payload.note }
+    updateActiveNote: (state,  action: PayloadAction<Partial<Note>>) => {
+      return { ...state, ...action.payload }
     },
     clearActiveNote: () => initialState,
     newActiveNote: () => {
@@ -30,5 +29,5 @@ const activeNoteSlice = createSlice({
   }
 });
 
-export const { getActiveNote, setActiveNote, updateActiveNote, clearActiveNote, newActiveNote } = activeNoteSlice.actions;
+export const { setActiveNote, updateActiveNote, clearActiveNote, newActiveNote } = activeNoteSlice.actions;
 export default activeNoteSlice.reducer;

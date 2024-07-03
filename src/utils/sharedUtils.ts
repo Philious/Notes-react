@@ -1,3 +1,5 @@
+import { firebaseConfig } from "@/firebaseConfig";
+
 export const throttle = <T extends unknown[]>(func: (...args: T) => void, limit: number): ((...args: T) => void) => {
   let inThrottle: boolean;
 
@@ -38,4 +40,12 @@ export const uid = (): string => {
 	return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
 
-export const isFirebase = () => import.meta.env.VITE_DATABASE === 'firebase';
+export const hasFirebase = () => {
+  const firebase = import.meta.env.VITE_DATABASE === 'firebase'
+  if (firebase && !Object.values(firebaseConfig).find(v => v === undefined)) return true
+  else if (firebase) {  
+    throw new Error('you have no firebase config setup')
+  } else {
+    return false;
+  }
+}

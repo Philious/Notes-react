@@ -5,13 +5,17 @@ import IconButton from "@/components/IconButton";
 import { dateFormat } from '@/utils/sharedUtils';
 import { useOverlay } from "@/hooks/providerHooks";
 import toast from '@/services/toastService';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
-import { useDatabaseFunctions } from '@/hooks/databaseFunctionsHook';
+import { useDispatch, useSelector } from 'react-redux';
+import { DatabaseDispatch, RootState } from '@/redux/store';
+import { useDatabaseFunctions } from '@/hooks/databaseFunctionHooks';
+import { activeNoteDispatchers } from '@/redux/customDispatchers';
 
 const Note: React.FC = () => {
+  const dispatch = useDispatch<DatabaseDispatch>();
+  const { setDialog, setContextMenu } = useOverlay();
+  const activeNote = useSelector((state: RootState) => state.activeNote);
 
-  const { activeNote, clearActiveNote, setActiveNote, setDialog, setContextMenu } = useOverlay();
+  const { setActiveNote, clearActiveNote } = activeNoteDispatchers(dispatch);
   const fn = useDatabaseFunctions()
   const database = useSelector((state: RootState) => state.database.database);
 
@@ -126,8 +130,6 @@ const Note: React.FC = () => {
             icon={Icon.Options}
             action={options}  
           />
-
-          
         </div>
       </div>
   </div> 
