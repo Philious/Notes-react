@@ -1,18 +1,17 @@
 import React from 'react';
 import '@/components/dialog.scss';
 import { DialogAction } from '@/types/types';
-import { useDialog } from '@/utils/helpers';
+import { useOverlay } from '@/hooks/providerHooks';
 
 const Dialog: React.FC = () => {
 
-  const { closeDialog, dialog, isOpen } = useDialog();
+  const { setDialog, dialog } = useOverlay();
   const actionHandler = (action: DialogAction) => {
     action.action();
-    if (action.closeOnAction !== false) closeDialog()
+    if (action.closeOnAction !== false) setDialog()
   }
 
-  if (!isOpen) return null;
-
+  if (dialog)
   return (
     <div className="dialog-container">
         <div className="dialog">

@@ -3,7 +3,7 @@
   display: grid;
   grid-template-rows: 48px 1fr;
   grid-area: var(--scratch-area);
-  padding: 0 1rem 2rem;
+  padding: 0 .5rem 2rem 1rem;
   position: fixed;
   inset: auto calc(100vw - var(--scratch-width)) 0 0;
   transform: translateY(calc(100% - var(--toolbar-height)));
@@ -20,6 +20,9 @@
       transform: rotate(180deg);
     }
   }
+}
+.scratch-pad-options {
+  display: flex;
 }
 .scratch-pad-header {
   height: 3rem;

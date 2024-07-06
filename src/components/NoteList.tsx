@@ -1,30 +1,33 @@
 import '@/components/noteList.scss'
-import { Icon, ButtonType } from "@/types/enums";
+import { Icon, ButtonType, scratch } from "@/types/enums";
 import { Note } from "@/types/types"
 import IconButton from "@/components/IconButton";
 import toast from "@/services/toastService";
-import { useContextMenu, useDatabase} from "@/utils/helpers";
+import { useOverlay } from "@/hooks/providerHooks";
 import PreviewNote from "./PreviewNote";
-
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/redux/store';
+import { activeNoteDispatchers } from '@/redux/customDispatchers';
 
 const NoteList: React.FC = () => {
-  const { database, newActiveNote, setActiveNote } = useDatabase();
-  const { openContextMenu, closeMenu } = useContextMenu();
-  
+  const notes = useSelector((state: RootState) => Object.values(state.notes).filter(n => n.id !== scratch).sort((a, b) => b.lastupdated - a.lastupdated));
+  const dispatch = useDispatch<AppDispatch>();
+  const { setContextMenu } = useOverlay();
+  const { setActiveNote, newActiveNote } = activeNoteDispatchers(dispatch);
+
   const getNote = (id: string) => {
-    const note = database.get(id);
-    note ? setActiveNote(note) :  newNote();
+    const note = notes.find((n) => n.id === id);
+    note ? setActiveNote(note) : newNote();
     toast('Get Note: ' + id)
   };
 
   const newNote = () => {
-    toast('New Note');
     newActiveNote();
+    toast('New Note');
   }
   
   const setLetterSize = () => {
-    closeMenu();
-    const menu = [
+    setContextMenu([
       {
         label: 'Larger',
         action: () => document.body.parentElement?.setAttribute('style', 'font-size: larger')
@@ -38,12 +41,12 @@ const NoteList: React.FC = () => {
         label: 'Small',
         action: () => document.body.parentElement?.setAttribute('style', 'font-size: small')
       },
-    ];
-    openContextMenu([...menu]);
+    ]);
   }
 
   const letterSizeIcon = { type: ButtonType.Border, icon: Icon.LetterSize, action: setLetterSize }
   const addIcon = { type: ButtonType.Border, icon: Icon.Add, action: newNote }
+
   return(
     <div className="note-list-container">
       <div className="list-header">
@@ -54,7 +57,7 @@ const NoteList: React.FC = () => {
         </div>
       </div>
       <ul className="list">
-        {[...database.values()].map((note: Note) =>
+        { notes.map((note: Note) =>
           <PreviewNote note={ note } getNote={ getNote } key={note.id} />
         )}
       </ul>

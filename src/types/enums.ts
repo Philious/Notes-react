@@ -1,3 +1,10 @@
+export enum Page {
+  LOGIN = '/',
+  MAIN = '/main',
+}
+
+export const scratch = 'scratch'
+
 export enum ButtonType {
   Default = 'default',
   Filled = 'filled',

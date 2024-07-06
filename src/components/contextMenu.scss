@@ -9,7 +9,7 @@
   background-color: hsla(0, 0%, 0%, .24);
   opacity: 0;
   transition: opacity .25s  $easeOutQuint;
-  &.loaded {
+  &.show {
     opacity: 1;
     .context-menu { transform: translateY(0) }
   }
