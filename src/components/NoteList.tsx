@@ -10,13 +10,13 @@ import { AppDispatch, RootState } from '@/redux/store';
 import { activeNoteDispatchers } from '@/redux/customDispatchers';
 
 const NoteList: React.FC = () => {
-  const notes = useSelector((state: RootState) => state.notes);
+  const notes = useSelector((state: RootState) => Object.values(state.notes).filter(n => n.id !== scratch).sort((a, b) => b.lastupdated - a.lastupdated));
   const dispatch = useDispatch<AppDispatch>();
   const { setContextMenu } = useOverlay();
   const { setActiveNote, newActiveNote } = activeNoteDispatchers(dispatch);
 
   const getNote = (id: string) => {
-    const note = notes[id];
+    const note = notes.find((n) => n.id === id);
     note ? setActiveNote(note) : newNote();
     toast('Get Note: ' + id)
   };
@@ -57,7 +57,7 @@ const NoteList: React.FC = () => {
         </div>
       </div>
       <ul className="list">
-        { Object.values(notes).filter(n => n.id !== scratch).map((note: Note) =>
+        { notes.map((note: Note) =>
           <PreviewNote note={ note } getNote={ getNote } key={note.id} />
         )}
       </ul>
