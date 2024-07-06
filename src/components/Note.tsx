@@ -7,29 +7,29 @@ import { useOverlay } from "@/hooks/providerHooks";
 import toast from '@/services/toastService';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
-import { useDatabaseFunctions } from '@/hooks/NoteSliceHooks';
-import { activeNoteDispatchers } from '@/redux/customDispatchers';
+import { activeNoteDispatchers, useDatabaseFunctions } from '@/redux/customDispatchers';
 
 const Note: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { setDialog, setContextMenu } = useOverlay();
   const activeNote = useSelector((state: RootState) => state.activeNote);
+  const [ initialNote ] = useState(activeNote);
 
   const { setActiveNote, clearActiveNote } = activeNoteDispatchers(dispatch);
-  const fn = useDatabaseFunctions()
+  const { addNote, deleteNote, updateNote } = useDatabaseFunctions(dispatch);
   const database = useSelector((state: RootState) => state.notes);
 
-  const [ initialNote ] = useState(database[activeNote?.id ?? '']);
   const updateTitle = (title: string) => setActiveNote({...activeNote!, title });
   const updateBody = (body: string) => setActiveNote({...activeNote!, body });
 
   const saveNote = () => {
-    if (activeNote) database[activeNote.id] ? fn?.updateNote(activeNote) : fn?.addNote(activeNote); 
+    if (activeNote) database[activeNote.id] ? updateNote(activeNote) : addNote(activeNote); 
     clearActiveNote();
   }
 
   const close = () => {
-    if (activeNote?.title === initialNote?.title && activeNote?.body === initialNote.body || !initialNote?.title && !initialNote?.body)  { clearActiveNote();
+    console.log(activeNote, initialNote )
+    if (activeNote?.title === initialNote?.title && activeNote?.body === initialNote?.body || !initialNote?.title && !initialNote?.body)  { clearActiveNote();
     } else {
       setDialog({
         title: 'Save before closing?',
@@ -45,13 +45,14 @@ const Note: React.FC = () => {
 
   const remove = (() => {
     setDialog({
-      title: 'Remove permanently', 
+      title: 'Remove permanently?', 
       content: '',
       actions: [
         { name: 'No', action: () => {} },
         { name: 'Yes', action: () => { 
+          console.log(activeNote?.id);
           if (activeNote?.id) {
-              fn?.deleteNote(activeNote.id);
+              deleteNote(activeNote.id);
               clearActiveNote();
             }
           }
@@ -134,7 +135,7 @@ const Note: React.FC = () => {
       </div>
   </div> 
   )
- return ( fn && activeNote?.id && noteFragment() )
+ return ( activeNote?.id && noteFragment() )
 }
 
 export default Note

@@ -83,9 +83,11 @@ export const useDatabaseFunctions = (dispatch: AppDispatch): NoteDispatchers => 
     }
 
     const deleteNote = (noteId: string) => {
-      _deleteNote(noteId);
-      delete database[noteId]
-      localStorage.setItem('notesTestData', JSON.stringify([...Object.values(database)]))
+      console.log('dispatcher', noteId);
+      dispatch(_deleteNote(noteId));
+      const prev = { ...database };
+      delete prev[noteId];
+      localStorage.setItem('notesTestData', JSON.stringify([...Object.values(prev)]))
     }
 
     return { fetchAllNotes, clearAllNotes, addNote, updateNote, deleteNote }

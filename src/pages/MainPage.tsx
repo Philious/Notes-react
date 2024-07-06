@@ -5,13 +5,12 @@ import ScratchPad from '@/components/ScratchPad';
 import ContextMenu from '@/components/ContextMenu';
 import Dialog from '@/components/Dialog';
 import Note from '@/components/Note';
-import { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
-import { scratch } from '@/types/enums';
+import { RootState } from '@/redux/store';
 
 const MainPage = () => {
-  const storedNotes = useSelector((state: RootState) => state.notes);
-  console.log('mainpage', storedNotes[scratch]);
+
+  const activeNote = useSelector((state: RootState) => state.activeNote);
   return <>
     <div className="main-page-container">
       <DayInfo />
@@ -19,7 +18,7 @@ const MainPage = () => {
       <ScratchPad />
     </div>
     <div id="overlays" className="overlays">
-      <Note />
+      { activeNote.id && <Note /> }
       <Dialog />
       <ContextMenu />
     </div>

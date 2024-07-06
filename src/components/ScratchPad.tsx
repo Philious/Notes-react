@@ -15,17 +15,16 @@ const ScratchPad = () => {
 
   const [ active, setActive ] = useState(false);
   const storedNotes = useSelector((state: RootState) => state.notes);
-  const initialNote = storedNotes[scratch];
+  const [ initialNote ] = useState(storedNotes[scratch]);
+  
   const { addNote, updateNote } = useDatabaseFunctions(dispatch);
   const [ body, setBody ] = useState('');
 
   useEffect(() => {
     if (initialNote?.body) setBody(initialNote?.body)
-     console.log('Scratch note: ', initialNote);
   }, [initialNote]);
 
   const quickUpdate = (update: string) => {
-    console.log('update scratch: ', {...initialNote, body: update, id: scratch });
     addNote({...initialNote, body: update }, scratch);
   }
 
