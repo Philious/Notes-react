@@ -22,6 +22,8 @@ const PreviewNote: React.FC<PreviewNoteProps> = (props) => {
       </div>
       <div className="list-item-date">
         Updated: { dateFormat(note.lastupdated) }
+        <br/>
+        id: {note.id }
       </div>
     </button>
   </li>

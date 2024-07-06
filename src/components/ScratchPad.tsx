@@ -1,13 +1,12 @@
 import '@/components/scratchPad.scss';
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import IconButton from "@/components/IconButton";
 import { Icon, ButtonType, scratch } from "@/types/enums";
-import { addNote, updateNote } from '@/redux/notesSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import store, { AppDispatch, RootState } from '@/redux/store';
+import { AppDispatch, RootState } from '@/redux/store';
 import { useOverlay } from '@/hooks/providerHooks';
 import useDebounce from '@/hooks/debounce';
-import { activeNoteDispatchers } from '@/redux/customDispatchers';
+import { activeNoteDispatchers, useDatabaseFunctions } from '@/redux/customDispatchers';
 
 const ScratchPad = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,38 +14,37 @@ const ScratchPad = () => {
   const { newActiveNote, updateActiveNote } = activeNoteDispatchers(dispatch);
 
   const [ active, setActive ] = useState(false);
-  const initialNote = useSelector((state: RootState) => state.notes[scratch]);
-  const scratchBody = useRef(initialNote?.body)
+  const storedNotes = useSelector((state: RootState) => state.notes);
+  const initialNote = storedNotes[scratch];
+  const { addNote, updateNote } = useDatabaseFunctions(dispatch);
+  const [ body, setBody ] = useState('');
 
   useEffect(() => {
-    /*
-    const content = scratchBody.current
-    content ? 
-      : dispatch(addNote({
-        id: scratch,
-        title: '',
-        body: '',
-        lastupdated: 0,
-        created: 0,
-      }));
-      */
-  }, [dispatch])
+    if (initialNote?.body) setBody(initialNote?.body)
+     console.log('Scratch note: ', initialNote);
+  }, [initialNote]);
 
-  const updateScratch = (update: string) => {
-    //setInputValue(update);
-    dispatch(updateNote({ id: scratch, body: update, }));
+  const quickUpdate = (update: string) => {
+    console.log('update scratch: ', {...initialNote, body: update, id: scratch });
+    addNote({...initialNote, body: update }, scratch);
   }
-  const lazyUpdate = useDebounce(updateScratch, 2000)
+
+  const lazyUpdate = useDebounce(quickUpdate, 2000)
+
+  const update = (update: string) => {
+    setBody(update);
+    lazyUpdate(update);
+  }
 
   const toggle = () => setActive(!active);
 
   const openContextMenu = (event:  React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.stopPropagation();
     setContextMenu([
-      { label: 'Clear scratchpad', action: () => '' },
+      { label: 'Clear scratchpad', action: () => updateNote({id: scratch, body: ''}) },
       { label: 'make scratchpad a note', action: () => {
         newActiveNote();
-        updateActiveNote({ body: scratchBody.current, title: 'Scratch note' });
+        updateActiveNote({ body, title: 'Scratch note' });
       }},
     ]);
   }
@@ -73,11 +71,9 @@ const ScratchPad = () => {
       </div>
       <textarea
         className="scratch-pad-area"
-        value={scratchBody.current}
-        onBlur={(ev) => updateScratch((ev.target as HTMLTextAreaElement).value)}
-        onInput={(ev) => {
-          lazyUpdate((ev.target as HTMLTextAreaElement).value)
-        }}
+        value={body}
+        onBlur={(ev) => quickUpdate((ev.target as HTMLTextAreaElement).value)}
+        onChange={e => update((e.target as HTMLTextAreaElement).value)}
       />
     </div>
   )

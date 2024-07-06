@@ -6,12 +6,12 @@ import { Auth, getAuth, getRedirectResult, onAuthStateChanged, signInWithRedirec
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import { Loader } from "@/components/Loader";
 import { GoogleAuthProvider } from "firebase/auth/web-extension";
 import { Note } from "@/types/types";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "@/firebaseConfig";
+import { Loader } from "@/components/Loader";
 
 export type LoginStateContextType = {
   redirectSignIn: () => void;
@@ -37,8 +37,10 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
   const [ auth, setAuth ] = useState<Auth>();
   const [ user, setUser ] = useState<User>();
   const [ provider, setProvider ] = useState<GoogleAuthProvider>();
-
+  const [loading, setLoading] = useState<boolean>(false);
+  
   useEffect(() => {
+    setLoading(true);
     if (hasFirebase()) {
       const app = initializeApp(firebaseConfig);
       const _auth = getAuth(app);
@@ -55,17 +57,22 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
           onValue(userDataRef, (snapshot) => {
             const data = snapshot.val().notes as Record<string, Note>;
             dispatch(setDatabase(Object.values(data)))
+            setLoading(false);
           });
         } else {
           dispatch(clearAllNotes());
+          setLoading(false);
         }
       });
+
     } else {
       const localData = localStorage.getItem('notesTestData');
       const data = (localData ? JSON.parse(localData) : []) as Note[];
       dispatch(setDatabase(Object.values(data)));
+      setLoading(false);
     }
   }, [setAuth, dispatch]);
+  if (loading) return <Loader />
 
   if (hasFirebase() && auth && provider) {
 
@@ -104,17 +111,12 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
     }
 
     return (
-      <> 
       <LoginStateContext.Provider value={{
         user, redirectSignIn, logout, passwordSignIn, newUser, forgotPassword
       }}>
         {children}
       </LoginStateContext.Provider>
-      </>
     );
-  } else if (hasFirebase()) {
-    /* Waiting on firebase */
-    return (<Loader />);
   } else {
     /* localstore */
 
@@ -128,13 +130,13 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
       dispatch(clearActiveNote());
     }
     return (
-      <> 
+
       <LoginStateContext.Provider value={{
         user, redirectSignIn, logout, passwordSignIn, newUser, forgotPassword
       }}>
         {children}
       </LoginStateContext.Provider>
-      </>
+
     );
   }
 }
