@@ -1,16 +1,16 @@
 import activeNoteSlice from '@/redux/activeNoteSlice'
-import databaseSlice from '@/redux/databaseSlice'
+import notesSlice from '@/redux/notesSlice'
 import { configureStore } from '@reduxjs/toolkit'
 
 const store = configureStore({
   reducer: {
     activeNote: activeNoteSlice,
-    database: databaseSlice,
+    notes: notesSlice,
   },
 })
 
-// Infer the `RootState` and `DatabaseDispatch` types from the store itself
+// Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type DatabaseDispatch = typeof store.dispatch
+export type AppDispatch = typeof store.dispatch
 export default store;

@@ -56,13 +56,6 @@ export type ActiveNoteFunctions = {
   newActiveNote: (note?: Partial<Note>) => void;
 }
 
-export type DatabaseFunctions = {
-  fetchDatabase: () => void;
-  addNote: (note: Note) => void;
-  updateNote: (note: Note) => void;
-  deleteNote: (noteId: string) => void;
-}
-
 export type LoginStateFunctions = {
   redirectSignIn: () => void;
   passwordSignIn: (name: string, password: string) => void;

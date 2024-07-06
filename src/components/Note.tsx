@@ -6,18 +6,18 @@ import { dateFormat } from '@/utils/sharedUtils';
 import { useOverlay } from "@/hooks/providerHooks";
 import toast from '@/services/toastService';
 import { useDispatch, useSelector } from 'react-redux';
-import { DatabaseDispatch, RootState } from '@/redux/store';
-import { useDatabaseFunctions } from '@/hooks/databaseFunctionHooks';
+import { AppDispatch, RootState } from '@/redux/store';
+import { useDatabaseFunctions } from '@/hooks/NoteSliceHooks';
 import { activeNoteDispatchers } from '@/redux/customDispatchers';
 
 const Note: React.FC = () => {
-  const dispatch = useDispatch<DatabaseDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
   const { setDialog, setContextMenu } = useOverlay();
   const activeNote = useSelector((state: RootState) => state.activeNote);
 
   const { setActiveNote, clearActiveNote } = activeNoteDispatchers(dispatch);
   const fn = useDatabaseFunctions()
-  const database = useSelector((state: RootState) => state.database.database);
+  const database = useSelector((state: RootState) => state.notes);
 
   const [ initialNote ] = useState(database[activeNote?.id ?? '']);
   const updateTitle = (title: string) => setActiveNote({...activeNote!, title });

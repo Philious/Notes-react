@@ -1,22 +1,22 @@
 import '@/components/noteList.scss'
-import { Icon, ButtonType } from "@/types/enums";
+import { Icon, ButtonType, scratch } from "@/types/enums";
 import { Note } from "@/types/types"
 import IconButton from "@/components/IconButton";
 import toast from "@/services/toastService";
 import { useOverlay } from "@/hooks/providerHooks";
 import PreviewNote from "./PreviewNote";
 import { useDispatch, useSelector } from 'react-redux';
-import { DatabaseDispatch, RootState } from '@/redux/store';
+import { AppDispatch, RootState } from '@/redux/store';
 import { activeNoteDispatchers } from '@/redux/customDispatchers';
 
 const NoteList: React.FC = () => {
-  const database = useSelector((state: RootState) => state.database.database);
-  const dispatch = useDispatch<DatabaseDispatch>();
+  const notes = useSelector((state: RootState) => state.notes);
+  const dispatch = useDispatch<AppDispatch>();
   const { setContextMenu } = useOverlay();
   const { setActiveNote, newActiveNote } = activeNoteDispatchers(dispatch);
 
   const getNote = (id: string) => {
-    const note = database[id];
+    const note = notes[id];
     note ? setActiveNote(note) : newNote();
     toast('Get Note: ' + id)
   };
@@ -57,8 +57,8 @@ const NoteList: React.FC = () => {
         </div>
       </div>
       <ul className="list">
-        { Object.values(database).map((note: Note) =>
-          note.id !== 'scratch' && <PreviewNote note={ note } getNote={ getNote } key={note.id} />
+        { Object.values(notes).filter(n => n.id !== scratch).map((note: Note) =>
+          <PreviewNote note={ note } getNote={ getNote } key={note.id} />
         )}
       </ul>
     </div>

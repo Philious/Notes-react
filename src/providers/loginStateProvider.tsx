@@ -1,11 +1,11 @@
 import toast from "@/services/toastService";
 import { clearActiveNote } from "@/redux/activeNoteSlice";
-import { clearDatabase, fetchDatabase } from '@/redux/databaseSlice'
+import { clearAllNotes, setDatabase } from '@/redux/notesSlice'
 import { hasFirebase } from "@/utils/sharedUtils";
 import { Auth, getAuth, getRedirectResult, onAuthStateChanged, signInWithRedirect, signOut, User } from "firebase/auth";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { DatabaseDispatch } from "@/redux/store";
+import { AppDispatch } from "@/redux/store";
 import { Loader } from "@/components/Loader";
 import { GoogleAuthProvider } from "firebase/auth/web-extension";
 import { Note } from "@/types/types";
@@ -30,12 +30,10 @@ const passwordSignIn = (name: string, password: string) => {
 const newUser = () => toast('Not at this time')
 const forgotPassword = () => toast('Good');
 
-
-
 export const LoginStateContext = createContext<LoginStateContextType | undefined>(undefined);
 
 export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const dispatch = useDispatch<DatabaseDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
   const [ auth, setAuth ] = useState<Auth>();
   const [ user, setUser ] = useState<User>();
   const [ provider, setProvider ] = useState<GoogleAuthProvider>();
@@ -56,16 +54,16 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
           const userDataRef = ref(db, `users/${uid}`);
           onValue(userDataRef, (snapshot) => {
             const data = snapshot.val().notes as Record<string, Note>;
-            dispatch(fetchDatabase(Object.values(data)))
+            dispatch(setDatabase(Object.values(data)))
           });
         } else {
-          dispatch(clearDatabase());
+          dispatch(clearAllNotes());
         }
       });
     } else {
       const localData = localStorage.getItem('notesTestData');
       const data = (localData ? JSON.parse(localData) : []) as Note[];
-      dispatch(fetchDatabase(Object.values(data)));
+      dispatch(setDatabase(Object.values(data)));
     }
   }, [setAuth, dispatch]);
 
@@ -98,7 +96,7 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
       if (auth)
       signOut(auth).then(() => {
         setUser(undefined);
-        dispatch(clearDatabase());
+        dispatch(clearAllNotes());
         dispatch(clearActiveNote());
       }).catch(() => {
         console.error('Error logging out')
@@ -126,7 +124,7 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
     };
 
     const logout = () => {
-      dispatch(clearDatabase());
+      dispatch(clearAllNotes());
       dispatch(clearActiveNote());
     }
     return (
