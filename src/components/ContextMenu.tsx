@@ -10,7 +10,7 @@ const ContextMenuItem = ({label, icon, keepOpen, action}: ContextMenuItemType) =
     action();
   }
   return (
-    <li className="context-menu-item">
+    <li className="context-menu-item" key={label}>
       <button className="btn context-menu-item-btn" onClick={click}>
         { icon && <Icon icon={icon} /> }
         { label }

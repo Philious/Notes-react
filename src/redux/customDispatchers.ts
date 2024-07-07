@@ -1,7 +1,7 @@
 import { AppDispatch, RootState } from "@/redux/store";
 import { Note } from "@/types/types";
 import { setActiveNote as _setActiveNote, updateActiveNote as _updateActiveNote, clearActiveNote as _clearActiveNote, newActiveNote as _newActiveNote } from "@/redux/activeNoteSlice";
-import { addNote as _addNote, updateNote as _updateNote, deleteNote as _deleteNote, clearAllNotes, setDatabase as _setDatabase, setDatabase } from '@/redux/notesSlice';
+import { addNote as _addNote, updateNote as _updateNote, deleteNote as _deleteNote, clearAllNotes as _clearAllNotes, setDatabase as _setDatabase, setDatabase } from '@/redux/notesSlice';
 import { useLoginState } from "@/hooks/providerHooks";
 import { hasFirebase } from "@/utils/sharedUtils";
 import { getDatabase, onValue, push, child, set, remove, ref } from "firebase/database";
@@ -59,7 +59,7 @@ export const useDatabaseFunctions = (dispatch: AppDispatch): NoteDispatchers => 
         .catch((error) => console.error(error));
     }
 
-    return { fetchAllNotes, clearAllNotes, addNote, updateNote, deleteNote }
+    return { fetchAllNotes, clearAllNotes: _clearAllNotes, addNote, updateNote, deleteNote }
   } else {
     const fetchAllNotes = () => {
       const localData = localStorage.getItem('notesTestData');
@@ -88,6 +88,11 @@ export const useDatabaseFunctions = (dispatch: AppDispatch): NoteDispatchers => 
       const prev = { ...database };
       delete prev[noteId];
       localStorage.setItem('notesTestData', JSON.stringify([...Object.values(prev)]))
+    }
+
+    const clearAllNotes = () => {
+      localStorage.removeItem('notesTestData');
+      console.log('removed from LocalStorage')
     }
 
     return { fetchAllNotes, clearAllNotes, addNote, updateNote, deleteNote }

@@ -1,5 +1,5 @@
 import '@/components/dayInfo.scss';
-import { IconEnum, ButtonEnum } from "@/types/enums"
+import { IconEnum, ButtonEnum, PageEnum } from "@/types/enums"
 import { useEffect, useState } from "react";
 import night from '@/assets/images/night.png';
 import morning from '@/assets/images/morning.png';
@@ -9,13 +9,19 @@ import evening from '@/assets/images/evening.png';
 import IconButton from "@/components/IconButton";
 
 import { useLoginState, useOverlay } from '@/hooks/providerHooks';
+import { useNavigate } from 'react-router-dom';
 
 export function DayInfo() {
   const [timeOfDay, setTimeOfDay] = useState<{ greeting: string, img: string }>({ greeting: '', img: '' });
   const [date, setDate] = useState('');
   const { logout } = useLoginState();
-
   const { setDialog } = useOverlay();
+  const navigate = useNavigate();
+  const redirectSignOut = () => {
+    logout();
+    // localStorage.removeItem('notesTestData');
+    navigate(PageEnum.LOGIN)
+  }
 
   const getState = () => {
     setDate(new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}));
@@ -41,7 +47,7 @@ export function DayInfo() {
     actions: [
       {
         name: 'Yes',
-        action: logout,
+        action: redirectSignOut,
       },
       {
         name: 'No',
