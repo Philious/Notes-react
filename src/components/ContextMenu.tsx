@@ -1,36 +1,37 @@
 import '@/components/contextMenu.scss';
-import { ContextMenuItem as ContextMenuItemType } from '@/types/types';
-import { useEffect, useState } from "react";
-import Icon from "./icons/Icon";
+import { ContextMenuItemType } from '@/types/types';
+import { useState } from "react";
+import Icon from "@/components/icons/Icon";
 import { useOverlay } from '@/hooks/providerHooks';
 
-const ContextMenuItem: React.FC<ContextMenuItemType> = (props) => {
+const ContextMenuItem = ({label, icon, keepOpen, action}: ContextMenuItemType) => {
   const click = (e:  React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    if (props.keepOpen) e.stopPropagation();
-    props.action();
+    if (keepOpen) e.stopPropagation();
+    action();
   }
   return (
-    <li className="context-menu-item" key={props.label}>
+    <li className="context-menu-item">
       <button className="btn context-menu-item-btn" onClick={click}>
-        { props.icon && <Icon icon={props.icon} /> }
-        { props.label }
+        { icon && <Icon icon={icon} /> }
+        { label }
       </button>
     </li>
   )
 }
 
+console.log('Rendering ContextMenu') // <--- se efter hur mycket omrenderingar vi har på denna
+
 const ContextMenu: React.FC = () => {
   const { setContextMenu, contextMenu} = useOverlay()
   const [ contextMenuRef, setContextMenuRef ] = useState<ContextMenuItemType[]>();
-  useEffect(() => { 
-    if (contextMenu) {
-      setTimeout(() => { 
-        setContextMenuRef(contextMenu)
-      }, 1);
-    } else {
-      setTimeout(() => { setContextMenuRef(contextMenu)}, 250);
-    }
-  });
+
+  if (contextMenu) {
+    setTimeout(() => { 
+      setContextMenuRef(contextMenu)
+    }, 1);
+  } else {
+    setTimeout(() => { setContextMenuRef(contextMenu)}, 250);
+  }
 
   if (contextMenu || contextMenuRef) {
     return (
