@@ -1,7 +1,7 @@
 import '@/components/scratchPad.scss';
 import { useEffect, useState } from "react"
 import IconButton from "@/components/IconButton";
-import { Icon, ButtonType, scratch } from "@/types/enums";
+import { IconEnum, ButtonEnum, scratch } from "@/types/enums";
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { useOverlay } from '@/hooks/providerHooks';
@@ -57,13 +57,13 @@ const ScratchPad = () => {
         <label className="header">Scratch pad</label>
         <div className="scratch-pad-options">
           <IconButton
-            type={ButtonType.Border}
-            icon={Icon.Options}
+            type={ButtonEnum.Border}
+            icon={IconEnum.Options}
             action={openContextMenu}
           />
           <IconButton
-            type={ButtonType.Border}
-            icon={Icon.Up}
+            type={ButtonEnum.Border}
+            icon={IconEnum.Up}
             action={() => undefined}
           />
         </div>

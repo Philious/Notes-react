@@ -1,4 +1,4 @@
-import { Icon, ButtonType } from "./enums";
+import { IconEnum, ButtonEnum } from "./enums";
 
 export type Note = {
   id: string;
@@ -8,9 +8,9 @@ export type Note = {
   created: number;
 }
 
-export type ContextMenuItem = {
+export type ContextMenuItemType = {
   label: string,
-  icon?: Icon;
+  icon?: IconEnum;
   keepOpen?: boolean;
   action: () => void
 }
@@ -36,8 +36,8 @@ export type Dialog = {
 }
 
 export type IconButtonType = {
-  type: ButtonType;
-  icon: Icon;
+  type: ButtonEnum;
+  icon: IconEnum;
   action: () => void;
 }
 

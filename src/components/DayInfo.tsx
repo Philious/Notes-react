@@ -1,5 +1,5 @@
 import '@/components/dayInfo.scss';
-import { Icon, ButtonType } from "@/types/enums"
+import { IconEnum, ButtonEnum } from "@/types/enums"
 import { useEffect, useState } from "react";
 import night from '@/assets/images/night.png';
 import morning from '@/assets/images/morning.png';
@@ -51,7 +51,7 @@ export function DayInfo() {
 });
 
   const IBProps = {
-    type: ButtonType.Default, icon: Icon.LogOut, action: logoutMenu
+    type: ButtonEnum.Default, icon: IconEnum.LogOut, action: logoutMenu
   }
 
   useEffect(() => {

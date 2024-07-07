@@ -1,5 +1,5 @@
 import '@/components/iconButton.scss';
-import { Icon as IconEnum } from "@/types/enums";
+import { IconEnum } from "@/types/enums";
 import { Add } from "@/components/icons/Add";
 import { Arrow } from "@/components/icons/Arrow";
 import { Remove } from "@/components/icons/Remove";

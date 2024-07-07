@@ -1,7 +1,7 @@
 import '@/pages/loginPage.scss';
 import { useState } from "react";
 import IconButton from "@/components/IconButton";
-import { Icon, ButtonType, Page } from "@/types/enums";
+import { IconEnum, ButtonEnum, PageEnum } from "@/types/enums";
 import googleIcon from '@/assets/images/GoogleIcon.svg';
 import { useLoginState } from '@/hooks/providerHooks';
 import { useNavigate } from 'react-router-dom';
@@ -15,14 +15,14 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const passwordLogin = () => {
     if (!hasFirebase()) {
-      navigate(Page.MAIN);
+      navigate(PageEnum.MAIN);
       console.log('login main');
     }
     passwordSignIn(userName, password);
   }
 
   const redirectLogin = () => {
-    if (!hasFirebase()) navigate(Page.MAIN)
+    if (!hasFirebase()) navigate(PageEnum.MAIN)
     redirectSignIn()
   }
   return (
@@ -46,8 +46,8 @@ const LoginPage = () => {
       />
       <div className="password-login-btn">
         <IconButton
-          type={ButtonType.Filled}
-          icon={Icon.Right}
+          type={ButtonEnum.Filled}
+          icon={IconEnum.Right}
           action={passwordLogin}
         />
       </div>

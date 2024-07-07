@@ -1,6 +1,6 @@
 import '@/components/note.scss';
 import { useState } from "react"
-import { ButtonType, Icon } from "@/types/enums"
+import { ButtonEnum, IconEnum } from "@/types/enums"
 import IconButton from "@/components/IconButton";
 import { dateFormat } from '@/utils/sharedUtils';
 import { useOverlay } from "@/hooks/providerHooks";
@@ -80,12 +80,12 @@ const Note: React.FC = () => {
     setContextMenu([
       {
         label: 'Letter size',
-        icon: Icon.LetterSize,
+        icon: IconEnum.LetterSize,
         keepOpen: true,
         action: setLetterSize
       }, {
         label: 'Remove',
-        icon: Icon.Remove,
+        icon: IconEnum.Remove,
         action: remove
       },
     ])
@@ -115,20 +115,20 @@ const Note: React.FC = () => {
       <div className="toolbar">
         <div className="toolbar-left-section">
           <IconButton
-            type={ButtonType.Border}
-            icon={Icon.Left}
+            type={ButtonEnum.Border}
+            icon={IconEnum.Left}
             action={close}
           />
           <IconButton 
-            type={ButtonType.Border}
-            icon={Icon.Check}
+            type={ButtonEnum.Border}
+            icon={IconEnum.Check}
             action={save}
           />
         </div>
         <div className="toolbar-right-section">
           <IconButton 
-            type={ButtonType.Border}
-            icon={Icon.Options}
+            type={ButtonEnum.Border}
+            icon={IconEnum.Options}
             action={options}  
           />
         </div>

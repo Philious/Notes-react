@@ -1,9 +1,9 @@
-import { ContextMenuItem, Dialog } from "@/types/types";
+import { ContextMenuItemType, Dialog } from "@/types/types";
 import { createContext, ReactNode, useState } from "react";
 
 export type OverlayContextType = {
-  contextMenu?: ContextMenuItem[];
-  setContextMenu: (update?: ContextMenuItem[]) => void;
+  contextMenu?: ContextMenuItemType[];
+  setContextMenu: (update?: ContextMenuItemType[]) => void;
   dialog?: Dialog;
   setDialog: (update?: Dialog) => void;
 }
@@ -11,7 +11,7 @@ export type OverlayContextType = {
 export const OverlayContext = createContext<OverlayContextType | undefined>(undefined);
 
 export const OverlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [contextMenu, setContextMenu] = useState<ContextMenuItem[]>();
+  const [contextMenu, setContextMenu] = useState<ContextMenuItemType[]>();
   const [dialog, setDialog] = useState<Dialog>();
   
   return (

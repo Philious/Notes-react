@@ -1,17 +1,17 @@
-export enum Page {
+export enum PageEnum {
   LOGIN = '/',
   MAIN = '/main',
 }
 
 export const scratch = 'scratch'
 
-export enum ButtonType {
+export enum ButtonEnum {
   Default = 'default',
   Filled = 'filled',
   Border = 'border'
 }
 
-export enum Icon {
+export enum IconEnum {
   Add = 'add',
   Cancel = 'cancel',
   Up = 'up',

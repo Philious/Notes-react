@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import MainPage from '@/pages/MainPage';
 import LoginPage from '@/pages/LoginPage';
 
-import { Page } from '@/types/enums';
+import { PageEnum } from '@/types/enums';
 
 
 function App() {
@@ -11,8 +11,8 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path={Page.LOGIN} element={<LoginPage />} />
-          <Route path={Page.MAIN} element={<MainPage />} />
+          <Route path={PageEnum.LOGIN} element={<LoginPage />} />
+          <Route path={PageEnum.MAIN} element={<MainPage />} />
         </Routes>
       </BrowserRouter>
     </>
