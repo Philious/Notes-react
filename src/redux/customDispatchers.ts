@@ -16,10 +16,10 @@ export type NoteDispatchers = {
 }
 
 export const activeNoteDispatchers = (dispatch: AppDispatch) => ({
-  setActiveNote: (note: Note) => dispatch(_setActiveNote({ note })),
+  setActiveNote: (note: Note) => dispatch(_setActiveNote(note)),
   updateActiveNote: (note: Partial<Note>) => dispatch(_updateActiveNote(note)),
   clearActiveNote: () => dispatch(_clearActiveNote()),
-  newActiveNote: () => dispatch(_newActiveNote()),
+  newActiveNote: (note?: Partial<Note>) => dispatch(_newActiveNote(note)),
 });
 
 export const useDatabaseFunctions = (dispatch: AppDispatch): NoteDispatchers => {
@@ -70,7 +70,6 @@ export const useDatabaseFunctions = (dispatch: AppDispatch): NoteDispatchers => 
     const addNote = (note: Note, fixedID?: string): void => {
       const id = fixedID ?? 'id-' + new Date().valueOf();
       const newNote = { ...note, id };
-      console.log(fixedID, newNote)
       dispatch(_addNote(newNote));
       localStorage.setItem('notesTestData', JSON.stringify([...Object.values({ ...database, [id]: newNote })]))
     }
@@ -83,7 +82,6 @@ export const useDatabaseFunctions = (dispatch: AppDispatch): NoteDispatchers => 
     }
 
     const deleteNote = (noteId: string) => {
-      console.log('dispatcher', noteId);
       dispatch(_deleteNote(noteId));
       const prev = { ...database };
       delete prev[noteId];
@@ -92,7 +90,6 @@ export const useDatabaseFunctions = (dispatch: AppDispatch): NoteDispatchers => 
 
     const clearAllNotes = () => {
       localStorage.removeItem('notesTestData');
-      console.log('removed from LocalStorage')
     }
 
     return { fetchAllNotes, clearAllNotes, addNote, updateNote, deleteNote }

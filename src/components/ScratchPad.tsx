@@ -1,12 +1,13 @@
 import '@/components/scratchPad.scss';
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import IconButton from "@/components/IconButton";
 import { IconEnum, ButtonEnum, scratch } from "@/types/enums";
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/redux/store';
+import { AppDispatch, getScratchNote } from '@/redux/store';
 import { useOverlay } from '@/hooks/providerHooks';
 import useDebounce from '@/hooks/debounce';
 import { activeNoteDispatchers, useDatabaseFunctions } from '@/redux/customDispatchers';
+import { equalNotes } from '@/utils/sharedUtils';
 
 const ScratchPad = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -14,18 +15,14 @@ const ScratchPad = () => {
   const { newActiveNote, updateActiveNote } = activeNoteDispatchers(dispatch);
 
   const [ active, setActive ] = useState(false);
-  const storedNotes = useSelector((state: RootState) => state.notes);
-  const [ initialNote ] = useState(storedNotes[scratch]);
+  const scratchNote = useSelector(getScratchNote);
+  const [ body, setBody ] = useState('');
   
   const { addNote, updateNote } = useDatabaseFunctions(dispatch);
-  const [ body, setBody ] = useState('');
-
-  useEffect(() => {
-    if (initialNote?.body) setBody(initialNote?.body)
-  }, [initialNote]);
-
+  
   const quickUpdate = (update: string) => {
-    addNote({...initialNote, body: update }, scratch);
+    if (equalNotes(scratchNote, {...scratchNote, body: update})) return;
+    addNote({...scratchNote, body: update }, scratch);
   }
 
   const lazyUpdate = useDebounce(quickUpdate, 2000)
@@ -43,7 +40,7 @@ const ScratchPad = () => {
       { label: 'Clear scratchpad', action: () => updateNote({id: scratch, body: ''}) },
       { label: 'make scratchpad a note', action: () => {
         newActiveNote();
-        updateActiveNote({ body, title: 'Scratch note' });
+        updateActiveNote({ body });
       }},
     ]);
   }

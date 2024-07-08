@@ -2,7 +2,7 @@ import '@/components/note.scss';
 import { useState } from "react"
 import { ButtonEnum, IconEnum } from "@/types/enums"
 import IconButton from "@/components/IconButton";
-import { dateFormat } from '@/utils/sharedUtils';
+import { dateFormat, equalNotes } from '@/utils/sharedUtils';
 import { useOverlay } from "@/hooks/providerHooks";
 import toast from '@/services/toastService';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,15 +10,15 @@ import { AppDispatch, RootState } from '@/redux/store';
 import { activeNoteDispatchers, useDatabaseFunctions } from '@/redux/customDispatchers';
 
 const Note: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { setDialog, setContextMenu } = useOverlay();
   const activeNote = useSelector((state: RootState) => state.activeNote);
   const [ initialNote ] = useState(activeNote);
-
-  const { setActiveNote, clearActiveNote } = activeNoteDispatchers(dispatch);
-  const { addNote, deleteNote, updateNote } = useDatabaseFunctions(dispatch);
   const database = useSelector((state: RootState) => state.notes);
 
+  const dispatch = useDispatch<AppDispatch>();
+  const { setDialog, setContextMenu, setLetterSize } = useOverlay();
+  const { setActiveNote, clearActiveNote } = activeNoteDispatchers(dispatch);
+  const { addNote, deleteNote, updateNote } = useDatabaseFunctions(dispatch);
+  
   const updateTitle = (title: string) => setActiveNote({...activeNote!, title });
   const updateBody = (body: string) => setActiveNote({...activeNote!, body });
 
@@ -28,8 +28,7 @@ const Note: React.FC = () => {
   }
 
   const close = () => {
-    console.log(activeNote, initialNote )
-    if (activeNote?.title === initialNote?.title && activeNote?.body === initialNote?.body || !initialNote?.title && !initialNote?.body)  { clearActiveNote();
+    if (equalNotes(activeNote, initialNote)) { clearActiveNote();
     } else {
       setDialog({
         title: 'Save before closing?',
@@ -43,14 +42,13 @@ const Note: React.FC = () => {
     }
   };
 
-  const remove = (() => {
+  const remove = () => {
     setDialog({
       title: 'Remove permanently?', 
       content: '',
       actions: [
         { name: 'No', action: () => {} },
         { name: 'Yes', action: () => { 
-          console.log(activeNote?.id);
           if (activeNote?.id) {
               deleteNote(activeNote.id);
               clearActiveNote();
@@ -59,21 +57,11 @@ const Note: React.FC = () => {
         }
       ]
     })
-  });
+  };
 
   const save = () => {
     toast('Save');
     saveNote();
-  }
-
-  const setLetterSize = () => {
-    setContextMenu();
-    setContextMenu([
-      { label: 'Larger', action: () => document.body.parentElement?.setAttribute('style', 'font-size: larger') },
-      { label: 'Large', action: () => document.body.parentElement?.setAttribute('style', 'font-size: large') },
-      { label: 'Medium',  action: () => document.body.parentElement?.setAttribute('style', 'font-size: medium') },
-      { label: 'Small', action: () => document.body.parentElement?.setAttribute('style', 'font-size: small') },
-    ]);
   }
 
   const options = () => {

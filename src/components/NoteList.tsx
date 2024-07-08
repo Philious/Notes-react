@@ -13,7 +13,7 @@ const NoteList: React.FC = () => {
   const notes = useSelector(getSortedNotes);
   
   const dispatch = useDispatch<AppDispatch>();
-  const { setContextMenu } = useOverlay();
+  const { setLetterSize } = useOverlay();
   const { setActiveNote, newActiveNote } = activeNoteDispatchers(dispatch);
 
   const getNote = (id: string) => {
@@ -26,25 +26,8 @@ const NoteList: React.FC = () => {
     newActiveNote();
     toast('New Note');
   }
-  
-  const setLetterSize = () => {
-    setContextMenu([
-      {
-        label: 'Larger',
-        action: () => document.body.parentElement?.setAttribute('style', 'font-size: larger')
-      }, {
-        label: 'Large',
-        action: () => document.body.parentElement?.setAttribute('style', 'font-size: large')
-      }, {
-        label: 'Medium',
-        action: () => document.body.parentElement?.setAttribute('style', 'font-size: medium')
-      }, {
-        label: 'Small',
-        action: () => document.body.parentElement?.setAttribute('style', 'font-size: small')
-      },
-    ]);
-  }
 
+  // Bättre sämre eller kvittar?
   const letterSizeIcon = { type: ButtonEnum.Border, icon: IconEnum.LetterSize, action: setLetterSize }
   const addIcon = { type: ButtonEnum.Border, icon: IconEnum.Add, action: newNote }
 

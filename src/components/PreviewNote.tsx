@@ -6,8 +6,7 @@ interface PreviewNoteProps extends React.HTMLAttributes<HTMLDivElement> {
   getNote: (id: string) => void;
 }
 
-const PreviewNote: React.FC<PreviewNoteProps> = (props) => {
-  const { note, getNote } = props;
+const PreviewNote = ({note, getNote}: PreviewNoteProps) => {
   return (
     <li className="list-item-container" key={note.id}>
     <button

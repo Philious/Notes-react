@@ -25,7 +25,6 @@ const notesSlice = createSlice({
       }
     },
     deleteNote: (state, action: PayloadAction<string>) => {
-      console.log('remove');
       const prev = { ...state };
       delete prev[action.payload];
 

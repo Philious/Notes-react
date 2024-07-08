@@ -11,7 +11,7 @@ import IconButton from "@/components/IconButton";
 import { useLoginState, useOverlay } from '@/hooks/providerHooks';
 import { useNavigate } from 'react-router-dom';
 
-export function DayInfo() {
+export const DayInfo: React.FC = () => {
   const [timeOfDay, setTimeOfDay] = useState<{ greeting: string, img: string }>({ greeting: '', img: '' });
   const [date, setDate] = useState('');
   const { logout } = useLoginState();

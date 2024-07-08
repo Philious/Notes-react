@@ -16,7 +16,6 @@ const LoginPage = () => {
   const passwordLogin = () => {
     if (!hasFirebase()) {
       navigate(PageEnum.MAIN);
-      console.log('login main');
     }
     passwordSignIn(userName, password);
   }

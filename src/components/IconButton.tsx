@@ -1,18 +1,18 @@
 import '@/components/iconButton.scss';
-import { Icon as IconEnum, ButtonType } from "@/types/enums";
+import { IconEnum, ButtonEnum } from "@/types/enums";
 import Icon from '@/components/icons/Icon';
 
-type IconButtonType = { type: ButtonType, icon: IconEnum, action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void }
+type IconButtonType = { type: ButtonEnum, icon: IconEnum, action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void }
 
-const IconButton: React.FC<IconButtonType> = (props) => {
+const IconButton: React.FC<IconButtonType> = ({ type, icon, action }: IconButtonType) => {
 
   return (
     <button
       className="btn icn-btn"
-      onClick={props.action}
+      onClick={action}
     >
-    <div className={`bkg ${props.type} ${props.icon}`}>
-      <Icon icon={props.icon}/>
+    <div className={`bkg ${type} ${icon}`}>
+      <Icon icon={icon}/>
     </div>
   </button>
   )

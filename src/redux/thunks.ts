@@ -2,54 +2,46 @@ import { Note } from "@/types/types";
 import { hasFirebase } from "@/utils/sharedUtils";
 import { onAuthStateChanged, Auth, signInWithRedirect, getRedirectResult, signOut, getAuth } from "firebase/auth";
 import { getDatabase, ref, onValue } from "firebase/database";
-import { setLoading, setDatabase, clearAllNotes } from "@/redux/notesSlice";
-import { AppDispatch, RootState } from "@/redux/store";
+import { setDatabase, clearAllNotes } from "@/redux/notesSlice";
+import { AppDispatch } from "@/redux/store";
 import { GoogleAuthProvider } from "firebase/auth/web-extension";
 import toast from "@/services/toastService";
 import { clearActiveNote } from "@/redux/activeNoteSlice";
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "@/firebaseConfig";
-import { useSetAuth, useSetUser } from "@/hooks/transformObjects";
-import { useSelector } from "react-redux";
 
 export const fetchData = () => async (dispatch: AppDispatch) => {
-  dispatch(setLoading(true));
-  console.log('fetch data');
+  // dispatch(setLoading(true));
   if (hasFirebase()) {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    useSetAuth(auth);
-    console.log('run as firebase');
+    // useSetAuth(auth);
 
     try {
       onAuthStateChanged(auth as Auth, (authUser) => {
         if (authUser) {
           const uid = authUser.uid;
-          useSetUser(authUser);
+          // useSetUser(authUser);
           const db = getDatabase();
           const userDataRef = ref(db, `users/${uid}`);
           onValue(userDataRef, (snapshot) => {
             const data = snapshot.val().notes as Record<string, Note>;
             dispatch(setDatabase(Object.values(data).filter(n => typeof n === 'object')))
-            console.log('database set ', Object.values(data).filter(n => typeof n === 'object'));
           });
         } else {
           dispatch(clearAllNotes());
         }
-        dispatch(setLoading(false));
+        // dispatch(setLoading(false));
       });
     } catch (error) {
       console.error(error);
-      dispatch(setLoading(false));
+      // dispatch(setLoading(false));
     }
   } else {
-    console.log('run as local');
     const localData = localStorage.getItem('notesTestData');
     const data = (localData ? JSON.parse(localData) : []) as Note[];
     dispatch(setDatabase(Object.values(data).filter(n => typeof n === 'object')));
-    console.log('fetchData', useSelector((state: RootState) => state.database.data));
-    dispatch(setLoading(false));
-    console.log('database set ', Object.values(data).filter(n => typeof n === 'object'));
+    //  dispatch(setLoading(false));
   }
 };
 
@@ -64,7 +56,7 @@ export const handleLoginWithGoogle = (auth: Auth) => async () => {
           // const credential = GoogleAuthProvider.credentialFromResult(result);
           // setToken(credential?.accessToken);
 
-          useSetUser(result.user);
+          // useSetUser(result.user);
         } else throw Error
 
       }).catch((error) => {
@@ -87,7 +79,7 @@ export const handleLogout = (auth: Auth) => async (dispatch: AppDispatch) => {
   if (hasFirebase()) {
     try {
       signOut(auth).then(() => {
-        useSetAuth(null);
+        // useSetAuth(null);
         dispatch(clearAllNotes());
         dispatch(clearActiveNote());
       }).catch(() => {
