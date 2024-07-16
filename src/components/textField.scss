@@ -1,0 +1,11 @@
+.input-field-container {}
+.input-field {
+  background-color: var(--n-100);
+  border: 0.0625rem solid var(--n-300);
+  color: var(--n-500);
+  border-radius: 0.125rem;
+  padding: 0 1rem;
+  height: 2.25rem;
+  width: 100%;
+  box-sizing: border-box;
+}

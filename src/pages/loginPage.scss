@@ -27,32 +27,16 @@
   font-size: 0.875rem;
   font-weight: 400;
 }
-.input-field {
-  background-color: var(--n-100);
-  border: 0.0625rem solid var(--n-300);
-  color: var(--n-500);
-  border-radius: 0.125rem;
-  padding: 0 1rem;
-  height: 2.25rem;
-  width: 100%;
-  box-sizing: border-box;
-}
 .login-btn { justify-self: end; }
-.txt-btn {
-  background-color: transparent;
-  border: none;
-  color: var(--n-500);
-  text-align: left;
-  height: 3rem;
-  font-size: 0.875rem;
-  font-weight: 400;
-  padding-left: 0;
-  &.new { white-space: nowrap; }
-}
+.new { white-space: nowrap; }
+.forgot { white-space: pre-wrap;}
 .vertical {
-  transform: rotate(270deg) translateY(100%);
+  transform: rotate(270deg) translateY(1rem);
   transform-origin: left bottom;
   align-self: end;
+  height: auto;
+  padding: 1rem 0;
+
 }
 .google-login {
   height: 3rem;

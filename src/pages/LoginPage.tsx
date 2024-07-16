@@ -6,6 +6,8 @@ import googleIcon from '@/assets/images/GoogleIcon.svg';
 import { useLoginState } from '@/hooks/providerHooks';
 import { useNavigate } from 'react-router-dom';
 import { hasFirebase } from '@/utils/sharedUtils';
+import TextField from '@/components/TextField';
+import Pressable from '@/components/Pressable';
 
 const LoginPage = () => {
   const { redirectSignIn, passwordSignIn, newUser, forgotPassword } = useLoginState();
@@ -24,25 +26,14 @@ const LoginPage = () => {
     if (!hasFirebase()) navigate(PageEnum.MAIN)
     redirectSignIn()
   }
+
   return (
     <div className="login-view">
       <h1 className="title">
         Notes
       </h1>
-      <input
-        name="userName"
-        className="input-field name"
-        value={userName}
-        placeholder="Username"
-        onChange={ (ev) => setUsername(ev.target.value) }
-      />
-      <input
-        name="userPassword"
-        className="input-field password"
-        placeholder="Password"
-        value={password}
-        onChange={ (ev) => setPassword(ev.target.value) }
-      />
+      <TextField name="user-name" className="name" value={userName} setValue={setUsername} placeholder="User name"/>
+      <TextField name="user-password" className="password" value={password} setValue={setPassword} placeholder="Password"/>
       <div className="password-login-btn">
         <IconButton
           type={ButtonEnum.Filled}
@@ -50,18 +41,14 @@ const LoginPage = () => {
           action={passwordLogin}
         />
       </div>
-      <button className="vertical txt-btn new" onClick={newUser}>
-        New user
-      </button>
-      <button className="vertical txt-btn forgot" onClick={forgotPassword}>
-        Forgot<br/>password
-      </button>
-      <button
+      <Pressable className={['new', 'vertical']} action={newUser} label="New User"/>
+      <Pressable className={['forgot', 'vertical']} action={forgotPassword} label={`Forgot\nPassword`}/>
+      <Pressable
         className="google-login"
-        onClick={redirectLogin}
+        action={redirectLogin}
       >
-        <img src={googleIcon} alt="Google icon" className="google-icon" />
-      </button>
+       { <img src={googleIcon} alt="Google icon" className="google-icon" /> }
+      </Pressable>
     </div>
   )
 } 

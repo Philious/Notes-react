@@ -51,4 +51,6 @@ export const hasFirebase = () => {
   }
 }
 
+export const flattenClassName = (a?: string | string[], s?: string) => a ? (Array.isArray(a) ? [...a, s] : [a, s]).join(' ') : s ?? '';
+
 export const equalNotes = (n1?: Note, n2?: Note) => n1 && n2 && (Object.keys(n1) as (keyof Note)[]).filter((k) => n1[k] !== n2[k]).length === 0;
