@@ -20,10 +20,10 @@ export const DayInfo: React.FC = () => {
   const redirectSignOut = () => {
     logout();
     // localStorage.removeItem('notesTestData');
-    navigate(PageEnum.LOGIN)
+    navigate(PageEnum.LOGIN);
   }
 
-  const getState = () => {
+  const updateDayState = () => {
     setDate(new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}));
     const d = new Date().getHours(); 
   
@@ -56,13 +56,9 @@ export const DayInfo: React.FC = () => {
     ]
 });
 
-  const IBProps = {
-    type: ButtonEnum.Default, icon: IconEnum.LogOut, action: logoutMenu
-  }
-
   useEffect(() => {
-    getState();
-    const timeout = setTimeout(() => getState(), 1000 * 60 * 60)
+    updateDayState();
+    const timeout = setInterval(() => updateDayState(), 1000 * 60 * 60)
 
     return () => {
       clearTimeout(timeout)
@@ -78,7 +74,9 @@ export const DayInfo: React.FC = () => {
       { date }
     </div>
       <IconButton
-        { ...IBProps }
+         type={ButtonEnum.Default}
+         icon={IconEnum.LogOut}
+         action={logoutMenu}
       />
   </div>
   )

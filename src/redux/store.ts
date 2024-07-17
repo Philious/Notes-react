@@ -18,7 +18,10 @@ export const getSortedNotes = createSelector(
 );
 export const getScratchNote = createSelector(
   [notes],
-  (notes): Note => Object.values(notes).find(n => n.id === scratch) ?? { id: scratch, body: '', title: 'Scratch note', lastupdated: 0, created: 0 }
+  (notes): Note => {
+    //console.log(Object.values(notes).find(n => n.id === scratch) ?? { id: scratch, body: '', title: 'Scratch note', lastupdated: 0, created: 0 });
+    return Object.values(notes).find(n => n.id === scratch) ?? { id: scratch, body: '', title: 'Scratch note', lastupdated: 0, created: 0 }
+  }
 );
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>

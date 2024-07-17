@@ -16,33 +16,32 @@ const NoteList: React.FC = () => {
   const { setLetterSize } = useOverlay();
   const { setActiveNote, newActiveNote } = activeNoteDispatchers(dispatch);
 
-  const getNote = (id: string) => {
+  const selectNote = (id: string) => {
     const note = notes.find((n) => n.id === id);
-    note ? setActiveNote(note) : newNote();
-    toast('Get Note: ' + id)
+    if (note) {
+      setActiveNote(note);
+    } else {
+      toast(`note ${id} seem to not excist ):`);
+    }
   };
-
-  const newNote = () => {
-    newActiveNote();
-    toast('New Note');
-  }
-
-  // Bättre sämre eller kvittar?
-  const letterSizeIcon = { type: ButtonEnum.Border, icon: IconEnum.LetterSize, action: setLetterSize }
-  const addIcon = { type: ButtonEnum.Border, icon: IconEnum.Add, action: newNote }
 
   return(
     <div className="note-list-container">
       <div className="list-header">
         <label className="header">Notes</label>
         <div className="list-options">
-          <IconButton { ...letterSizeIcon }/>
-          <IconButton { ...addIcon }/>
+          <IconButton type={ButtonEnum.Border}
+            icon={IconEnum.LetterSize} action={setLetterSize} />
+          <IconButton
+            type={ButtonEnum.Border}
+            icon={IconEnum.Add}
+            action={() => newActiveNote}
+          />
         </div>
       </div>
       <ul className="list">
         { notes.map((note: Note) =>
-          <PreviewNote note={ note } getNote={ getNote } key={note.id} />
+          <PreviewNote note={ note } getNote={ selectNote } key={note.id} />
         )}
       </ul>
     </div>

@@ -55,6 +55,7 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
           const db = getDatabase();
           const userDataRef = ref(db, `users/${uid}`);
           onValue(userDataRef, (snapshot) => {
+            // console.log('login use dbfunction s - laddaq data');
             const data = snapshot.val().notes as Record<string, Note>;
             dispatch(setDatabase(Object.values(data)))
             setLoading(false);
@@ -79,6 +80,7 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
     const redirectSignIn = () => {
 
       if (auth && provider) {
+        console.log(auth, provider);
         signInWithRedirect(auth, provider);
         getRedirectResult(auth).then((result) => {
 

@@ -1,5 +1,5 @@
 import '@/components/scratchPad.scss';
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import IconButton from "@/components/IconButton";
 import { IconEnum, ButtonEnum, scratch } from "@/types/enums";
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,13 +13,16 @@ const ScratchPad = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { setContextMenu } = useOverlay();
   const { newActiveNote, updateActiveNote } = activeNoteDispatchers(dispatch);
+  const { addNote, updateNote } = useDatabaseFunctions(dispatch); 
 
   const [ active, setActive ] = useState(false);
   const scratchNote = useSelector(getScratchNote);
   const [ body, setBody ] = useState('');
   
-  const { addNote, updateNote } = useDatabaseFunctions(dispatch);
-  
+  useEffect(() => {
+    setBody(scratchNote.body)
+  }, [scratchNote.body])
+
   const quickUpdate = (update: string) => {
     if (equalNotes(scratchNote, {...scratchNote, body: update})) return;
     addNote({...scratchNote, body: update }, scratch);

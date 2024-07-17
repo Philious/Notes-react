@@ -14,18 +14,18 @@ const Dialog: React.FC = () => {
   if (dialog)
   return (
     <div className="dialog-container">
-        <div className="dialog">
-          {dialog.title && <div className="dialog-title">{dialog.title}</div>}
-          {dialog.content && <div className="dialog-content">{dialog.content}</div>}
-          <div className="dialog-footer">
-            {dialog.actions.map((action) => (
-              <button key={action.name} className="dialog-button" onClick={() => actionHandler(action)}>
-                {action.name}
-              </button>
-            ))}
-          </div>
+      <div className="dialog">
+        {dialog.title && <div className="dialog-title">{dialog.title}</div>}
+        {dialog.content && <div className="dialog-content">{dialog.content}</div>}
+        <div className="dialog-footer">
+          {dialog.actions.map((action) => (
+            <button key={action.name} className="dialog-button" onClick={() => actionHandler(action)}>
+              {action.name}
+            </button>
+          ))}
         </div>
       </div>
+    </div>
   );
 };
 
