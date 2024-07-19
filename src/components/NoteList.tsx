@@ -4,7 +4,7 @@ import { Note } from "@/types/types"
 import IconButton from "@/components/IconButton";
 import toast from "@/services/toastService";
 import { useOverlay } from "@/hooks/providerHooks";
-import PreviewNote from "./PreviewNote";
+import NoteListItem from "@/components/NoteListItem";
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, getSortedNotes } from '@/redux/store';
 import { activeNoteDispatchers } from '@/redux/customDispatchers';
@@ -35,13 +35,13 @@ const NoteList: React.FC = () => {
           <IconButton
             type={ButtonEnum.Border}
             icon={IconEnum.Add}
-            action={() => newActiveNote}
+            action={() => (newActiveNote())}
           />
         </div>
       </div>
       <ul className="list">
         { notes.map((note: Note) =>
-          <PreviewNote note={ note } getNote={ selectNote } key={note.id} />
+          <NoteListItem note={ note } getNote={ selectNote } key={note.id} />
         )}
       </ul>
     </div>

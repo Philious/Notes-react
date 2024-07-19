@@ -1,3 +1,4 @@
+import '@/components/noteListItem.scss'
 import { Note } from "@/types/types"
 import { dateFormat } from "@/utils/sharedUtils"
 
@@ -21,8 +22,6 @@ const PreviewNote = ({note, getNote}: PreviewNoteProps) => {
         </div>
         <div className="list-item-date">
           Updated: { dateFormat(note.lastupdated) }
-          <br/>
-          id: {note.id }
         </div>
       </button>
     </li>

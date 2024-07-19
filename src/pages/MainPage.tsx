@@ -18,7 +18,7 @@ const MainPage = () => {
       <ScratchPad />
     </div>
     <div id="overlays" className="overlays">
-      { activeNote.id && <Note /> }
+      <Note />
       <Dialog />
       <ContextMenu />
     </div>

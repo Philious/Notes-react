@@ -60,11 +60,13 @@ const ScratchPad = () => {
             type={ButtonEnum.Border}
             icon={IconEnum.Options}
             action={openContextMenu}
+            className="options-icn"
           />
           <IconButton
             type={ButtonEnum.Border}
             icon={IconEnum.Up}
             action={() => undefined}
+            className="arrow-icn"
           />
         </div>
       </div>

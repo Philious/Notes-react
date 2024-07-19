@@ -8,7 +8,7 @@ type ButtonProps = {
 }
 
 function Button({label, action, className}: ButtonProps) {
-  const classes = flattenClassName([...className ?? [], 'btn']);
+  const classes = flattenClassName(className, 'btn');
   return (
     <button className={classes} onClick={action}>
       <span className="btn-txt">{label}</span>

@@ -10,15 +10,18 @@
   box-shadow: 0 -0.0625rem 0 var(--n-300), 0.0625rem 0 var(--n-300);
   transition: transform .25s;
   box-sizing: border-box;
-  .arrow-icon {
+  .arrow-icn {
     transform: rotate(0);
+    transition: transform .25s;
+  }
+  .options-icn { 
+    transform: scale(0);
     transition: transform .25s;
   }
   &.active {
     transform: translateY(0);
-    .arrow-icon {
-      transform: rotate(180deg);
-    }
+    .arrow-icn { transform: rotate(180deg); }
+    .options-icn { transform: scale(1) }
   }
 }
 .scratch-pad-options {

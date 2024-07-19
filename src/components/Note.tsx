@@ -1,5 +1,5 @@
 import '@/components/note.scss';
-import { useState } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { ButtonEnum, IconEnum } from "@/types/enums"
 import IconButton from "@/components/IconButton";
 import { dateFormat, equalNotes } from '@/utils/sharedUtils';
@@ -11,14 +11,34 @@ import { activeNoteDispatchers, useDatabaseFunctions } from '@/redux/customDispa
 
 const Note: React.FC = () => {
   const activeNote = useSelector((state: RootState) => state.activeNote);
+  const [ active, setActive] = useState(false);
+  const [show, setShow ] = useState(false);
   const [ initialNote ] = useState(activeNote);
   const database = useSelector((state: RootState) => state.notes);
+  const [isPending, startTransition] = useTransition();
 
   const dispatch = useDispatch<AppDispatch>();
   const { setDialog, setContextMenu, setLetterSize } = useOverlay();
   const { setActiveNote, clearActiveNote } = activeNoteDispatchers(dispatch);
   const { addNote, deleteNote, updateNote } = useDatabaseFunctions(dispatch);
   
+  useEffect(() => {
+    if (activeNote.id) {
+      setActive(true)
+      setTimeout(() => { 
+        setShow(true);
+      }, 1);
+    } else {
+      setShow(false);
+      setTimeout(() => { setActive(false)}, 500);
+    }
+  }, [activeNote, activeNote.id, setActive, active, show])
+  useEffect(() => {
+
+      
+
+  }, []);
+
   const updateTitle = (title: string) => setActiveNote({...activeNote!, title });
   const updateBody = (body: string) => setActiveNote({...activeNote!, body });
 
@@ -80,7 +100,7 @@ const Note: React.FC = () => {
   }
 
   const noteFragment = () => (
-    <div id="note" className="note">
+    <div id="note" className={show ? 'note show' : 'note'}>
       <input
         name="titleInput"
         value={activeNote?.title}
@@ -123,7 +143,7 @@ const Note: React.FC = () => {
       </div>
   </div> 
   )
- return ( activeNote?.id && noteFragment() )
+ return ( active && noteFragment() )
 }
 
 export default Note

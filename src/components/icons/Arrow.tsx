@@ -1,4 +1,4 @@
-import '@/components/icons/icons.css';
+import '@/components/icons/icons.scss';
 
 export const Arrow = () => {
 

@@ -1,4 +1,4 @@
-import '@/components/icons/icons.css';
+import '@/components/icons/icons.scss';
 
 export const Remove = () => {
 //style="transform: rotate(45deg);fill: var(--n-500);width: 1.5rem;height: 1.5rem;"
