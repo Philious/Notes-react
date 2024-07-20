@@ -7,7 +7,7 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { GoogleAuthProvider } from "firebase/auth/web-extension";
-import { Note } from "@/types/types";
+import { NoteProps } from "@/types/types";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "@/firebaseConfig";
@@ -56,7 +56,7 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
           const userDataRef = ref(db, `users/${uid}`);
           onValue(userDataRef, (snapshot) => {
             // console.log('login use dbfunction s - laddaq data');
-            const data = snapshot.val().notes as Record<string, Note>;
+            const data = snapshot.val().notes as Record<string, NoteProps>;
             dispatch(setDatabase(Object.values(data)))
             setLoading(false);
           });
@@ -68,7 +68,7 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
 
     } else {
       const localData = localStorage.getItem('notesTestData');
-      const data = (localData ? JSON.parse(localData) : []) as Note[];
+      const data = (localData ? JSON.parse(localData) : []) as NoteProps[];
       dispatch(setDatabase(Object.values(data)));
       setLoading(false);
     }

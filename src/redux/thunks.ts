@@ -1,4 +1,4 @@
-import { Note } from "@/types/types";
+import { NoteProps } from "@/types/types";
 import { hasFirebase } from "@/utils/sharedUtils";
 import { onAuthStateChanged, Auth, signInWithRedirect, getRedirectResult, signOut, getAuth } from "firebase/auth";
 import { getDatabase, ref, onValue } from "firebase/database";
@@ -25,7 +25,7 @@ export const fetchData = () => async (dispatch: AppDispatch) => {
           const db = getDatabase();
           const userDataRef = ref(db, `users/${uid}`);
           onValue(userDataRef, (snapshot) => {
-            const data = snapshot.val().notes as Record<string, Note>;
+            const data = snapshot.val().notes as Record<string, NoteProps>;
             dispatch(setDatabase(Object.values(data).filter(n => typeof n === 'object')))
           });
         } else {
@@ -39,7 +39,7 @@ export const fetchData = () => async (dispatch: AppDispatch) => {
     }
   } else {
     const localData = localStorage.getItem('notesTestData');
-    const data = (localData ? JSON.parse(localData) : []) as Note[];
+    const data = (localData ? JSON.parse(localData) : []) as NoteProps[];
     dispatch(setDatabase(Object.values(data).filter(n => typeof n === 'object')));
     //  dispatch(setLoading(false));
   }

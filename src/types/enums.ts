@@ -11,6 +11,13 @@ export enum ButtonEnum {
   Border = 'border'
 }
 
+export enum Direction {
+  UP,
+  RIGHT,
+  DOWN,
+  LEFT
+}
+
 export enum IconEnum {
   Add = 'add',
   Cancel = 'cancel',

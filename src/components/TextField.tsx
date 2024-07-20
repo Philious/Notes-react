@@ -1,4 +1,5 @@
 import '@/components/textField.scss';
+import styled from 'styled-components';
 type TextFieldProps = {
   value: string,
   
@@ -19,7 +20,7 @@ function TextField({value, setValue, name, className, placeholder, label}:TextFi
   return (
   <div className={classes}>
     { label && <span>{label}</span> }
-    <input
+    <TextInput
         name={name}
         className="input-field"
         value={value}
@@ -31,3 +32,14 @@ function TextField({value, setValue, name, className, placeholder, label}:TextFi
 }
 
 export default TextField;
+
+const TextInput = styled.input.attrs({type: 'text'})`
+  background-color: var(--n-100);
+  border: 0.0625rem solid var(--n-300);
+  color: var(--n-500);
+  border-radius: 0.125rem;
+  padding: 0 1rem;
+  height: 2.25rem;
+  width: 100%;
+  box-sizing: border-box;
+`;

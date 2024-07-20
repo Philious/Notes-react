@@ -1,5 +1,5 @@
 import { AppDispatch, RootState } from "@/redux/store";
-import { Note } from "@/types/types";
+import { NoteProps } from "@/types/types";
 import { setActiveNote as _setActiveNote, updateActiveNote as _updateActiveNote, clearActiveNote as _clearActiveNote, newActiveNote as _newActiveNote } from "@/redux/activeNoteSlice";
 import { addNote as _addNote, updateNote as _updateNote, deleteNote as _deleteNote, clearAllNotes as _clearAllNotes, setDatabase as _setDatabase, setDatabase } from '@/redux/notesSlice';
 import { useLoginState } from "@/hooks/providerHooks";
@@ -10,16 +10,16 @@ import { useSelector } from "react-redux";
 export type NoteDispatchers = {
   fetchAllNotes: () => void;
   clearAllNotes: () => void;
-  addNote: (note: Note, fixedID?: string) => void;
-  updateNote: (note: Partial<Note> & { id: string }) => void;
+  addNote: (note: NoteProps, fixedID?: string) => void;
+  updateNote: (note: Partial<NoteProps> & { id: string }) => void;
   deleteNote: (noteId: string) => void;
 }
 
 export const activeNoteDispatchers = (dispatch: AppDispatch) => ({
-  setActiveNote: (note: Note) => dispatch(_setActiveNote(note)),
-  updateActiveNote: (note: Partial<Note>) => dispatch(_updateActiveNote(note)),
+  setActiveNote: (note: NoteProps) => dispatch(_setActiveNote(note)),
+  updateActiveNote: (note: Partial<NoteProps>) => dispatch(_updateActiveNote(note)),
   clearActiveNote: () => dispatch(_clearActiveNote()),
-  newActiveNote: (note?: Partial<Note>) => dispatch(_newActiveNote(note)),
+  newActiveNote: (note?: Partial<NoteProps>) => dispatch(_newActiveNote(note)),
 });
 
 export const useDatabaseFunctions = (dispatch: AppDispatch): NoteDispatchers => {
@@ -32,12 +32,12 @@ export const useDatabaseFunctions = (dispatch: AppDispatch): NoteDispatchers => 
       const db = getDatabase();
       const userDataRef = ref(db, `users/${uid}`);
       onValue(userDataRef, (snapshot) => {
-        const data = snapshot.val().notes as Record<string, Note>;
+        const data = snapshot.val().notes as Record<string, NoteProps>;
         dispatch(_setDatabase(Object.values(data)))
       });
     }
 
-    const addNote = (note: Note, fixedID?: string): void => {
+    const addNote = (note: NoteProps, fixedID?: string): void => {
       const db = getDatabase();
       const id = fixedID ?? push(child(ref(db), 'note')).key;
       set(ref(db, `users/${uid}/notes/${id}`), { ...note, id })
@@ -45,7 +45,7 @@ export const useDatabaseFunctions = (dispatch: AppDispatch): NoteDispatchers => 
         .catch((error) => console.error(error));
     }
 
-    const updateNote = (note: Partial<Note> & { id: string }) => {
+    const updateNote = (note: Partial<NoteProps> & { id: string }) => {
       const db = getDatabase();
       return set(ref(db, `users/${uid}/notes/${note.id}`), note)
         .then(() => console.log('Data updated successfully!'))
@@ -63,18 +63,18 @@ export const useDatabaseFunctions = (dispatch: AppDispatch): NoteDispatchers => 
   } else {
     const fetchAllNotes = () => {
       const localData = localStorage.getItem('notesTestData');
-      const data = (localData ? JSON.parse(localData) : []) as Note[];
+      const data = (localData ? JSON.parse(localData) : []) as NoteProps[];
       dispatch(setDatabase(Object.values(data)));
     }
 
-    const addNote = (note: Note, fixedID?: string): void => {
+    const addNote = (note: NoteProps, fixedID?: string): void => {
       const id = fixedID ?? 'id-' + new Date().valueOf();
       const newNote = { ...note, id };
       dispatch(_addNote(newNote));
       localStorage.setItem('notesTestData', JSON.stringify([...Object.values({ ...database, [id]: newNote })]))
     }
 
-    const updateNote = (note: Partial<Note> & { id: string }) => {
+    const updateNote = (note: Partial<NoteProps> & { id: string }) => {
       dispatch(_updateNote(note));
       const prev = database[note.id];
       const update = { ...database, [note.id]: { ...prev, ...note } };

@@ -1,6 +1,6 @@
 import { IconEnum, ButtonEnum } from "./enums";
 
-export type Note = {
+export type NoteProps = {
   id: string;
   title: string;
   body: string;
@@ -8,14 +8,14 @@ export type Note = {
   created: number;
 }
 
-export type ContextMenuItemType = {
+export type ContextMenuItemProps = {
   label: string,
   icon?: IconEnum;
   keepOpen?: boolean;
   action: () => void
 }
 
-export type DataBaseNotes = Record<string, Note>
+export type DataBaseNotes = Record<string, NoteProps>
 
 export type ToastOptions = {
   duration?: number;
@@ -23,43 +23,20 @@ export type ToastOptions = {
   align?: 'left' | 'center' | 'right';
 }
 
-export type DialogAction = {
+export type DialogActionProps = {
   name: string;
   action: () => void;
   closeOnAction?: boolean;
 }
 
-export type Dialog = {
+export type DialogProps = {
   title: string,
   content: string,
-  actions: DialogAction[]
+  actions: DialogActionProps[]
 }
 
-export type IconButtonType = {
+export type IconButtonProps = {
   type: ButtonEnum;
   icon: IconEnum;
   action: () => void;
-}
-
-export type DialogContextType = {
-  openDialog: (title: string, content: string, actions: DialogAction[]) => void;
-  closeDialog: () => void;
-  dialog: Dialog;
-  isOpen: boolean;
-};
-
-export type ActiveNoteFunctions = {
-  getActiveNote: () => Note | undefined;
-  setActiveNote: (note: Note) => void;
-  updateActiveNote: (note: Partial<Note>) => void;
-  clearActiveNote: () => void;
-  newActiveNote: (note?: Partial<Note>) => void;
-}
-
-export type LoginStateFunctions = {
-  redirectSignIn: () => void;
-  passwordSignIn: (name: string, password: string) => void;
-  logout: () => void;
-  forgotPassword: () => void;
-  newUser: () => void;
 }

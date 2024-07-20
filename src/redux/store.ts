@@ -1,7 +1,7 @@
 import activeNoteSlice from '@/redux/activeNoteSlice'
 import notesSlice from '@/redux/notesSlice'
 import { scratch } from '@/types/enums'
-import { Note } from '@/types/types'
+import { NoteProps } from '@/types/types'
 import { configureStore, createSelector } from '@reduxjs/toolkit'
 
 const store = configureStore({
@@ -18,7 +18,7 @@ export const getSortedNotes = createSelector(
 );
 export const getScratchNote = createSelector(
   [notes],
-  (notes): Note => {
+  (notes): NoteProps => {
     //console.log(Object.values(notes).find(n => n.id === scratch) ?? { id: scratch, body: '', title: 'Scratch note', lastupdated: 0, created: 0 });
     return Object.values(notes).find(n => n.id === scratch) ?? { id: scratch, body: '', title: 'Scratch note', lastupdated: 0, created: 0 }
   }

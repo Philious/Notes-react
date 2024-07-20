@@ -1,13 +1,13 @@
-import '@/components/note.scss';
-import { useEffect, useState, useTransition } from "react"
-import { ButtonEnum, IconEnum } from "@/types/enums"
-import IconButton from "@/components/IconButton";
+import { useEffect, useState } from "react"
+import { IconEnum } from "@/types/enums"
 import { dateFormat, equalNotes } from '@/utils/sharedUtils';
 import { useOverlay } from "@/hooks/providerHooks";
 import toast from '@/services/toastService';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { activeNoteDispatchers, useDatabaseFunctions } from '@/redux/customDispatchers';
+import NoteToolbar from '@/components/NoteToolbar';
+import styled from 'styled-components';
 
 const Note: React.FC = () => {
   const activeNote = useSelector((state: RootState) => state.activeNote);
@@ -15,7 +15,6 @@ const Note: React.FC = () => {
   const [show, setShow ] = useState(false);
   const [ initialNote ] = useState(activeNote);
   const database = useSelector((state: RootState) => state.notes);
-  const [isPending, startTransition] = useTransition();
 
   const dispatch = useDispatch<AppDispatch>();
   const { setDialog, setContextMenu, setLetterSize } = useOverlay();
@@ -33,11 +32,6 @@ const Note: React.FC = () => {
       setTimeout(() => { setActive(false)}, 500);
     }
   }, [activeNote, activeNote.id, setActive, active, show])
-  useEffect(() => {
-
-      
-
-  }, []);
 
   const updateTitle = (title: string) => setActiveNote({...activeNote!, title });
   const updateBody = (body: string) => setActiveNote({...activeNote!, body });
@@ -100,8 +94,8 @@ const Note: React.FC = () => {
   }
 
   const noteFragment = () => (
-    <div id="note" className={show ? 'note show' : 'note'}>
-      <input
+    <Wrapper id="note" className={show ? 'note show' : 'note'}>
+      <TitleInput
         name="titleInput"
         value={activeNote?.title}
         className="title-input"
@@ -109,41 +103,79 @@ const Note: React.FC = () => {
         onChange={ (e) => updateTitle(e.target.value) }
         placeholder="Title"
       />
-      <div className="date">
+      <DatesContainer className="date">
         <span>Created: { dateFormat(activeNote?.created ?? 0) }</span>
         <span>Updated: { dateFormat(activeNote?.lastupdated ?? 0) }</span>
-      </div>
-      <textarea
+      </DatesContainer>
+      <BodyInput
         className="body-input"
         name="bodyInput"
         value={ activeNote?.body }
         onChange={ (e) => updateBody(e.target.value) }
         placeholder='Content...'
       />
-      <div className="toolbar">
-        <div className="toolbar-left-section">
-          <IconButton
-            type={ButtonEnum.Border}
-            icon={IconEnum.Left}
-            action={close}
-          />
-          <IconButton 
-            type={ButtonEnum.Border}
-            icon={IconEnum.Check}
-            action={save}
-          />
-        </div>
-        <div className="toolbar-right-section">
-          <IconButton 
-            type={ButtonEnum.Border}
-            icon={IconEnum.Options}
-            action={options}  
-          />
-        </div>
-      </div>
-  </div> 
+      <NoteToolbar close={close} save={save} options={options}/>
+  </Wrapper> 
   )
  return ( active && noteFragment() )
 }
 
 export default Note
+
+const Wrapper = styled.div`
+  grid-area: var(--note-area);
+  background-color: var(--black);
+  position: fixed;
+  inset: 0 0 0 var(--note-width);
+  display: grid;
+  grid-template-rows: auto 1.5rem 1fr;
+  box-shadow: -1px 0 0 var(--n-300);
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(3rem);
+  transition-property: opacity, transform;
+  transition-duration: .5s;
+  transition-timing-function: $easeOutQuint,;
+  &.show {
+    opacity: 1;
+    transform: translateY(0)
+  }
+`
+const TitleInput = styled.input.attrs({type: "text"})`
+  box-sizing: border-box;
+  padding: 0 1rem;
+  margin-bottom: 0.125rem;
+  font-size: 1rem;
+  height: 3rem;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  box-shadow: 0 1.0625rem 0 -1rem var(--n-300);
+  color: var(--n-600);
+  &:focus-visible { outline-color: var(--primary); }
+`;
+const DatesContainer = styled.div`
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  color: var(--n-500);
+  padding: 0 1rem;
+  justify-content: space-between;
+  display: flex;
+  margin: auto 0; 
+`;
+
+const BodyInput = styled.textarea`
+  background-color: transparent;
+  border: none;
+  box-sizing: border-box;
+  line-height: 1.375;
+  font-size: 0.875rem;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  white-space-collapse: break-spaces;
+  overflow-y: auto;
+  color: var(--n-600);
+  resize: none;
+  &:focus-visible { outline-color: var(--primary); }
+`;

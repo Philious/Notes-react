@@ -41,15 +41,3 @@
   background-color: hsl(0, 0%, 15%);
   border: none;
 }
-
-.dialog-enter-active,
-.dialog-leave-active {
-  transition: opacity .5s, transform .5s;
-  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.dialog-enter-from,
-.dialog-leave-to {
-  opacity: 0;
-  transform: translateY(3rem);
-}

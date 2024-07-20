@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import '@/components/loader.scss';
+import styled from "styled-components";
 
 export const Loader = () => {
   const dots = [
@@ -27,8 +28,23 @@ export const Loader = () => {
   }, []);
   
   return (
-    <div id="loading-screen">
-      <span className="message">{ message }</span>
-    </div>
+    <Wrapper id="loading-screen">
+      <Message className="message">{ message }</Message>
+    </Wrapper>
   )
 }
+
+const Wrapper = styled.div`
+  display: grid;
+  place-items: center;
+  position: fixed;
+  inset: 0;
+  background: var(--n-200);
+  letter-spacing: .125rem;
+  z-index: 1;
+`
+
+const Message = styled.span`
+  width: 4.625rem;
+  white-space: nowrap;
+`

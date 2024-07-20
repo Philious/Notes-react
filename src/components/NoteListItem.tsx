@@ -1,9 +1,9 @@
 import '@/components/noteListItem.scss'
-import { Note } from "@/types/types"
+import { NoteProps } from "@/types/types"
 import { dateFormat } from "@/utils/sharedUtils"
 
 type PreviewNoteProps = {
-  note: Note;
+  note: NoteProps;
   getNote: (id: string) => void;
 }
 
