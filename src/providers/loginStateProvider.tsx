@@ -37,25 +37,24 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
   const [ auth, setAuth ] = useState<Auth>();
   const [ user, setUser ] = useState<User>();
   const [ provider, setProvider ] = useState<GoogleAuthProvider>();
-  const [loading, setLoading] = useState<boolean>(false);
-  
+  const [ loading, setLoading ] = useState<boolean>(false);
+
   useEffect(() => {
     setLoading(true);
     if (hasFirebase()) {
       const app = initializeApp(firebaseConfig);
-      const _auth = getAuth(app);
-      const _provider = new GoogleAuthProvider();
+      setAuth(getAuth(app));
+      setProvider(new GoogleAuthProvider());
 
-      setAuth(_auth);
-      setProvider(_provider);
-      onAuthStateChanged(_auth as Auth, (authUser) => {
+      if (auth)
+      onAuthStateChanged(auth as Auth, (authUser) => {
+
         if (authUser) {
           setUser(authUser);
           const uid = authUser.uid;
           const db = getDatabase();
           const userDataRef = ref(db, `users/${uid}`);
           onValue(userDataRef, (snapshot) => {
-            // console.log('login use dbfunction s - laddaq data');
             const data = snapshot.val().notes as Record<string, NoteProps>;
             dispatch(setDatabase(Object.values(data)))
             setLoading(false);
@@ -63,42 +62,41 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
         } else {
           dispatch(clearAllNotes());
           setLoading(false);
+
+          if (location.pathname !== '/') location.pathname = '/';
         }
       });
-
     } else {
       const localData = localStorage.getItem('notesTestData');
       const data = (localData ? JSON.parse(localData) : []) as NoteProps[];
       dispatch(setDatabase(Object.values(data)));
       setLoading(false);
     }
-  }, [setAuth, dispatch]);
-  if (loading) return <Loader />
+  }, [auth, setAuth, dispatch]);
+  
 
   if (hasFirebase() && auth && provider) {
 
     const redirectSignIn = () => {
+      console.log(auth, provider);
+      signInWithRedirect(auth, provider);
 
-      if (auth && provider) {
-        console.log(auth, provider);
-        signInWithRedirect(auth, provider);
-        getRedirectResult(auth).then((result) => {
+      getRedirectResult(auth).then((result) => {
 
-          if (result) {
-            // const credential = GoogleAuthProvider.credentialFromResult(result);
-            // setToken(credential?.accessToken);
+        if (result) {
+          // const credential = GoogleAuthProvider.credentialFromResult(result);
+          // setToken(credential?.accessToken);
 
-            setUser(result.user);
-          } else throw Error
-          
-        }).catch((error) => {
-          const errorCode: string | undefined = error.code;
-          const message : string | undefined = error.message;
-          const errorMessage = errorCode ? `Last known error\nError code: ${errorCode}\nError: ${message}` : `Error: ${message}`;
+          setUser(result.user);
+        } else throw Error
         
-          if (message) toast(errorMessage, { duration: 5000, align: 'left'});
-        });
-      }
+      }).catch((error) => {
+        const errorCode: string | undefined = error.code;
+        const message : string | undefined = error.message;
+        const errorMessage = errorCode ? `Last known error\nError code: ${errorCode}\nError: ${message}` : `Error: ${message}`;
+      
+        if (message) toast(errorMessage, { duration: 5000, align: 'left'});
+      });
     }
         
     const logout = () => {
@@ -113,12 +111,14 @@ export const LoginStateProvider: React.FC<{ children: ReactNode }> = ({ children
     }
 
     return (
-      <LoginStateContext.Provider value={{
-        user, redirectSignIn, logout, passwordSignIn, newUser, forgotPassword
-      }}>
-        {children}
-      </LoginStateContext.Provider>
-    );
+      loading 
+        ? <Loader />
+        : <LoginStateContext.Provider value={{
+          user, redirectSignIn, logout, passwordSignIn, newUser, forgotPassword
+        }}>
+          {children}
+        </LoginStateContext.Provider>
+      );
   } else {
     /* localstore */
 

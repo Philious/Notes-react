@@ -15,18 +15,6 @@
   --list-item-font-size: max(0.6875rem, min(1.3vw, .825rem));
   --list-item-line-height: calc(var(--list-item-font-size) * 1.375);
 
-  @include tabletUp {
-    --toolbar-height: 3rem;
-    --main-tab-bar-height: 4rem;
-    --main-columns: 20rem;
-    --note-width: 20rem;
-    --scratch-width: 20rem;
-    --list-header-top: 0;
-    --day-area: 1 / 1 / 2 / 2;
-    --list-area: 2 / 1 / 3 / 2;
-    --note-area: 1 / 2 / 3 / 3;
-  }
-
   --p-200: hsl(330, 94%, 24%);
   --p-300: hsl(330, 94%, 34%);
   --p-400: hsl(330, 65%, 56%);
@@ -42,4 +30,16 @@
   --n-500: hsl(0, 0%, 64%);
   --n-600: hsl(0, 0%, 80%);
   --white: #fff;
+
+  @include tabletUp {
+    --toolbar-height: 3rem;
+    --main-tab-bar-height: 4rem;
+    --main-columns: 20rem;
+    --note-width: 20rem;
+    --scratch-width: 20rem;
+    --list-header-top: 0;
+    --day-area: 1 / 1 / 2 / 2;
+    --list-area: 2 / 1 / 3 / 2;
+    --note-area: 1 / 2 / 3 / 3;
+  }
 }

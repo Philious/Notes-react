@@ -2,11 +2,13 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  box-shadow: 0.0625rem 0 0 var(--n-300);
+  
   @include tabletUp {
     display: grid;
     grid-template-columns: var(--main-columns);
     grid-template-rows: var(--day-area-height) calc(100vh - var(--day-area-height));
   }
   
-  box-shadow: 0.0625rem 0 0 var(--n-300);
+  
 }
