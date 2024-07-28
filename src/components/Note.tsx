@@ -5,9 +5,10 @@ import { useOverlay } from "@/hooks/providerHooks";
 import toast from '@/services/toastService';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
-import { activeNoteDispatchers, useDatabaseFunctions } from '@/redux/customDispatchers';
+import { activeNoteDispatchers } from '@/redux/customDispatchers';
 import NoteToolbar from '@/components/NoteToolbar';
 import styled from 'styled-components';
+import { noteActions } from "@/services/dotNetService";
 
 const Note: React.FC = () => {
   const activeNote = useSelector((state: RootState) => state.activeNote);
@@ -19,7 +20,7 @@ const Note: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { setDialog, setContextMenu, setLetterSize } = useOverlay();
   const { setActiveNote, clearActiveNote } = activeNoteDispatchers(dispatch);
-  const { addNote, deleteNote, updateNote } = useDatabaseFunctions(dispatch);
+
   
   useEffect(() => {
     if (activeNote.id) {
@@ -34,10 +35,10 @@ const Note: React.FC = () => {
   }, [activeNote, activeNote.id, setActive, active, show])
 
   const updateTitle = (title: string) => setActiveNote({...activeNote!, title });
-  const updateBody = (body: string) => setActiveNote({...activeNote!, body });
+  const updateBody = (content: string) => setActiveNote({...activeNote!, content });
 
   const saveNote = () => {
-    if (activeNote) database[activeNote.id] ? updateNote(activeNote) : addNote(activeNote); 
+    if (activeNote) database[activeNote.id] ? noteActions.update(activeNote) : noteActions.add(activeNote); 
     clearActiveNote();
   }
 
@@ -64,7 +65,7 @@ const Note: React.FC = () => {
         { name: 'No', action: () => {} },
         { name: 'Yes', action: () => { 
           if (activeNote?.id) {
-              deleteNote(activeNote.id);
+              noteActions.delete(activeNote.id);
               clearActiveNote();
             }
           }
@@ -104,13 +105,13 @@ const Note: React.FC = () => {
         placeholder="Title"
       />
       <DatesContainer className="date">
-        <span>Created: { dateFormat(activeNote?.created ?? 0) }</span>
-        <span>Updated: { dateFormat(activeNote?.lastupdated ?? 0) }</span>
+        <span>Created: { dateFormat(activeNote?.createdAt ?? 0) }</span>
+        <span>Updated: { dateFormat(activeNote?.updatedAt ?? 0) }</span>
       </DatesContainer>
       <BodyInput
         className="body-input"
         name="bodyInput"
-        value={ activeNote?.body }
+        value={ activeNote?.content }
         onChange={ (e) => updateBody(e.target.value) }
         placeholder='Content...'
       />

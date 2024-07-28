@@ -8,21 +8,16 @@ import afternoon from '@/assets/images/afternoon.png';
 import evening from '@/assets/images/evening.png';
 import IconButton from "@/components/IconButton";
 
-import { useLoginState, useOverlay } from '@/hooks/providerHooks';
+import { useOverlay } from '@/hooks/providerHooks';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { userActions } from "@/services/dotNetService";
 
 export const DayInfo: React.FC = () => {
   const [timeOfDay, setTimeOfDay] = useState<{ greeting: string, img: string }>({ greeting: '', img: '' });
   const [date, setDate] = useState('');
-  const { logout } = useLoginState();
   const { setDialog } = useOverlay();
   const navigate = useNavigate();
-  const redirectSignOut = () => {
-    logout();
-    // localStorage.removeItem('notesTestData');
-    navigate(PageEnum.LOGIN);
-  }
 
   const updateDayState = () => {
     setDate(new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}));
@@ -48,7 +43,10 @@ export const DayInfo: React.FC = () => {
     actions: [
       {
         name: 'Yes',
-        action: redirectSignOut,
+        action: () => {
+          userActions.logout();
+          navigate(PageEnum.LOGIN);
+        },
       },
       {
         name: 'No',

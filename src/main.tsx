@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from '@/App.tsx';
+import Router from '@/pages/Router';
 import '@/assets/styles/styles.scss';
 import { OverlayProvider } from '@/providers/overLayProvider';
-import { LoginStateProvider } from '@/providers/loginStateProvider';
 import { Provider } from 'react-redux';
 import store from '@/redux/store';
 
@@ -13,11 +12,9 @@ root.render(
   <React.StrictMode>
     <>
       <Provider store={store}>
-        <LoginStateProvider>
-            <OverlayProvider>
-              <App />    
-            </OverlayProvider>
-        </LoginStateProvider>
+          <OverlayProvider>
+            <Router />    
+          </OverlayProvider>
       </Provider>
     </>
   </React.StrictMode>,

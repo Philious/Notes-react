@@ -1,11 +1,13 @@
 import { IconEnum, ButtonEnum } from "./enums";
 
-export type NoteProps = {
+export interface NoteProps {
   id: string;
   title: string;
-  body: string;
-  lastupdated: number;
-  created: number;
+  content: string;
+  catalog: string;
+  tags: string[];
+  createdAt: number;
+  updatedAt: number;
 }
 
 export type ContextMenuItemProps = {

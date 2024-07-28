@@ -1,6 +1,9 @@
 export enum PageEnum {
   LOGIN = '/',
   MAIN = '/main',
+  NEW = '/newmuser',
+  FORGOT = '/forgot_password'
+
 }
 
 export const scratch = 'scratch'

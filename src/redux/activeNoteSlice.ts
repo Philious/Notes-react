@@ -1,14 +1,17 @@
 import { NoteProps } from "@/types/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { deleteNote } from "./notesSlice";
 
 type ActiveNoteState = NoteProps
 
 const initialState: ActiveNoteState = {
   id: '',
   title: '',
-  body: '',
-  lastupdated: 0,
-  created: 0
+  content: '',
+  catalog: '',
+  tags: [],
+  updatedAt: 0,
+  createdAt: 0
 };
 
 const activeNoteSlice = createSlice({
@@ -24,7 +27,14 @@ const activeNoteSlice = createSlice({
     clearActiveNote: () => initialState,
     newActiveNote: (_state, action: PayloadAction<Partial<NoteProps> | undefined>) => {
       const date = new Date().valueOf();
-      return ({ id: 'new', title: '', body: '', ...(action?.payload ?? {}), lastupdated: date, created: date })
+      return ({
+        id: 'new',
+        title: '',
+        content: '',
+        catalog: '',
+        tags: [],
+        ...(action?.payload ?? {}), updatedAt: date, createdAt: date
+      })
     }
   }
 });
