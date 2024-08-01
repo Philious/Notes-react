@@ -1,5 +1,14 @@
 import { NoteProps } from '@/types/types';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
+
+const BECall = axios.create({
+  baseURL: 'http://localhost:5173',
+  withCredentials: true,
+  headers: {
+    // 'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json'
+  }
+});
 
 enum API {
   USER = 'http://localhost:5230/api/Users',
@@ -12,49 +21,77 @@ export type User = {
   username?: string;
 }
 
-export const getAllUsers = async (): Promise<User> => await axios.get<User>(API.USER)
-  .then((response) => response.data)
-  .catch((error) => { throw Error(error) })
+export type UserResponse = {
+  id: string,
+  username: string | null,
+  email: string,
+  createdAt: string
+}
 
+export const checkAuthentication = async (): Promise<boolean> => {
+  console.log('run check');
+  try {
+    const response = await BECall.get<{ authenticated: boolean }>(`${API.USER}/authcheck`);
+
+    return response.data.authenticated;
+  } catch (error) {
+    console.error('Error checking authentication:', error);
+    return false;
+  }
+};
 
 export const userActions = {
-  register: async (payload: User): Promise<AxiosResponse> => axios.post<User>(`${API.USER}/${'register'}`, payload)
+  register: async (payload: User) => BECall.post<UserResponse>(`${API.USER}/${'register'}`, payload)
     .then((response) => response)
     .catch((error) => { throw Error(error) }),
 
-  login: async (payload: User): Promise<AxiosResponse> => axios.post<User>(`${API.USER}/${'login'}`, payload)
+  login: async (payload: User) => BECall.post<UserResponse>(`${API.USER}/${'login'}`, payload)
     .then((response) => response)
     .catch((error) => { throw Error(error) }),
 
-  logout: async (): Promise<AxiosResponse<void, any>> => axios.post<void>(`${API.USER}/${'logout'}`)
+  logout: async () => BECall.post<void>(`${API.USER}/${'logout'}`)
     .then((response) => response)
     .catch((error) => { throw Error(error) }),
+
+  getAllUsers: async (): Promise<UserResponse[] | null> => {
+    try {
+      const users = await BECall.get<UserResponse[]>(API.USER)
+      return users.data;
+    } catch (error) {
+      console.log('no users');
+      return null
+    }
+  },
 }
 
 export const noteActions = {
-  byId: async (id: string): Promise<NoteProps> => await axios.get<NoteProps>(`${API.NOTES}/${id}`)
+  byId: async (id: string) => await BECall.get<NoteProps>(`${API.NOTES}/${id}`)
     .then((response) => response.data)
     .catch(function (error) { throw Error(error) }),
 
-  all: async (): Promise<NoteProps[]> => await axios.get<NoteProps[]>(API.NOTES + '/', {
+  all: async (): Promise<NoteProps[] | null> => {
+    try {
+      const response = await BECall.get<NoteProps[]>(API.NOTES);
+      return response.data;
+    } catch (error) {
+      console.error('no notes');
+      return null;
+    }
+  },
 
-  })
-    .then((response) => response?.data)
-    .catch(function (error) { throw Error(error) }),
-
-  add: async (note: NoteProps): Promise<AxiosResponse> => await axios.post<NoteProps>(API.NOTES + '/', note)
+  add: async (note: NoteProps) => await BECall.post<NoteProps>(API.NOTES, note)
     .then((response) => response)
     .catch(function (error) { throw Error(error) }),
 
-  update: async (note: Partial<NoteProps> & { id: string }): Promise<AxiosResponse> => {
+  update: async (note: Partial<NoteProps> & { id: string }) => {
     const prev = await noteActions.byId(note.id);
 
-    return await axios.put<NoteProps>(`${API.NOTES}/${note.id}`, { ...prev, note })
+    return await BECall.put<NoteProps>(`${API.NOTES}/${note.id}`, { ...prev, note })
       .then((response) => response)
       .catch(function (error) { throw Error(error) })
   },
 
-  delete: async (id: string): Promise<AxiosResponse> => await axios.delete(`${API.NOTES}/${id}`)
+  delete: async (id: string) => await BECall.delete(`${API.NOTES}/${id}`)
     .then((response) => response)
     .catch(function (error) { throw Error(error) }),
 }

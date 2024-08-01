@@ -1,7 +1,7 @@
 export enum PageEnum {
   LOGIN = '/',
   MAIN = '/main',
-  NEW = '/newmuser',
+  NEW = '/new_user',
   FORGOT = '/forgot_password'
 
 }

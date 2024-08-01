@@ -4,8 +4,8 @@ export interface NoteProps {
   id: string;
   title: string;
   content: string;
-  catalog: string;
-  tags: string[];
+  catalog?: string;
+  tags?: string[];
   createdAt: number;
   updatedAt: number;
 }

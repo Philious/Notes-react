@@ -5,26 +5,18 @@ import { useNavigate } from 'react-router-dom';
 import TextField from '@/components/TextField';
 import Pressable from '@/components/Pressable';
 import styled from 'styled-components';
-import { userActions, noteActions } from "@/services/dotNetService";
+import { noteActions, userActions } from "@/services/dotNetService";
 import { ButtonBase, H1, PageWrapper } from "@/assets/styles/styledComponents";
+import { useUserState } from "@/hooks/providerHooks";
 
-const passwordLogin = async (email: string, password: string) => {
-    
-  const user = await userActions.login({ email, password });
-  // const test = await noteActions.all();
-  console.log({ user });
 
-    // navigate(PageEnum.MAIN);
-  
-}
 
+// navigate(PageEnum.MAIN)
 const LoginPage = () => {
-  
   const [ password, setPassword ] = useState('test1234');
   const [ email, setEmail ] = useState('test@test.test');
-
+  const { login } = useUserState();
   const navigate = useNavigate();
-
 
   return (
     <Wrapper>
@@ -36,9 +28,9 @@ const LoginPage = () => {
         <LoginButton
           type={ButtonEnum.Filled}
           icon={IconEnum.Right}
-          action={() => passwordLogin(email, password)}
+          action={async () => await login(email, password)}
         />
-      <NewUser action={() => navigate(PageEnum.NEW)} label="New user"/>
+      <NewUser action={() =>  navigate(PageEnum.NEW)} label="New user"/>
       <Forgot action={() => navigate(PageEnum.FORGOT)} label={`Forgot\npassword`}/>
     </Wrapper>
   )

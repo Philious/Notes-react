@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 export const useThrottle = <T>(callback: (...args: T[]) => void, limit: number) => {
-  const lastRan = useRef(Date.now());
-  const timeout = useRef<NodeJS.Timeout | null>(null);
+  const lastRan = useRef<number>(Date.now());
+  const timeout = useRef<number | null>(null);
 
   const throttledFunction = useCallback(
     (...args: T[]) => {

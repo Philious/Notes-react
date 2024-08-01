@@ -15,8 +15,9 @@ function NewUserPage() {
   const navigate = useNavigate();
   const createAccount = async () => {
     const response = await userActions.register({ email, password });
-    if (response) await userActions.login(response.data);
-    
+    console.log(response)
+    if (response.data) await userActions.login(response.data);
+
     navigate(PageEnum.MAIN);
   };
 

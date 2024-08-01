@@ -9,7 +9,7 @@ export type OverlayContextType = {
   setLetterSize: () => void
 }
 
-export const OverlayContext = createContext<OverlayContextType | undefined>(undefined);
+export const OverlayContext = createContext<OverlayContextType | null>(null);
 
 export const OverlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [contextMenu, setContextMenu] = useState<ContextMenuItemProps[]>();
