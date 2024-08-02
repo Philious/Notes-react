@@ -1,20 +1,23 @@
-import { setDatabase } from "@/redux/notesSlice";
+import { Loader } from "@/components/Loader";
+import useComputedRef from "@/hooks/computedRef";
+import { fetchNotes } from "@/redux/asyncNoteThunks";
+import { addScratch, fetchScratch } from "@/redux/asyncScratchThunk";
+import { clearAllNotes } from "@/redux/notesSlice";
 import { AppDispatch } from "@/redux/store";
-import { checkAuthentication, noteActions, userActions } from "@/services/dotNetService";
+import { checkAuthentication, userActions } from "@/services/dotNetService";
 import { PageEnum } from "@/types/enums";
 import { intervalHandler } from "@/utils/sharedUtils";
-import { createContext, ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { createContext, ReactNode, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export type UserStateContextType = {
-  loginState: boolean;
+  auth: boolean;
   email?: string;
   username?: string;
-  setLoginState: (update: boolean) => void,
+  loading: boolean;
   setEmail: (update: string) => void,
   setUsername: (update: string) => void,
-  init: () => void;
   login: (user: string, pass: string) => void;
   logout: () => void;
   checkedNavigation: (page: PageEnum, exclude?: string[]) => void;
@@ -23,9 +26,11 @@ export type UserStateContextType = {
 export const UserStateContext = createContext<UserStateContextType | null>(null);
 
 export const UserStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [loginState, setLoginState] = useState(false);
+  const cycle = useRef(0);
+  const [auth, setAuth] = useComputedRef(false);
   const [email, setEmail] = useState<string>();
   const [username, setUsername] = useState<string>();
+  const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -35,69 +40,78 @@ export const UserStateProvider: React.FC<{ children: ReactNode }> = ({ children 
   };
 
   const intervalAuthCheck = useRef(intervalHandler(async () => {
-    const auth = await checkAuthentication();
-    if (auth !== loginState) setLoginState(auth);
+    console.log('update intervall');
+    const authorized = await checkAuthentication();
+    setAuth(authorized);
   }, 36000000));
 
   const getAllNotes = async () => {
-    
     try {
-      const fetchedNotes = await noteActions.all();
-      if (fetchedNotes) {
-        dispatch(setDatabase(fetchedNotes));
-        checkedNavigation(PageEnum.MAIN)
-      }
+      await dispatch(fetchNotes());
+      
+      const scratch = await dispatch(fetchScratch());
+      if (!scratch?.payload?.content!) await dispatch(addScratch());
+
     } catch(e) { 
       console.error('Error while fetching notes', e);
     }
   };
 
-  const init = async () => {
-    if (!loginState) {
-      const auth = await checkAuthentication();
-      setLoginState(auth)
-      if (auth) {
-        await getAllNotes();
-      } else {
-        intervalAuthCheck.current.stop();
-        checkedNavigation(PageEnum.LOGIN, [PageEnum.FORGOT, PageEnum.NEW]);
-      }
-      console.log(loginState);
+  useEffect(() => console.log('auth updated', auth), [auth]);
+  
+  useEffect(() => {
+    const check = async () => {
+      try {
+        setLoading(true);
+        const authorized = await checkAuthentication();
+        setAuth(authorized);
+      } finally { setLoading(false) }
     }
-  }
-
-  useCallback(async () => {
-    await init();
+    if (cycle.current === 0) check();
+    cycle.current += 1;
   }, []);
 
   useEffect(() => {
-    if (loginState) {
-      intervalAuthCheck.current.start();
+    const init = async () => {
+      if (auth) {
+        setLoading(true);
+        await getAllNotes(); 
+        intervalAuthCheck.current.start();
+        setLoading(false);
+        checkedNavigation(PageEnum.MAIN);
+        
+      } else {
+        cycle.current = 0;
+        intervalAuthCheck.current.stop();
+        clearAllNotes();
+        checkedNavigation(PageEnum.LOGIN, [PageEnum.FORGOT, PageEnum.NEW]);
+      }
     }
-    else {
-      intervalAuthCheck.current.stop();
-      checkedNavigation(PageEnum.LOGIN, [PageEnum.FORGOT, PageEnum.NEW]);
-    }
-  }, [loginState]);
+    init();
+  }, [auth]);
 
   const login = async (email: string, password: string) => {
+    if (auth) {
+      checkedNavigation(PageEnum.MAIN);
+      return;
+    }
+    
     const user = await userActions.login({ email, password });
     if (user.data) {
-      await getAllNotes();
-      setLoginState(!!user?.data?.id);
+      setAuth(!!user?.data?.id);
     } else {
-      console.error('¿login fail?')
+      console.error('Login fail, forgot to press play on tape?')
     }
   }
   
   const logout = async () => {
     await userActions.logout();
-    checkedNavigation(PageEnum.LOGIN);
+    setAuth(false);
   }
 
   return (
-    <UserStateContext.Provider value={{loginState, email, username, setLoginState, setEmail, setUsername, init, login, logout, checkedNavigation}}>
-      { children }
+    <UserStateContext.Provider value={{email, username, loading, auth, setEmail, setUsername, login, logout, checkedNavigation}}>
+      { loading ? <Loader /> : children }
     </UserStateContext.Provider>
   )
 }

@@ -18,10 +18,10 @@ const PreviewNote = ({note, getNote}: PreviewNoteProps) => {
           { note.title }
         </div>
         <div className="list-item-content">
-          { note.body }
+          { note.content }
         </div>
         <div className="list-item-date">
-          Updated: { dateFormat(note.lastupdated) }
+          Updated: { dateFormat(note.updatedAt) }
         </div>
       </button>
     </li>

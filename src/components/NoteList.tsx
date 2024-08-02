@@ -6,20 +6,19 @@ import toast from "@/services/toastService";
 import { useOverlay } from "@/hooks/providerHooks";
 import NoteListItem from "@/components/NoteListItem";
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, getSortedNotes } from '@/redux/store';
-import { activeNoteDispatchers } from '@/redux/customDispatchers';
+import { AppDispatch, RootState } from '@/redux/store';
+import { newActiveNote, setActiveNote } from '@/redux/activeNoteSlice';
 
 const NoteList: React.FC = () => {
-  const notes = useSelector(getSortedNotes);
+  const notes = useSelector((state: RootState) => state.notes.notes);
   
   const dispatch = useDispatch<AppDispatch>();
   const { setLetterSize } = useOverlay();
-  const { setActiveNote, newActiveNote } = activeNoteDispatchers(dispatch);
 
   const selectNote = (id: string) => {
-    const note = notes.find((n) => n.id === id);
+    const note = notes?.find((n) => n.id === id);
     if (note) {
-      setActiveNote(note);
+      dispatch(setActiveNote(note));
     } else {
       toast(`note ${id} seem to not excist ):`);
     }
@@ -35,12 +34,12 @@ const NoteList: React.FC = () => {
           <IconButton
             type={ButtonEnum.Border}
             icon={IconEnum.Add}
-            action={() => (newActiveNote())}
+            action={() => dispatch(newActiveNote())}
           />
         </div>
       </div>
       <ul className="list">
-        { notes.map((note: NoteProps) =>
+        { notes?.map((note: NoteProps) =>
           <NoteListItem note={ note } getNote={ selectNote } key={note.id} />
         )}
       </ul>

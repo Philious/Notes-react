@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import TextField from '@/components/TextField';
 import Pressable from '@/components/Pressable';
 import styled from 'styled-components';
-import { noteActions, userActions } from "@/services/dotNetService";
 import { ButtonBase, H1, PageWrapper } from "@/assets/styles/styledComponents";
 import { useUserState } from "@/hooks/providerHooks";
 

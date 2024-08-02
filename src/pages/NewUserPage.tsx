@@ -2,22 +2,27 @@ import { ButtonBase, H1, PageWrapper } from "@/assets/styles/styledComponents";
 import IconButton from "@/components/IconButton";
 import Pressable from "@/components/Pressable";
 import TextField from "@/components/TextField";
+import { addScratch } from "@/redux/asyncScratchThunk";
+import { AppDispatch } from "@/redux/store";
 import { userActions} from "@/services/dotNetService";
 import { ButtonEnum, IconEnum, PageEnum } from "@/types/enums";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 function NewUserPage() {
+  const dispatch = useDispatch<AppDispatch>();
   const [ email, setHandle ] = useState('');
   const [ password, setPassword ] = useState('');
-
   const navigate = useNavigate();
+  
   const createAccount = async () => {
     const response = await userActions.register({ email, password });
-    console.log(response)
-    if (response.data) await userActions.login(response.data);
-
+    await dispatch(addScratch())
+    if (response.statusText === 'OK') {
+      await userActions.login({email, password });
+    }
     navigate(PageEnum.MAIN);
   };
 

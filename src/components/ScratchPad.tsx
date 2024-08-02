@@ -1,37 +1,32 @@
 import { useEffect, useState } from "react"
 import IconButton from "@/components/IconButton";
-import { IconEnum, ButtonEnum, scratch } from "@/types/enums";
+import { IconEnum, ButtonEnum } from "@/types/enums";
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, getScratchNote } from '@/redux/store';
+import { AppDispatch, RootState } from '@/redux/store';
 import { useOverlay } from '@/hooks/providerHooks';
 import useDebounce from '@/hooks/debounce';
-import { activeNoteDispatchers, useDatabaseFunctions } from '@/redux/customDispatchers';
-import { equalNotes } from '@/utils/sharedUtils';
 import styled from 'styled-components';
+import { newActiveNote } from "@/redux/activeNoteSlice";
+import { updateScratch } from "@/redux/asyncScratchThunk";
 
 const ScratchPad = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { setContextMenu } = useOverlay();
-  const { newActiveNote, updateActiveNote } = activeNoteDispatchers(dispatch);
-  const { addNote, updateNote } = useDatabaseFunctions(dispatch); 
 
   const [ active, setActive ] = useState(false);
-  const scratchNote = useSelector(getScratchNote);
-  const [ body, setBody ] = useState('');
-  
-  useEffect(() => {
-    setBody(scratchNote.body)
-  }, [scratchNote.body])
+  const scratchPad = useSelector((state: RootState) => state.scratchPad.scratch);
+  const [ content, setContent ] = useState(scratchPad.content);
 
   const quickUpdate = (update: string) => {
-    if (equalNotes(scratchNote, {...scratchNote, body: update})) return;
-    addNote({...scratchNote, body: update }, scratch);
+    if (scratchPad && scratchPad.content !== update) {
+      dispatch(updateScratch(content));
+    }
   }
 
   const lazyUpdate = useDebounce(quickUpdate, 2000)
 
   const update = (update: string) => {
-    setBody(update);
+    setContent(update);
     lazyUpdate(update);
   }
 
@@ -40,10 +35,9 @@ const ScratchPad = () => {
   const openContextMenu = (event:  React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.stopPropagation();
     setContextMenu([
-      { label: 'Clear scratchpad', action: () => updateNote({id: scratch, body: ''}) },
+      { label: 'Clear scratchpad', action: () => dispatch(updateScratch('')) },
       { label: 'make scratchpad a note', action: () => {
-        newActiveNote();
-        updateActiveNote({ body });
+        dispatch(newActiveNote({ content }));
       }},
     ]);
   }
@@ -70,7 +64,7 @@ const ScratchPad = () => {
         </Options>
       </Header>
       <TextInput
-        value={body}
+        value={content}
         onBlur={(ev) => quickUpdate((ev.target as HTMLTextAreaElement).value)}
         onChange={e => update((e.target as HTMLTextAreaElement).value)}
       />

@@ -1,41 +1,54 @@
 import { NoteProps } from "@/types/types";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { fetchNotes, addNote, updateNote, deleteNote } from "@/redux/asyncNoteThunks";
+import addCommonCases from "./utils";
+import { NetworkStatus } from "@/types/enums";
 
-type NotesState = Record<string, NoteProps>;
+type NotesState = {
+  notes: NoteProps[] | null;
+  status: NetworkStatus;
+  error: string | null;
+}
 
-const initialState: NotesState = {};
+const initialState: NotesState = {
+  notes: null,
+  status: NetworkStatus.IDLE,
+  error: null,
+};
 
 const notesSlice = createSlice({
   name: 'database',
   initialState,
   reducers: {
-    setDatabase: (_state, action: PayloadAction<NoteProps[]>) => {
-      return action.payload.reduce((acc, note) => {
-        acc[note.id] = note;
-        return acc;
-      }, {} as Record<string, NoteProps>);
-    },
-    addNote: (state, action: PayloadAction<NoteProps>) => {
-      state[action.payload.id] = action.payload;
-    },
-    updateNote: (state, action: PayloadAction<Partial<NoteProps> & { id: string }>) => {
-      const prev = state[action.payload.id];
-      if (prev) {
-        state[action.payload.id] = { ...prev, ...action.payload };
+    clearAllNotes: (_state) => initialState,
+  },
+  extraReducers: (builder) => {
+    addCommonCases(builder, fetchNotes, (state, action) => {
+      state.notes = action.payload?.sort((a, b) => b.updatedAt - a.updatedAt) ?? null;
+    });
+    addCommonCases(builder, addNote, (state, action) => {
+      if (state.notes) {
+        state.notes.push(action.payload);
+        state.notes.sort((a, b) => b.updatedAt - a.updatedAt);
       }
-    },
-    deleteNote: (state, action: PayloadAction<string>) => {
-      const prev = { ...state };
-      delete prev[action.payload];
-
-      return prev;
-    },
-    clearAllNotes: () => {
-      return ({});
-    }
-  }
+    });
+    addCommonCases(builder, updateNote, (state, action) => {
+      if (state.notes) {
+        const index = state.notes.findIndex(note => note.id === action.payload.id);
+        if (index !== -1) {
+          state.notes[index] = action.payload;
+          state.notes.sort((a, b) => b.updatedAt - a.updatedAt);
+        }
+      }
+    })
+    addCommonCases(builder, deleteNote, (state, action) => {
+      if (state.notes) {
+        state.notes = state.notes.filter(note => (note.id as string) !== (action.meta.arg as string));
+      }
+    })
+  },
 });
 
-export const { setDatabase, addNote, updateNote, deleteNote, clearAllNotes } = notesSlice.actions;
+export const { clearAllNotes } = notesSlice.actions;
 export type DatabaseActions = typeof notesSlice.actions;
 export default notesSlice.reducer;

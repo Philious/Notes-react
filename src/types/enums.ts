@@ -3,7 +3,13 @@ export enum PageEnum {
   MAIN = '/main',
   NEW = '/new_user',
   FORGOT = '/forgot_password'
+}
 
+export enum NetworkStatus {
+  IDLE = 'idle',
+  LOADING = 'loading',
+  SUCCSESS = 'succeeded',
+  FAILED = 'failed'
 }
 
 export const scratch = 'scratch'

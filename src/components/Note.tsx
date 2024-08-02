@@ -5,22 +5,21 @@ import { useOverlay } from "@/hooks/providerHooks";
 import toast from '@/services/toastService';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
-import { activeNoteDispatchers } from '@/redux/customDispatchers';
 import NoteToolbar from '@/components/NoteToolbar';
 import styled from 'styled-components';
-import { noteActions } from "@/services/dotNetService";
+import { clearActiveNote, setActiveNote } from "@/redux/activeNoteSlice";
+import { addNote, deleteNote, updateNote } from "@/redux/asyncNoteThunks";
 
 const Note: React.FC = () => {
   const activeNote = useSelector((state: RootState) => state.activeNote);
   const [ active, setActive] = useState(false);
   const [show, setShow ] = useState(false);
   const [ initialNote ] = useState(activeNote);
-  const database = useSelector((state: RootState) => state.notes);
+  const notes = useSelector((state: RootState) => state.notes.notes);
 
   const dispatch = useDispatch<AppDispatch>();
+  const clear = () => dispatch(clearActiveNote());
   const { setDialog, setContextMenu, setLetterSize } = useOverlay();
-  const { setActiveNote, clearActiveNote } = activeNoteDispatchers(dispatch);
-
   
   useEffect(() => {
     if (activeNote.id) {
@@ -34,23 +33,25 @@ const Note: React.FC = () => {
     }
   }, [activeNote, activeNote.id, setActive, active, show])
 
-  const updateTitle = (title: string) => setActiveNote({...activeNote!, title });
-  const updateBody = (content: string) => setActiveNote({...activeNote!, content });
+  const updateTitle = (title: string) => dispatch(setActiveNote({...activeNote, title }));
+  const updateBody = (content: string) => dispatch(setActiveNote({...activeNote, content }));
 
   const saveNote = () => {
-    if (activeNote) database[activeNote.id] ? noteActions.update(activeNote) : noteActions.add(activeNote); 
-    clearActiveNote();
+    const dbNote = notes?.find(n => n.id === activeNote.id);
+    if (activeNote) dbNote ? dispatch(updateNote(activeNote)) : dispatch(addNote(activeNote)); 
+    clear();
   }
 
   const close = () => {
-    if (equalNotes(activeNote, initialNote)) { clearActiveNote();
+    if (equalNotes(activeNote, initialNote)) {
+      clear();
     } else {
       setDialog({
         title: 'Save before closing?',
         content: '',
         actions: [
           { name: 'Cancel', action: () => {} }, 
-          { name: 'No', action: clearActiveNote },
+          { name: 'No', action: clear },
           { name: 'Yes', action: saveNote }
         ]
       })
@@ -65,8 +66,8 @@ const Note: React.FC = () => {
         { name: 'No', action: () => {} },
         { name: 'Yes', action: () => { 
           if (activeNote?.id) {
-              noteActions.delete(activeNote.id);
-              clearActiveNote();
+              dispatch(deleteNote(activeNote.id));
+              clear();
             }
           }
         }
