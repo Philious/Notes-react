@@ -1,10 +1,10 @@
 import { Loader } from "@/components/Loader";
 import useComputedRef from "@/hooks/computedRef";
-import { fetchNotes } from "@/redux/asyncNoteThunks";
-import { addScratch, fetchScratch } from "@/redux/asyncScratchThunk";
-import { clearAllNotes } from "@/redux/notesSlice";
+import { fetchNotes } from "@/redux/thunks/asyncNoteThunks";
+import { addScratch, fetchScratch } from "@/redux/thunks/asyncScratchThunk";
+import { clearAllNotes } from "@/redux/slices/notesSlice";
 import { AppDispatch } from "@/redux/store";
-import { checkAuthentication, userActions } from "@/services/dotNetService";
+import { checkAuthentication, userActions } from "@/api/api";
 import { PageEnum } from "@/types/enums";
 import { intervalHandler } from "@/utils/sharedUtils";
 import { createContext, ReactNode, useEffect, useRef, useState } from "react";
@@ -50,7 +50,7 @@ export const UserStateProvider: React.FC<{ children: ReactNode }> = ({ children 
       await dispatch(fetchNotes());
       
       const scratch = await dispatch(fetchScratch());
-      if (!scratch?.payload?.content!) await dispatch(addScratch());
+      if (!fetchScratch.fulfilled.match(scratch)) await dispatch(addScratch());
 
     } catch(e) { 
       console.error('Error while fetching notes', e);

@@ -6,8 +6,8 @@ import { AppDispatch, RootState } from '@/redux/store';
 import { useOverlay } from '@/hooks/providerHooks';
 import useDebounce from '@/hooks/debounce';
 import styled from 'styled-components';
-import { newActiveNote } from "@/redux/activeNoteSlice";
-import { updateScratch } from "@/redux/asyncScratchThunk";
+import { newActiveNote } from "@/redux/slices/activeNoteSlice";
+import { updateScratch } from "@/redux/thunks/asyncScratchThunk";
 
 const ScratchPad = () => {
   const dispatch = useDispatch<AppDispatch>();

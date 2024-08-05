@@ -4,33 +4,32 @@ type TextFieldProps = {
   
   setValue: (update: string) => void; 
   name: string,
-  className?: string | string[],
   placeholder?: string
   label?: string
 };
 
-function TextField({value, setValue, name, className, placeholder, label}:TextFieldProps) {
-  const classes = `input-field-container ${className
-    ? Array.isArray(className)
-      ? className.join(' ') : className
-    : ''
-}`;
+function TextField({value, setValue, name, placeholder, label}:TextFieldProps) {''
 
-  return (
-  <div className={classes}>
+  return ( 
+  <InputWrapper>
     { label && <span>{label}</span> }
     <TextInput
+        id={name}
         name={name}
-        className="input-field"
         value={value}
         placeholder={placeholder}
         onChange={ (ev) => setValue(ev.target.value) }
       />
-    </div>
+    </InputWrapper>
   )
 }
 
 export default TextField;
+
+const InputWrapper = styled.div`
+  background: red;
+  height: 100px;
+`;
 
 const TextInput = styled.input.attrs({type: 'text'})`
   background-color: var(--n-100);

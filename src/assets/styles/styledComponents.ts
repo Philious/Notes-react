@@ -7,8 +7,8 @@ export const easing = {
 
 export const H1 = styled.h1`
   user-select: none;
-  font-size: 0.875rem;
-  font-weight: 400;
+  font-size: 1rem;
+  font-weight: 500;
 `;
 
 export const ButtonBase = `

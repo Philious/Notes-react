@@ -1,7 +1,7 @@
 :root {
-  --toolbar-height: 3rem;
-  --main-tab-bar-height: 4rem;
-  --primary: hsl(330, 94%, 34%);
+
+  
+
   --main-columns: 1fr;
   --day-area: 1 / 1 / 2 / 2;
   --list-area: 2 / 1 / 3 / 2;
@@ -11,25 +11,54 @@
   --note-width: 0;
   --scratch-width: 100vw;
 
+  --toolbar-height: 3rem;
+  --main-tab-bar-height: 4rem;
   --list-header-top: var(--day-area-height);
   --list-item-font-size: max(0.6875rem, min(1.3vw, .825rem));
   --list-item-line-height: calc(var(--list-item-font-size) * 1.375);
 
-  --p-200: hsl(330, 94%, 24%);
-  --p-300: hsl(330, 94%, 34%);
-  --p-400: hsl(330, 65%, 56%);
-  --p-500: hsl(330, 65%, 76%);
-  --p-600: hsl(330, 65%, 90%);
-  --p-700: hsl(330, 65%, 96%);
+  
   
   --black: #000;
-  --n-100: hsl(0,0%,10%);
+  --n-0: hsl(0, 0%, 7%);
+  --n-100: hsl(0, 0%, 10%);
   --n-200: hsl(0deg 0% 15%);
   --n-300: hsl(0deg 0% 30%);
   --n-400: hsl(0deg 0% 44%);
   --n-500: hsl(0, 0%, 64%);
   --n-600: hsl(0, 0%, 80%);
   --white: #fff;
+
+  color-scheme: dark light;
+
+  @media (prefers-color-scheme: dark) {
+    --primary: var(--white);
+    --secondary: var(--n-500);
+    --interactive: hsl(189, 76%, 50%);
+    --inactive:  var(--n-300);
+    --error: #ffa8ab;
+    --correct: --correct: hsl(141, 50%, 52%);
+
+
+    --bkg: var(--black);
+    --btn-bkg: var(--00);
+    --mask-bkg: hsla(0, 0%, 0%, .24);
+    --input-bkg: var(--n-100);
+  }
+
+  @media (prefers-color-scheme: light) {
+    --primary: hsl(0, 0%, 11%);
+    --secondary: var( --n-400);
+    --interactive: hsl(189, 81%, 31%);
+    --inactive: var( --n-500);
+    --error: hsl(358, 90%, 35%);
+    --correct: hsl(141, 50%, 52%);
+
+    --bkg: var(--black);
+    --btn-bkg: var(--00);
+    --mask-bkg: hsla(0, 0%, 0%, .24);
+    --input-bkg: var(--n-100);
+  }
 
   @include tabletUp {
     --toolbar-height: 3rem;

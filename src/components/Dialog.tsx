@@ -64,7 +64,7 @@ const Container = styled.div<{$speed: number, $show?: boolean}>`
   display: grid;
   max-height: 90vw;
   grid-template-rows: repeat(3, auto);
-  background-color: hsl(0, 0%, 10%);
+  background-color: var(--input-bkg);
   border-radius: .5rem;
   box-shadow:
     0 0 2px hsla(0,0%,0%, .48),

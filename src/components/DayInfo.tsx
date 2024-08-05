@@ -11,7 +11,7 @@ import IconButton from "@/components/IconButton";
 import { useOverlay } from '@/hooks/providerHooks';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { userActions } from "@/services/dotNetService";
+import { userActions } from "@/api/api";
 
 export const DayInfo: React.FC = () => {
   const [timeOfDay, setTimeOfDay] = useState<{ greeting: string, img: string }>({ greeting: '', img: '' });

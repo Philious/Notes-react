@@ -16,12 +16,12 @@ export default ({label, action, className, primary}: ButtonProps) => {
     </ButtonElement>
   )
 }
-
+ 
 const ButtonElement = styled.button<{$primary?: boolean;}>`
-  background-color: ${props => props.$primary ? 'var(--n-200)' : 'transparent'};
+  background-color: ${props => props.$primary ? 'var(--btn-bkg)' : 'transparent'};
   box-sizing: ${props => props.$primary ? 'content-box' : ' border-box'};
   border: none;
-  color: var(--n-500);
+  color: var(--primary);
   text-align: left;
   height: 3rem;
   font-size: 0.875rem;

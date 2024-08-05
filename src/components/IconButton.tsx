@@ -39,11 +39,11 @@ const Background = styled.div`
   height: 2rem;
   border-radius: 50%;
   &.filled {
-    background-color: var(--n-500);
-    svg { fill: var(--black); }
+    background-color: var(--secondary);
+    svg { fill: var(--bkg; }
   }
   &.border {
     fill: var(--n-500);
-    border: 1px solid var(--n-300);
+    border: 1px solid var(--inactive);
   }
 `

@@ -1,11 +1,11 @@
-import { NoteProps } from "@/types/types";
+import { NoteResponse } from "@/types/types";
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchNotes, addNote, updateNote, deleteNote } from "@/redux/asyncNoteThunks";
-import addCommonCases from "./utils";
+import { fetchNotes, addNote, updateNote, deleteNote } from "@/redux/thunks/asyncNoteThunks";
+import addCommonCases from "@/redux/utils";
 import { NetworkStatus } from "@/types/enums";
 
 type NotesState = {
-  notes: NoteProps[] | null;
+  notes: NoteResponse[] | null;
   status: NetworkStatus;
   error: string | null;
 }
