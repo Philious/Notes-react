@@ -1,13 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { NoteProps } from '@/types/types';  // Adjust import based on your project
-import { ENDPOINT, backend } from '@/services/dotNetService';
+import { backend } from '@/services/dotNetService';
 
 // Define async thunk for fetching notes
 export const fetchNotes = createAsyncThunk<NoteProps[] | null, void>(
   'notes/fetchNotes',
   async (_, thunkURL) => {
     try {
-      const response = await backend.get<NoteProps[]>(ENDPOINT.NOTES);
+      const response = await backend.get<NoteProps[]>('Notes');
       return response.data;
     } catch (error) {
       return thunkURL.rejectWithValue('Failed to fetch notes');
@@ -20,7 +20,7 @@ export const addNote = createAsyncThunk<NoteProps, NoteProps>(
   'notes/addNote',
   async (note, thunkURL) => {
     try {
-      const response = await backend.post<NoteProps>(ENDPOINT.NOTES, note);
+      const response = await backend.post<NoteProps>('Notes', note);
       return response.data;
     } catch (error) {
       return thunkURL.rejectWithValue('Failed to add note');
@@ -33,7 +33,7 @@ export const updateNote = createAsyncThunk<NoteProps, Partial<NoteProps> & { id:
   'notes/updateNote',
   async (note, thunkURL) => {
     try {
-      const response = await backend.put<NoteProps>(`${ENDPOINT.NOTES}/${note.id}`, note);
+      const response = await backend.put<NoteProps>(`Notes/${note.id}`, note);
       return response.data;
     } catch (error) {
       return thunkURL.rejectWithValue('Failed to update note');
@@ -46,7 +46,7 @@ export const deleteNote = createAsyncThunk<void, string>(
   'notes/deleteNote',
   async (id, thunkURL) => {
     try {
-      await backend.delete(`${ENDPOINT.NOTES}/${id}`);
+      await backend.delete(`Notes/${id}`);
     } catch (error) {
       return thunkURL.rejectWithValue('Failed to delete note');
     }

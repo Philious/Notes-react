@@ -1,4 +1,3 @@
-import '@/components/textField.scss';
 import styled from 'styled-components';
 type TextFieldProps = {
   value: string,

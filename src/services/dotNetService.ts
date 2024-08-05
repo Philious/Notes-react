@@ -1,18 +1,12 @@
 import axios from 'axios';
 
 export const backend = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_URL,
+  baseURL: import.meta.env.VITE_APP_DATABASE_URL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
   }
 });
-
-export const ENDPOINT = {
-  USER: `${import.meta.env.VITE_APP_DATABASE_URL}/api/Users`,
-  NOTES: `${import.meta.env.VITE_APP_DATABASE_URL}/api/Notes`,
-  SCRATCH: `${import.meta.env.VITE_APP_DATABASE_URL}/api/Scratchpad`
-};
 
 export type User = {
   email: string;
@@ -30,7 +24,7 @@ export type UserResponse = {
 export const checkAuthentication = async (): Promise<boolean> => {
   console.log('check authentication');
   try {
-    const response = await backend.get<{ authenticated: boolean }>(`${ENDPOINT.USER}/authcheck`);
+    const response = await backend.get<{ authenticated: boolean }>('User/authcheck');
 
     return response.data.authenticated;
   } catch (error) {
@@ -40,24 +34,24 @@ export const checkAuthentication = async (): Promise<boolean> => {
 };
 
 export const userActions = {
-  register: async (payload: User) => backend.post<UserResponse>(`${ENDPOINT.USER}/${'register'}`, payload)
+  register: async (payload: User) => backend.post<UserResponse>('User/register', payload)
     .then((response) => response)
     .catch((error) => { throw Error(error) }),
 
   login: async (payload: User) => {
     console.log('login');
-    return backend.post<UserResponse>(`${ENDPOINT.USER}/${'login'}`, payload)
+    return backend.post<UserResponse>('User/login', payload)
       .then((response) => response)
       .catch((error) => { throw Error(error + ' add erroe state') })
   },
 
-  logout: async () => backend.post<void>(`${ENDPOINT.USER}/${'logout'}`)
+  logout: async () => backend.post<void>('User/logout')
     .then((response) => response)
     .catch((error) => { throw Error(error) }),
 
   getAllUsers: async (): Promise<UserResponse[] | null> => {
     try {
-      const users = await backend.get<UserResponse[]>(ENDPOINT.USER)
+      const users = await backend.get<UserResponse[]>('User')
       return users.data;
     } catch (error) {
       console.error(error);
@@ -65,49 +59,3 @@ export const userActions = {
     }
   },
 }
-/*
-export const noteActions = {
-  byId: async (id: string) => await backend.get<NoteProps>(`${ENDPOINT.NOTES}/${id}`)
-    .then((response) => response.data)
-    .catch(function (error) { throw Error(error) }),
-
-  all: async (): Promise<NoteProps[] | null> => {
-    console.log('get all notes');
-    try {
-      const response = await backend.get<NoteProps[]>(ENDPOINT.NOTES);
-      return response.data;
-    } catch (error) {
-      console.error('no notes');
-      return null;
-    }
-  },
-
-  add: async (note: NoteProps) => await backend.post<NoteProps>(ENDPOINT.NOTES, note)
-    .then((response) => response)
-    .catch(function (error) { throw Error(error) }),
-
-  update: async (note: Partial<NoteProps> & { id: string }) => {
-    const prev = await noteActions.byId(note.id);
-
-    return await backend.put<NoteProps>(`${ENDPOINT.NOTES}/${note.id}`, { ...prev, note })
-      .then((response) => response)
-      .catch(function (error) { throw Error(error) })
-  },
-
-  delete: async (id: string) => await backend.delete(`${ENDPOINT.NOTES}/${id}`)
-    .then((response) => response)
-    .catch(function (error) { throw Error(error) }),
-}
-
-export const scratchActions = {
-  add: async (note: NoteProps) => await backend.post<NoteProps>(ENDPOINT.SCRATCH, note)
-    .then((response) => response)
-    .catch(function (error) { throw Error(error) }),
-
-  update: async (note: NoteProps) => {
-    return await backend.put<NoteProps>(ENDPOINT.SCRATCH, { note })
-      .then((response) => response)
-      .catch(function (error) { throw Error(error) })
-  }
-}
-  */
