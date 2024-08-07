@@ -1,13 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { NoteProps } from '@/types/types';  // Adjust import based on your project
-import { backend } from '@/services/dotNetService';
+import { NoteProps, NoteResponse } from '@/types/types';
+import { backend } from '@/api/api';
 
-// Define async thunk for fetching notes
-export const fetchNotes = createAsyncThunk<NoteProps[] | null, void>(
+export const fetchNotes = createAsyncThunk<NoteResponse[] | null, void>(
   'notes/fetchNotes',
   async (_, thunkURL) => {
     try {
-      const response = await backend.get<NoteProps[]>('Notes');
+      const response = await backend.get<NoteResponse[]>('Notes');
       return response.data;
     } catch (error) {
       return thunkURL.rejectWithValue('Failed to fetch notes');
@@ -15,12 +14,11 @@ export const fetchNotes = createAsyncThunk<NoteProps[] | null, void>(
   }
 );
 
-// Define async thunk for adding a note
-export const addNote = createAsyncThunk<NoteProps, NoteProps>(
+export const addNote = createAsyncThunk<NoteResponse, NoteProps>(
   'notes/addNote',
   async (note, thunkURL) => {
     try {
-      const response = await backend.post<NoteProps>('Notes', note);
+      const response = await backend.post<NoteResponse>('Notes', note);
       return response.data;
     } catch (error) {
       return thunkURL.rejectWithValue('Failed to add note');
@@ -28,12 +26,12 @@ export const addNote = createAsyncThunk<NoteProps, NoteProps>(
   }
 );
 
-// Define async thunk for updating a note
-export const updateNote = createAsyncThunk<NoteProps, Partial<NoteProps> & { id: string }>(
+export const updateNote = createAsyncThunk<void, NoteProps & { id: string }>(
   'notes/updateNote',
   async (note, thunkURL) => {
     try {
-      const response = await backend.put<NoteProps>(`Notes/${note.id}`, note);
+      const response = await backend.put<void>(`Notes/${note.id}`, note);
+
       return response.data;
     } catch (error) {
       return thunkURL.rejectWithValue('Failed to update note');
@@ -41,7 +39,6 @@ export const updateNote = createAsyncThunk<NoteProps, Partial<NoteProps> & { id:
   }
 );
 
-// Define async thunk for deleting a note
 export const deleteNote = createAsyncThunk<void, string>(
   'notes/deleteNote',
   async (id, thunkURL) => {

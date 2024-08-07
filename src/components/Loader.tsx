@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import '@/components/loader.scss';
 import styled from "styled-components";
 
 export const Loader = () => {

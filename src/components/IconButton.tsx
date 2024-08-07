@@ -2,7 +2,7 @@ import { IconEnum, ButtonEnum } from "@/types/enums";
 import Icon from '@/components/icons/Icon';
 import { flattenClassName } from '@/utils/sharedUtils';
 import styled from "styled-components";
-import { ButtonBase } from "@/assets/styles/styledComponents";
+import { BaseButton } from "@/assets/styles/styledComponents";
 
 type IconButtonType = { type: ButtonEnum, icon: IconEnum, action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void, className?: string | string[] }
 
@@ -23,7 +23,7 @@ function IconButton({ type, icon, action, className }: IconButtonType) {
 export default IconButton;
 
 const Button = styled.button`
-  ${ButtonBase}
+  ${BaseButton}
   width: 3rem;
   height: 3rem;
   display: grid;

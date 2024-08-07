@@ -1,3 +1,4 @@
+import { BaseButton } from "@/assets/styles/styledComponents";
 import { flattenClassName } from "@/utils/sharedUtils";
 import { ReactNode } from 'react';
 import styled from 'styled-components';
@@ -20,15 +21,8 @@ function Pressable({children, action, className, label}: PressableProps) {
 
 export default Pressable;
 
-const Button = styled.button`
-  border: none;
-  background-color: transparent;
-  border-radius: 025rem;
+const Button = styled(BaseButton)`
   color: var(--n-500);
-  height: 3rem;
-  font-size: 0.875rem;
-  font-weight: 400;
-  padding: 0;
   display: flex;
   align-items: center;
   justify-content: flex-start;

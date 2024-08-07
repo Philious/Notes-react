@@ -1,4 +1,3 @@
-import '@/pages/mainPage.scss';
 import { DayInfo } from "@/components/DayInfo";
 import NoteList from '@/components/NoteList';
 import ScratchPad from '@/components/ScratchPad';
@@ -6,10 +5,9 @@ import ContextMenu from '@/components/ContextMenu';
 import Dialog from '@/components/Dialog';
 import Note from '@/components/Note';
 import styled from 'styled-components';
-import { tabletUp } from '@/assets/styles/styledComponents';
+import { queryTabletUp } from '@/assets/styles/styledComponents';
 
 const MainPage = () => {
-  // const activeNote = useSelector((state: RootState) => state.activeNote);
   return <>
     <Wrapper>
       <DayInfo />
@@ -30,7 +28,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  ${tabletUp(`
+  ${queryTabletUp(`
     display: grid;
     grid-template-columns: var(--main-columns);
     grid-template-rows: var(--day-area-height) calc(100vh - var(--day-area-height));

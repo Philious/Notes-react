@@ -42,19 +42,16 @@ export const uid = (): string => {
 export const flattenClassName = (a?: string | string[], s?: string) => a ? (Array.isArray(a) ? [...a, s] : [a, s]).join(' ') : s ?? '';
 
 export const newNote = (note?: Partial<NoteProps>): NoteProps => {
-  const date = new Date().valueOf();
   return {
     id: uid(),
     title: '',
     content: '',
     catalog: '',
     tags: [],
-    createdAt: date,
-    updatedAt: date,
     ...(note ?? {})
   }
 }
-export const equalNotes = (n1?: NoteProps, n2?: NoteProps) => n1 && n2 && (Object.keys(n1) as (keyof NoteProps)[]).filter((k) => n1[k] !== n2[k]).length === 0;
+export const equalNotes = (n1?: NoteProps, n2?: NoteProps) => n1 && n2 && (['title', 'content'] as (keyof NoteProps)[]).filter((k) => n1[k] !== n2[k]).length === 0;
 
 export const intervalHandler = (fn: () => void, time: number) => {
   let interval: ReturnType<typeof setInterval>;

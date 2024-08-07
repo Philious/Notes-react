@@ -1,10 +1,10 @@
-import { ButtonBase, H1, PageWrapper } from "@/assets/styles/styledComponents";
+import { H1, PageWrapper } from "@/assets/styles/styledComponents";
 import IconButton from "@/components/IconButton";
 import Pressable from "@/components/Pressable";
 import TextField from "@/components/TextField";
-import { addScratch } from "@/redux/asyncScratchThunk";
+import { addScratch } from "@/redux/thunks/asyncScratchThunk";
 import { AppDispatch } from "@/redux/store";
-import { userActions} from "@/services/dotNetService";
+import { userActions} from "@/api/api";
 import { ButtonEnum, IconEnum, PageEnum } from "@/types/enums";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -49,19 +49,24 @@ const Wrapper = styled(PageWrapper)`
   grid-template-rows: 1fr auto auto auto 1fr min-content;
   grid-template-columns: 3rem 1fr 3.5rem;
 `;
+
 const Title = styled(H1)`
   grid-area: 2 / 1 / 3 / 4;
 `;
+
 const Name = styled(TextField)`
   grid-area: 3 / 1 / 4 / 3;
-`; 
+`;
+
 const Password = styled(TextField)`
   grid-area: 4 / 1 / 5 / 3;
 `;
+
 const LoginButton = styled(IconButton)`
   grid-area: 4 / 3 / 5 / 4;
   margin-left: auto;  
 `;
+
 const Vertical = styled(Pressable)`
   transform: rotate(270deg) translateY(2rem);
   transform-origin: left bottom;
@@ -69,8 +74,8 @@ const Vertical = styled(Pressable)`
   height: auto;
   padding: 1rem 0;
 `;
+
 const Back = styled(Vertical)`
-  ${ButtonBase}
   grid-area: 6 / 1 / 7 / 2;
   white-space: nowrap;
 `;

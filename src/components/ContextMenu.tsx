@@ -34,8 +34,8 @@ const ContextMenu: React.FC = () => {
 
   if (contextMenu || contextMenuRef) {
     return (
-      <Wrapper className={`context-menu-container ${contextMenuRef && contextMenu ? 'show' : ''}`} onClick={() => setContextMenu()}>
-        <List className="context-menu">
+      <Wrapper $show={!!contextMenuRef && !!contextMenu} onClick={() => setContextMenu()}>
+        <List $show={!!contextMenuRef && !!contextMenu}>
           {(contextMenu ?? contextMenuRef!).map((menuItem: ContextMenuItemProps) => ContextMenuItem(menuItem))}
         </List>
       </Wrapper>
@@ -45,7 +45,7 @@ const ContextMenu: React.FC = () => {
 
 export default ContextMenu
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{$show: boolean}>`
   position: fixed;
   max-width: 100vw;
   max-height: 100vh;
@@ -54,15 +54,12 @@ const Wrapper = styled.div`
   place-content: end center;
   z-index: 1;
   background-color: hsla(0, 0%, 0%, .24);
-  opacity: 0;
   transition: opacity .25s  ${easing.easeOutQuint};
-  &.show {
-    opacity: 1;
-    .context-menu { transform: translateY(0) }
-  }
+  opacity: ${props => props.$show ? 1 : 0 }
 `;
-const List = styled.ul`
-display: grid;
+
+const List = styled.ul<{$show: boolean}>`
+  display: grid;
   width: min(calc(100vw - 2rem), 320px);
   background-color: var(--n-200);
   border-radius: .5rem;
@@ -70,7 +67,7 @@ display: grid;
   margin: auto auto 3rem;
   padding: 0;
   transition: transform .25s ${easing.easeOutQuint};
-  transform: translateY(3rem);
+  transform: translateY(${props => props.$show ? '0' : '3rem'});
 `;
 
 const ListItem = styled.li`

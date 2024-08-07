@@ -1,7 +1,6 @@
-import { NoteProps } from "@/types/types";
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchScratch, addScratch, updateScratch } from "@/redux/asyncScratchThunk";
-import addCommonCases from "./utils";
+import { fetchScratch, addScratch, updateScratch } from "@/redux/thunks/asyncScratchThunk";
+import addCommonCases from "@/redux/utils";
 import { NetworkStatus } from "@/types/enums";
 
 export type NotesState = {

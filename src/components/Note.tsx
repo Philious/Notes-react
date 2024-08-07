@@ -7,15 +7,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import NoteToolbar from '@/components/NoteToolbar';
 import styled from 'styled-components';
-import { clearActiveNote, setActiveNote } from "@/redux/activeNoteSlice";
-import { addNote, deleteNote, updateNote } from "@/redux/asyncNoteThunks";
+import { clearActiveNote, setActiveNote } from "@/redux/slices/activeNoteSlice";
+import { addNote, deleteNote, updateNote } from "@/redux/thunks/asyncNoteThunks";
 
 const Note: React.FC = () => {
   const activeNote = useSelector((state: RootState) => state.activeNote);
   const [ active, setActive] = useState(false);
   const [show, setShow ] = useState(false);
-  const [ initialNote ] = useState(activeNote);
   const notes = useSelector((state: RootState) => state.notes.notes);
+  const dbNote = notes?.find(n => n.id === activeNote.id);
 
   const dispatch = useDispatch<AppDispatch>();
   const clear = () => dispatch(clearActiveNote());
@@ -37,13 +37,12 @@ const Note: React.FC = () => {
   const updateBody = (content: string) => dispatch(setActiveNote({...activeNote, content }));
 
   const saveNote = () => {
-    const dbNote = notes?.find(n => n.id === activeNote.id);
-    if (activeNote) dbNote ? dispatch(updateNote(activeNote)) : dispatch(addNote(activeNote)); 
+    if (activeNote) dbNote ? dispatch(updateNote({...dbNote, ...activeNote})) : dispatch(addNote(activeNote)); 
     clear();
   }
 
   const close = () => {
-    if (equalNotes(activeNote, initialNote)) {
+    if (equalNotes(activeNote, dbNote)) {
       clear();
     } else {
       setDialog({
@@ -106,8 +105,8 @@ const Note: React.FC = () => {
         placeholder="Title"
       />
       <DatesContainer className="date">
-        <span>Created: { dateFormat(activeNote?.createdAt ?? 0) }</span>
-        <span>Updated: { dateFormat(activeNote?.updatedAt ?? 0) }</span>
+        <span>Created: { dateFormat(dbNote?.createdAt ?? 0) }</span>
+        <span>Updated: { dateFormat(dbNote?.updatedAt ?? 0) }</span>
       </DatesContainer>
       <BodyInput
         className="body-input"

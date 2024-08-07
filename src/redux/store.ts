@@ -1,6 +1,6 @@
-import activeNoteReducers from '@/redux/activeNoteSlice';
-import scratchPadReducers from '@/redux/scratchPadSlice';
-import notesReducers from '@/redux/notesSlice'
+import activeNoteReducers from '@/redux/slices/activeNoteSlice';
+import scratchPadReducers from '@/redux/slices/scratchPadSlice';
+import notesReducers from '@/redux/slices/notesSlice'
 import { configureStore } from '@reduxjs/toolkit'
 
 const store = configureStore({

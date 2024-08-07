@@ -1,3 +1,4 @@
+import { BaseButton } from "@/assets/styles/styledComponents";
 import { flattenClassName } from "@/utils/sharedUtils";
 import styled from 'styled-components';
 
@@ -17,16 +18,12 @@ export default ({label, action, className, primary}: ButtonProps) => {
   )
 }
 
-const ButtonElement = styled.button<{$primary?: boolean;}>`
+const ButtonElement = styled(BaseButton)<{$primary?: boolean;}>`
   background-color: ${props => props.$primary ? 'var(--n-200)' : 'transparent'};
   box-sizing: ${props => props.$primary ? 'content-box' : ' border-box'};
-  border: none;
   color: var(--n-500);
   text-align: left;
-  height: 3rem;
-  font-size: 0.875rem;
-  font-weight: 400;
+  min-height: 3rem;
   padding: 0 1rem;
-  border-radius: 0.25rem;
-  white-space: nowrap;
+  white-space: nowrap;  
 `;

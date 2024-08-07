@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import IconButton from "@/components/IconButton";
 import { IconEnum, ButtonEnum } from "@/types/enums";
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,8 +6,8 @@ import { AppDispatch, RootState } from '@/redux/store';
 import { useOverlay } from '@/hooks/providerHooks';
 import useDebounce from '@/hooks/debounce';
 import styled from 'styled-components';
-import { newActiveNote } from "@/redux/activeNoteSlice";
-import { updateScratch } from "@/redux/asyncScratchThunk";
+import { newActiveNote } from "@/redux/slices/activeNoteSlice";
+import { updateScratch } from "@/redux/thunks/asyncScratchThunk";
 
 const ScratchPad = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -45,23 +45,21 @@ const ScratchPad = () => {
   return (
     <Wrapper $active={active}>
       <Header
-        onClick={ toggle }
+        onClick={toggle}
       >
         <Title className="header">Scratch pad</Title>
-        <Options>
-          <IconButton
+        <ActionWrapper>
+          <Options $active={active}
             type={ButtonEnum.Border}
             icon={IconEnum.Options}
             action={openContextMenu}
-            className="options-icn"
           />
-          <IconButton
+          <Arrow $active={active}
             type={ButtonEnum.Border}
             icon={IconEnum.Up}
             action={() => undefined}
-            className="arrow-icn"
           />
-        </Options>
+        </ActionWrapper>
       </Header>
       <TextInput
         value={content}
@@ -86,10 +84,8 @@ const Wrapper = styled.div<{$active: boolean}>`
   box-shadow: 0 -0.0625rem 0 var(--n-300), 0.0625rem 0 var(--n-300);
   transition: transform .25s;
   box-sizing: border-box;
-  .icn-btn { transition: transform .25s; }
-  .arrow-icn { transform: ${props => props.$active ? 'rotate(180deg)' : 'rotate(0)' };
-  .options-icn { transform: ${props => props.$active ? 'scale(1)' : 'scale(0)' };
 `;
+
 const Header = styled.div`
   height: 3rem;
   width: 100%;
@@ -101,6 +97,7 @@ const Header = styled.div`
   font-weight: 700;
   place-self: center start;
 `;
+
 const Title = styled.div`
   height: 3rem;
   width: 100%;
@@ -112,9 +109,20 @@ const Title = styled.div`
   font-weight: 700;
   place-self: center start;
 `;
-const Options = styled.div`
+
+const ActionWrapper = styled.div`
   display: flex;
 `;
+
+const Options = styled(IconButton)<{$active: boolean}>`
+  transition: transform .25s; 
+  transform: ${props => props.$active ? 'scale(1)' : 'scale(0)'};
+`
+const Arrow = styled(IconButton)<{$active: boolean}>`
+  transition: transform .25s; 
+  transform: ${props => props.$active ? 'rotate(180deg)' : 'rotate(0)' }
+`;
+
 const TextInput = styled.textarea`
   background-color: hsl(320deg 16% 13%); 
   border-radius: .5rem;

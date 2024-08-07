@@ -5,12 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import TextField from '@/components/TextField';
 import Pressable from '@/components/Pressable';
 import styled from 'styled-components';
-import { ButtonBase, H1, PageWrapper } from "@/assets/styles/styledComponents";
+import { H1, PageWrapper } from "@/assets/styles/styledComponents";
 import { useUserState } from "@/hooks/providerHooks";
 
-
-
-// navigate(PageEnum.MAIN)
 const LoginPage = () => {
   const [ password, setPassword ] = useState('test1234');
   const [ email, setEmail ] = useState('test@test.test');
@@ -45,27 +42,33 @@ const Wrapper = styled(PageWrapper)`
 const Title = styled(H1)`
   grid-area: 2 / 1 / 3 / 4;
 `;
+
 const Name = styled(TextField)`
   grid-area: 3 / 1 / 4 / 3;
-`; 
+`;
+
 const Password = styled(TextField)`
   grid-area: 4 / 1 / 5 / 3;
 `;
+
 const LoginButton = styled(IconButton)`
   grid-area: 4 / 3 / 5 / 4;
   margin-left: auto;  
 `;
+
 const Vertical = styled(Pressable)`
-  ${ButtonBase}
   transform: rotate(270deg) translate(-1rem, 2rem);
   transform-origin: left bottom;
+  font-size: .875rem;
   align-self: end;
   padding: 0 1rem;
 `;
+
 const NewUser = styled(Vertical)`
   grid-area: 6 / 1 / 7 / 2;
   white-space: nowrap;
 `;
+
 const Forgot = styled(Vertical)`
   grid-area: 6 / 2 / 7 / 3;
   white-space: pre-wrap;

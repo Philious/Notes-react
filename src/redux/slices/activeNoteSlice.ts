@@ -2,16 +2,12 @@ import { NoteProps } from "@/types/types";
 import { newNote } from "@/utils/sharedUtils";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type ActiveNoteState = NoteProps
-
-const initialState: ActiveNoteState = {
+const initialState: NoteProps = {
   id: '',
   title: '',
   content: '',
   catalog: '',
   tags: [],
-  updatedAt: 0,
-  createdAt: 0
 };
 
 const activeNoteSlice = createSlice({

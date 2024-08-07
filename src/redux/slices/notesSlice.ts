@@ -1,11 +1,11 @@
-import { NoteProps } from "@/types/types";
+import { NoteResponse } from "@/types/types";
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchNotes, addNote, updateNote, deleteNote } from "@/redux/asyncNoteThunks";
-import addCommonCases from "./utils";
+import { fetchNotes, addNote, updateNote, deleteNote } from "@/redux/thunks/asyncNoteThunks";
+import addCommonCases from "@/redux/utils";
 import { NetworkStatus } from "@/types/enums";
 
 type NotesState = {
-  notes: NoteProps[] | null;
+  notes: NoteResponse[] | null;
   status: NetworkStatus;
   error: string | null;
 }
@@ -34,12 +34,14 @@ const notesSlice = createSlice({
     });
     addCommonCases(builder, updateNote, (state, action) => {
       if (state.notes) {
-        const index = state.notes.findIndex(note => note.id === action.payload.id);
+        const index = state.notes.findIndex(note => note.id === action.meta.arg.id);
         if (index !== -1) {
-          state.notes[index] = action.payload;
+          const note = state.notes[index];
+          state.notes[index] = { ...note, ...action.meta.arg };
           state.notes.sort((a, b) => b.updatedAt - a.updatedAt);
         }
       }
+      return state;
     })
     addCommonCases(builder, deleteNote, (state, action) => {
       if (state.notes) {
