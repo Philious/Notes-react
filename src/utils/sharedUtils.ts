@@ -1,4 +1,7 @@
+import { PageEnum } from "@/types/enums";
 import { NoteProps } from "@/types/types";
+import { NavigateFunction } from "react-router-dom";
+
 export const throttle = <T extends unknown[]>(func: (...args: T) => void, limit: number): ((...args: T) => void) => {
   let inThrottle: boolean;
 
@@ -27,7 +30,7 @@ export const debounce = <T extends unknown[]>(func: (...args: T) => void, delay:
   };
 }
 
-export const dateFormat = (date: number) => new Date(date).toLocaleDateString('sv-se', { year: "2-digit", month: "2-digit", day: "2-digit" });
+export const dateFormat = (date: string) => new Date(date).toLocaleDateString('sv-se', { year: "2-digit", month: "2-digit", day: "2-digit" });
 
 export const createNode = (nodeType: string, attributes: Record<string, string>) => {
   const elem = document.createElement(nodeType);
@@ -48,6 +51,8 @@ export const newNote = (note?: Partial<NoteProps>): NoteProps => {
     content: '',
     catalog: '',
     tags: [],
+    createdAt: new Date().toJSON(),
+    updatedAt: new Date().toJSON(),
     ...(note ?? {})
   }
 }
@@ -66,3 +71,12 @@ export const intervalHandler = (fn: () => void, time: number) => {
 
   return { start, stop };
 }
+
+export const checkedNavigation = (navigate: NavigateFunction) => (page: PageEnum) => {
+  console.log(location.pathname, import.meta.env.BASE_URL);
+  if (location.pathname !== `${import.meta.env.BASE_URL}${page}`) navigate(page);
+};
+
+export const toggleObfuscation = (message: string, key: string): string => message.split('').map((char, index) => {
+  return String.fromCharCode(char.charCodeAt(0) ^ key.charCodeAt(index % key.length));
+}).join('');

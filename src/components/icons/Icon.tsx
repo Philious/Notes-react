@@ -15,15 +15,12 @@ const Add = (fill?: string, stroke?: string, strokeWidth?: number) => (
 const Arrow = (direction: Direction) => (
   <SVG
     viewBox="0 0 24 24"
-    className="arrow icn"
-    transform={`rotate(${direction === Direction.UP
-      ? 270
-      : direction === Direction.LEFT
-      ? 180
-      : direction === Direction.DOWN
-      ? 90 : 0}, 0, 0)`}
+    className={`${direction} arrow icn`}
   >
-    <Path d="M14 16L20 12L14 8V11H4V13H14V16Z" />
+    { direction === Direction.UP && <Path d="M14 16L20 12L14 8V11H4V13H14V16Z" /> }
+    { direction === Direction.RIGHT && <Path d="M14 16L20 12L14 8V11L4 11L4 13L14 13V16Z" /> }
+    { direction === Direction.DOWN && <Path d="M8 14L12 20L16 14L13 14L13 4L11 4L11 14L8 14Z" /> }
+    { direction === Direction.LEFT && <Path d="M10 8L4 12L10 16L10 13L20 13L20 11L10 11L10 8Z" /> }
   </SVG>
 )
 
@@ -81,7 +78,6 @@ const Remove = () => (
   >        
     <Path
       transform="rotate(45)"
-      transform-origin="center"
       d="M13 7H11V11L7 11V13H11V17H13V13H17V11L13 11V7Z"
     />
   </SVG>
@@ -150,5 +146,6 @@ const ListSVG = styled(SVG)`
 const Path = styled.path<{ $fill?: string, $stroke?: string, $strokeWidth?: number }>`
   fill: ${props => props.$fill};
   stroke: ${props => props.$stroke};
-  stroke-with: ${props => props.$strokeWidth }
+  stroke-with: ${props => props.$strokeWidth };
+  transform-origin: center;
 `;

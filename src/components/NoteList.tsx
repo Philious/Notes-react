@@ -1,5 +1,5 @@
 import { IconEnum, ButtonEnum } from "@/types/enums";
-import { NoteResponse } from "@/types/types"
+import { NoteProps } from "@/types/types"
 import IconButton from "@/components/IconButton";
 import toast from "@/services/toastService";
 import { useOverlay } from "@/hooks/providerHooks";
@@ -40,7 +40,7 @@ const NoteList: React.FC = () => {
         </Actions>
       </HeaderBar>
       <List>
-        { notes?.map((note: NoteResponse) => <NoteListItem note={note} getNote={selectNote} key={note.id} />)}
+        { notes?.map((note: NoteProps) => <NoteListItem note={note} getNote={selectNote} key={note.id} />)}
       </List>
     </Wrapper>
   )

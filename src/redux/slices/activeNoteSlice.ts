@@ -8,6 +8,8 @@ const initialState: NoteProps = {
   content: '',
   catalog: '',
   tags: [],
+  createdAt: '',
+  updatedAt: ''
 };
 
 const activeNoteSlice = createSlice({

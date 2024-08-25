@@ -1,11 +1,11 @@
-import { NoteResponse } from "@/types/types"
+import { NoteProps } from "@/types/types"
 import { dateFormat } from "@/utils/sharedUtils"
 import styled from 'styled-components';
 import Pressable from './Pressable';
 import { H4, Small } from '@/assets/styles/styledComponents';
 
 type PreviewNoteProps = {
-  note: NoteResponse;
+  note: NoteProps;
   getNote: (id: string) => void;
 }
 

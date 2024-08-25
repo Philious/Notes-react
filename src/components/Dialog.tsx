@@ -73,7 +73,7 @@ const Container = styled.div<{$speed: number, $show?: boolean}>`
     0 18px 54px hsla(0,0%,0%, .06);
   opacity: 0;
   transition-property: opacity, transform;
-  transition-duration: ${$props => $props.$speed}ms;
+  transition-duration: ${props => props.$speed}ms;
   transform: translateY(3rem);
   transition-timing-function: ${easing.easeOutQuint};
   opacity: ${props => props.$show ? 1 : 0 };

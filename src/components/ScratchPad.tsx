@@ -4,30 +4,28 @@ import { IconEnum, ButtonEnum } from "@/types/enums";
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { useOverlay } from '@/hooks/providerHooks';
-import useDebounce from '@/hooks/debounce';
 import styled from 'styled-components';
 import { newActiveNote } from "@/redux/slices/activeNoteSlice";
 import { updateScratch } from "@/redux/thunks/asyncScratchThunk";
+
 
 const ScratchPad = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { setContextMenu } = useOverlay();
 
   const [ active, setActive ] = useState(false);
-  const scratchPad = useSelector((state: RootState) => state.scratchPad.scratch);
-  const [ content, setContent ] = useState(scratchPad.content);
+  const scratchPad = useSelector((state: RootState) => state.scratchPad.scratch.content);
+  const [ content, setContent ] = useState(scratchPad);
 
-  const quickUpdate = (update: string) => {
-    if (scratchPad && scratchPad.content !== update) {
-      dispatch(updateScratch(content));
-    }
+
+  const updateOnType = (update: string) => {
+    setContent(update)
   }
 
-  const lazyUpdate = useDebounce(quickUpdate, 2000)
-
-  const update = (update: string) => {
-    setContent(update);
-    lazyUpdate(update);
+  const updateOnBlur = (update: string) => {
+    if (scratchPad !== update) {
+      dispatch(updateScratch(update));
+    }
   }
 
   const toggle = () => setActive(!active);
@@ -63,8 +61,8 @@ const ScratchPad = () => {
       </Header>
       <TextInput
         value={content}
-        onBlur={(ev) => quickUpdate((ev.target as HTMLTextAreaElement).value)}
-        onChange={e => update((e.target as HTMLTextAreaElement).value)}
+        onBlur={(ev) => updateOnBlur((ev.target as HTMLTextAreaElement).value)}
+        onChange={e => updateOnType((e.target as HTMLTextAreaElement).value)}
       />
     </Wrapper>
   )

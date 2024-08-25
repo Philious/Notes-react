@@ -3,6 +3,7 @@ import IconButton from "@/components/IconButton";
 import Pressable from "@/components/Pressable";
 import TextField from "@/components/TextField";
 import { ButtonEnum, IconEnum, PageEnum } from "@/types/enums";
+import { checkedNavigation } from "@/utils/sharedUtils";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -30,7 +31,7 @@ function EnterRecoveryEmail({ email, setEmail, sendNewPassword }: EnterRecoveryE
 function ForgorPasswordPage() {
   const [ email, setEmail ] = useState('');
   const [ sent, setSent ] = useState(false);
-  const navigate = useNavigate();
+  const navigate = checkedNavigation(useNavigate());
   const sendNewPassword = () => {
     setSent(true);
   };

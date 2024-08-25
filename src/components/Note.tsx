@@ -12,7 +12,7 @@ import { addNote, deleteNote, updateNote } from "@/redux/thunks/asyncNoteThunks"
 
 const Note: React.FC = () => {
   const activeNote = useSelector((state: RootState) => state.activeNote);
-  const [ active, setActive] = useState(false);
+  const [active, setActive] = useState(false);
   const [show, setShow ] = useState(false);
   const notes = useSelector((state: RootState) => state.notes.notes);
   const dbNote = notes?.find(n => n.id === activeNote.id);
@@ -94,7 +94,7 @@ const Note: React.FC = () => {
     ])
   }
 
-  const noteFragment = () => (
+  const noteFn = () => (
     <Wrapper id="note" className={show ? 'note show' : 'note'}>
       <TitleInput
         name="titleInput"
@@ -105,8 +105,8 @@ const Note: React.FC = () => {
         placeholder="Title"
       />
       <DatesContainer className="date">
-        <span>Created: { dateFormat(dbNote?.createdAt ?? 0) }</span>
-        <span>Updated: { dateFormat(dbNote?.updatedAt ?? 0) }</span>
+        <span>Created: { dateFormat(dbNote?.createdAt ?? new Date().toJSON()) }</span>
+        <span>Updated: { dateFormat(dbNote?.updatedAt ?? new Date().toJSON()) }</span>
       </DatesContainer>
       <BodyInput
         className="body-input"
@@ -118,7 +118,7 @@ const Note: React.FC = () => {
       <NoteToolbar close={close} save={save} options={options}/>
   </Wrapper> 
   )
- return ( active && noteFragment() )
+ return ( active && noteFn() )
 }
 
 export default Note

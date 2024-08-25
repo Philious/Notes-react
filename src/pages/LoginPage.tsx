@@ -1,18 +1,21 @@
 import { useState } from "react";
 import IconButton from "@/components/IconButton";
 import { IconEnum, ButtonEnum, PageEnum } from "@/types/enums";
-import { useNavigate } from 'react-router-dom';
 import TextField from '@/components/TextField';
 import Pressable from '@/components/Pressable';
 import styled from 'styled-components';
 import { H1, PageWrapper } from "@/assets/styles/styledComponents";
 import { useUserState } from "@/hooks/providerHooks";
+import google from '@/assets/images/GoogleIcon.svg';
+import { checkedNavigation } from "@/utils/sharedUtils";
+import { useNavigate } from "react-router-dom";
+
 
 const LoginPage = () => {
   const [ password, setPassword ] = useState('test1234');
   const [ email, setEmail ] = useState('test@test.test');
-  const { login } = useUserState();
-  const navigate = useNavigate();
+  const { login, signInPopup } = useUserState();
+  const navigate = checkedNavigation(useNavigate());
 
   return (
     <Wrapper>
@@ -28,6 +31,9 @@ const LoginPage = () => {
         />
       <NewUser action={() =>  navigate(PageEnum.NEW)} label="New user"/>
       <Forgot action={() => navigate(PageEnum.FORGOT)} label={`Forgot\npassword`}/>
+      <GoogleLogin action={signInPopup}>
+        <img src={google} />
+      </GoogleLogin>
     </Wrapper>
   )
 } 
@@ -72,4 +78,8 @@ const NewUser = styled(Vertical)`
 const Forgot = styled(Vertical)`
   grid-area: 6 / 2 / 7 / 3;
   white-space: pre-wrap;
+`;
+
+const GoogleLogin = styled(Pressable)`
+
 `;

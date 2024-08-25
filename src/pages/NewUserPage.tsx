@@ -2,26 +2,27 @@ import { H1, PageWrapper } from "@/assets/styles/styledComponents";
 import IconButton from "@/components/IconButton";
 import Pressable from "@/components/Pressable";
 import TextField from "@/components/TextField";
-import { addScratch } from "@/redux/thunks/asyncScratchThunk";
+import { updateScratch } from "@/redux/thunks/asyncScratchThunk";
 import { AppDispatch } from "@/redux/store";
-import { userActions} from "@/api/api";
 import { ButtonEnum, IconEnum, PageEnum } from "@/types/enums";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { userAPI } from "@/api/firebaseAPI";
+import { checkedNavigation } from "@/utils/sharedUtils";
+import { useNavigate } from "react-router-dom";
 
 function NewUserPage() {
   const dispatch = useDispatch<AppDispatch>();
   const [ email, setHandle ] = useState('');
   const [ password, setPassword ] = useState('');
-  const navigate = useNavigate();
+  const navigate = checkedNavigation(useNavigate());
   
   const createAccount = async () => {
-    const response = await userActions.register({ email, password });
-    await dispatch(addScratch())
-    if (response.statusText === 'OK') {
-      await userActions.login({email, password });
+    const response = await userAPI().register(email, password);
+    await dispatch(updateScratch('Scratchpad'))
+    if (response?.id) {
+      await userAPI().login(email, password);
     }
     navigate(PageEnum.MAIN);
   };

@@ -1,4 +1,4 @@
-import { NoteProps, NoteResponse, ScratchResponse } from "@/types/types";
+import { NoteProps, ScratchpadProps } from "@/types/types";
 
 const localData = 'notesTestData';
 const scratchData = 'scratchData';
@@ -6,16 +6,16 @@ const scratchData = 'scratchData';
 export const getNotes = () => {
   const dataString = localStorage.getItem(localData);
   if (dataString) {
-    return JSON.parse(dataString) as NoteResponse[];
+    return JSON.parse(dataString) as NoteProps[];
   } else {
     localStorage.setItem(localData, JSON.stringify([]));
-    return [] as NoteResponse[];
+    return [] as NoteProps[];
   }
 }
 
 export const addNote = (note: NoteProps): void => {
   const database = getNotes();
-  const time = new Date().valueOf();
+  const time = new Date().toJSON();
   const id = 'id-' + new Date().valueOf();
   database.push({ ...note, id, createdAt: time, updatedAt: time });
 
@@ -24,7 +24,7 @@ export const addNote = (note: NoteProps): void => {
 
 export const updateNote = (note: Partial<NoteProps> & { id: string }) => {
   const database = getNotes();
-  const updatedAt = new Date().valueOf();
+  const updatedAt = new Date().toJSON();
   const noteIndex = database.findIndex(n => n.id === note.id);
   database[noteIndex] = { ...database[noteIndex], ...note, updatedAt }
 
@@ -42,7 +42,7 @@ export const deleteNote = (noteId: string) => {
 export const getScratchpad = () => {
   const dataString = localStorage.getItem(localData);
   if (dataString) {
-    return JSON.parse(scratchData) as ScratchResponse;
+    return JSON.parse(scratchData) as ScratchpadProps;
   } else {
     localStorage.setItem(scratchData, JSON.stringify({ content: '', updatedAt: new Date().valueOf() }));
     return { content: '', updatedAt: new Date().valueOf() };
