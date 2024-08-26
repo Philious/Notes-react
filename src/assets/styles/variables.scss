@@ -14,15 +14,13 @@
   --list-header-top: var(--day-area-height);
   --list-item-font-size: max(0.6875rem, min(1.3vw, .825rem));
   --list-item-line-height: calc(var(--list-item-font-size) * 1.375);
-
-  --primary: hsl(189, 76%, 50%);
   
-  --p-200: hsl(330, 94%, 24%);
-  --p-300: hsl(330, 94%, 34%);
-  --p-400: hsl(330, 65%, 56%);
-  --p-500: hsl(330, 65%, 76%);
-  --p-600: hsl(330, 65%, 90%);
-  --p-700: hsl(330, 65%, 96%);
+  --primary: hsl(189, 76%, 50%);
+  --secondary: hsl(0, 0%, 69%);
+  --inactive: hsl(0, 0%, 43%);
+  --interactive: hsl(189, 76%, 50%);
+  --error: hsl(0, 100%, 75%);
+  --correct: hsl(141, 50%, 52%);
   
   --black: #000;
   --n-100: hsl(0,0%,10%);

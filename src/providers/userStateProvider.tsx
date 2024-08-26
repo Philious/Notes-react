@@ -5,7 +5,7 @@ import { createContext, ReactNode, useState } from "react";
 import { useDispatch } from "react-redux";
 import { fireState, userAPI } from "@/api/firebaseAPI";
 import { User } from "firebase/auth";
-import { UserResponse } from "@/types/types";
+import { ErrorReturn, UserAPI, UserResponse } from "@/types/types";
 import { fetchNotes } from "@/redux/thunks/asyncNoteThunks";
 import { fetchScratch } from "@/redux/thunks/asyncScratchThunk";
 import { useNavigate } from "react-router-dom";
@@ -14,11 +14,9 @@ import { checkedNavigation } from "@/utils/sharedUtils";
 export type UserStateContextType = {
   loading: boolean;
   user: User | null;
-  register: (email: string, password: string) => Promise<UserResponse | null>;
-  login: (user: string, pass: string) => void;
-  signInPopup: () => Promise<UserResponse | null>;
-  logout: () => void;
-};
+  signInPopup: () => Promise<UserResponse | ErrorReturn>;
+
+} & Omit<UserAPI, 'popupLogin'>;
 
 export const UserStateContext = createContext<UserStateContextType | null>(null);
 

@@ -78,7 +78,10 @@ export type OldNoteType = {
   title: string;
 }
 
+export type ErrorReturn = { errorCode: string, errorMessage: string }
+
 export type UserResponse = {
+  errorCode?: undefined;
   id: string;
   username: string | null;
   email: string | null;
@@ -86,8 +89,8 @@ export type UserResponse = {
 }
 
 export type UserAPI = {
-  register: (email: string, password: string) => Promise<UserResponse | null>;
-  login: (email: string, password: string) => Promise<UserResponse | null>;
-  popupLogin: (auth: Auth, provider: GoogleAuthProvider) => Promise<UserResponse | null>
+  register: (email: string, password: string) => Promise<UserResponse | ErrorReturn>;
+  login: (email: string, password: string) => Promise<UserResponse | ErrorReturn>;
+  popupLogin: (auth: Auth, provider: GoogleAuthProvider) => Promise<UserResponse | ErrorReturn>
   logout: () => void;
 }

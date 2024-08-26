@@ -21,7 +21,7 @@ function NewUserPage() {
   const createAccount = async () => {
     const response = await userAPI().register(email, password);
     await dispatch(updateScratch('Scratchpad'))
-    if (response?.id) {
+    if (!response?.errorCode) {
       await userAPI().login(email, password);
     }
     navigate(PageEnum.MAIN);

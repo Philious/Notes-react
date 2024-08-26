@@ -73,7 +73,6 @@ export const intervalHandler = (fn: () => void, time: number) => {
 }
 
 export const checkedNavigation = (navigate: NavigateFunction) => (page: PageEnum) => {
-  console.log(location.pathname, import.meta.env.BASE_URL);
   if (location.pathname !== `${import.meta.env.BASE_URL}${page}`) navigate(page);
 };
 

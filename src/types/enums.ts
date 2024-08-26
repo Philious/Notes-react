@@ -12,6 +12,12 @@ export enum NetworkStatus {
   FAILED = 'failed'
 }
 
+export enum InputStatus {
+  DEFAULT = 'default',
+  OK = 'ok',
+  ERROR = 'error'
+}
+
 export const scratch = 'scratch'
 
 export enum ButtonEnum {

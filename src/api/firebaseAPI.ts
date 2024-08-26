@@ -1,7 +1,7 @@
 import { getDatabase, onValue, child, push, set, remove as removeFromFirebase, ref, DataSnapshot } from "firebase/database";
 import { FirebaseError, initializeApp } from "firebase/app";
 import { Auth, createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, User } from "firebase/auth";
-import { NoteAPI, NoteProps, ScratchpadAPI, ScratchpadProps, UserAPI, UserResponse } from '@/types/types';
+import { ErrorReturn, NoteAPI, NoteProps, ScratchpadAPI, ScratchpadProps, UserAPI, UserResponse } from '@/types/types';
 import { uid } from '@/utils/sharedUtils';
 
 export type UserData = { email: string, password: string }
@@ -29,9 +29,9 @@ const returnError = (err: unknown) => {
   const email = error.customData?.email;
   const credential = GoogleAuthProvider.credentialFromError(error);
 
-  console.error(`Error: ${errorCode}, ${errorMessage}\nemail: ${email}\nCredentials: ${credential}`,);
+  console.error(`Error: ${errorCode}, ${errorMessage}\nemail: ${email}\nCredentials: ${credential}`);
 
-  return null;
+  return { errorCode, errorMessage: errorMessage.split(/[()]/g)[1] };
 }
 
 class UseFireState {
@@ -105,7 +105,7 @@ export const fireState = new UseFireState();
 */
 
 export const userAPI = (): UserAPI => {
-  const register = async (email: string, password: string): Promise<UserResponse | null> => {
+  const register = async (email: string, password: string): Promise<UserResponse | ErrorReturn> => {
     try {
       const userCredentials = await createUserWithEmailAndPassword(fireState.getAuth(), email, password)
       fireState.setUser(userCredentials.user);
@@ -119,20 +119,21 @@ export const userAPI = (): UserAPI => {
 
   }
 
-  const login = async (email: string, password: string): Promise<UserResponse | null> => {
+  const login = async (email: string, password: string): Promise<UserResponse | ErrorReturn> => {
     try {
-      const userCredentials = await signInWithEmailAndPassword(fireState.getAuth(), email, password)
+      const userCredentials = await signInWithEmailAndPassword(fireState.getAuth(), email, password);
+      const user = userCredentials.user;
       fireState.setUser(userCredentials.user);
       return {
-        id: userCredentials.user.uid,
+        id: user.uid,
         username: null,
-        email: userCredentials.user.email ?? userCredentials.user.uid,
-        createdAt: userCredentials.user.metadata.creationTime ?? new Date().toJSON(),
-      }
-    } catch (err) { return returnError(err); }
+        email: user.email,
+        createdAt: user.metadata.creationTime ?? new Date().toJSON(),
+      };
+    } catch (err) { return returnError(err) };
   };
 
-  const popupLogin = async (): Promise<UserResponse | null> => {
+  const popupLogin = async (): Promise<UserResponse | ErrorReturn> => {
     try {
 
       const result = await signInWithPopup(fireState.getAuth(), fireState.getProvider())

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import IconButton from "@/components/IconButton";
-import { IconEnum, ButtonEnum, PageEnum } from "@/types/enums";
+import { IconEnum, ButtonEnum, PageEnum, InputStatus } from "@/types/enums";
 import TextField from '@/components/TextField';
 import Pressable from '@/components/Pressable';
 import styled from 'styled-components';
@@ -12,9 +12,19 @@ import { useNavigate } from "react-router-dom";
 
 
 const LoginPage = () => {
-  const [ password, setPassword ] = useState('test1234');
   const [ email, setEmail ] = useState('test@test.test');
+  const [ password, setPassword ] = useState('test1234');
+  const [state, setState ] = useState(InputStatus.DEFAULT);
+  const [message, setMessage] = useState('');
+
   const { login, signInPopup } = useUserState();
+  const loginWithPassword = async (email: string, password: string) => {
+    const response = await login(email, password);
+    setMessage(response.errorCode ? response.errorMessage : '');
+    setState(response.errorCode ? InputStatus.ERROR : InputStatus.OK);
+    console.log(response.errorCode, state)
+  }
+
   const navigate = checkedNavigation(useNavigate());
 
   return (
@@ -22,14 +32,18 @@ const LoginPage = () => {
       <Title>
         Notes
       </Title>
-      <Name name="user-name" value={email} setValue={setEmail} placeholder="User name"/>
-      <Password name="user-password" value={password} setValue={setPassword} placeholder="Password"/>
-        <LoginButton
+      <Name name="user-name" value={email} setValue={setEmail} placeholder="User name" status={state} />
+      <MessageWrapper>
+      <TextField name="user-password" value={password} setValue={setPassword} placeholder="Password" status={state} />
+      {message && <ErrorMessage>{message}</ErrorMessage> }
+
+      </MessageWrapper>
+      <LoginButton
           type={ButtonEnum.Filled}
           icon={IconEnum.Right}
-          action={async () => await login(email, password)}
+          action={async () => await loginWithPassword(email, password)}
         />
-      <NewUser action={() =>  navigate(PageEnum.NEW)} label="New user"/>
+      <NewUser action={() =>  navigate(PageEnum.NEW)} label="New user" />
       <Forgot action={() => navigate(PageEnum.FORGOT)} label={`Forgot\npassword`}/>
       <GoogleLogin action={signInPopup}>
         <img src={google} />
@@ -53,8 +67,26 @@ const Name = styled(TextField)`
   grid-area: 3 / 1 / 4 / 3;
 `;
 
-const Password = styled(TextField)`
+const MessageWrapper = styled.div`
   grid-area: 4 / 1 / 5 / 3;
+  position: relative;
+`;
+
+const Password = styled(TextField)``;
+
+const ErrorMessage  = styled.div`
+    text-transform: capitalize;
+    font-size: 0.75rem;
+    color: var(--error);
+    position: absolute;
+    bottom: 0;
+    transform: translateY(calc(100% + 2rem));
+    padding: .5rem 1rem;
+    border: 0.125rem solid var(--error);
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 24px;
+    text-align: center;
 `;
 
 const LoginButton = styled(IconButton)`
@@ -81,5 +113,5 @@ const Forgot = styled(Vertical)`
 `;
 
 const GoogleLogin = styled(Pressable)`
-
+  grid-area: 6 / 3 / 7 / 4;
 `;

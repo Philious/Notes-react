@@ -1,36 +1,43 @@
 import { BaseInput } from '@/assets/styles/styledComponents';
+import { InputStatus } from '@/types/enums';
 import styled from 'styled-components';
 type TextFieldProps = {
-  value: string,
-  
+  value: string;
   setValue: (update: string) => void; 
-  name: string,
-  className?: string | string[],
-  placeholder?: string
-  label?: string
+  name: string;
+  placeholder?: string;
+  label?: string;
+  status?: InputStatus;
+  assistiveText?: string;
 };
 
-function TextField({value, setValue, name, className, placeholder, label}:TextFieldProps) {
-  const classes = `input-field-container ${className
-    ? Array.isArray(className)
-      ? className.join(' ') : className
-    : ''
-}`;
+function TextField({value, setValue, name, placeholder, label, assistiveText, status = InputStatus.DEFAULT}: TextFieldProps) {
 
   return (
-  <div className={classes}>
-    { label && <span>{label}</span> }
-    <TextInput
+    <Wrapper>
+      { label && <Label>{label}</Label> }
+      <TextInput
         name={name}
         className="input-field"
         value={value}
         placeholder={placeholder}
         onChange={ (ev) => setValue(ev.target.value) }
+        $status={status}
       />
-    </div>
+      <AssistiveText $status={status}>{assistiveText}</AssistiveText>
+    </Wrapper>
   )
 }
 
 export default TextField;
-
-const TextInput = styled(BaseInput).attrs({type: 'text'})``;
+const Wrapper = styled.div`
+  display: grid;
+  gap: 0.125rem
+`;
+const Label = styled.label``;
+const TextInput = styled(BaseInput).attrs({type: 'text'})<{$status: InputStatus}>`
+  border-color: ${props => props.$status === InputStatus.DEFAULT ? 'var(--n-300)' : props.$status === InputStatus.ERROR ? 'var(--error)' : 'var(--correct)'}
+`;
+const AssistiveText = styled.span<{$status: InputStatus}>`
+  color: ${props => props.$status === InputStatus.DEFAULT ? 'var(--n-300)' : props.$status === InputStatus.ERROR ? 'var(--error)' : 'var(--correct)'}
+`;
