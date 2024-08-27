@@ -34,7 +34,7 @@ const LoginPage = () => {
       </Title>
       <Name name="user-name" value={email} setValue={setEmail} placeholder="User name" status={state} />
       <MessageWrapper>
-      <TextField name="user-password" value={password} setValue={setPassword} placeholder="Password" status={state} />
+      <Password name="user-password" value={password} setValue={setPassword} placeholder="Password" status={state} />
       {message && <ErrorMessage>{message}</ErrorMessage> }
 
       </MessageWrapper>
