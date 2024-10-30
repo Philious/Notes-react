@@ -19,6 +19,7 @@ export const fetchScratch = createAsyncThunk<ScratchpadProps | null, void>(
 export const updateScratch = createAsyncThunk<ScratchpadProps | null, string>(
   'scratch/update',
   async (content, thunkURL) => {
+    console.log('update scratch', content);
     try {
       const response = await scratchAPI().update(content);
       return response;

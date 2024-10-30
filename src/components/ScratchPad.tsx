@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import IconButton from "@/components/IconButton";
 import { IconEnum, ButtonEnum } from "@/types/enums";
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,15 +14,31 @@ const ScratchPad = () => {
   const { setContextMenu } = useOverlay();
 
   const [ active, setActive ] = useState(false);
-  const scratchPad = useSelector((state: RootState) => state.scratchPad.scratch.content);
+  const scratchPad = useSelector((state: RootState) => { console.log(state.scratchPad.scratch.content); return state.scratchPad.scratch.content});
   const [ content, setContent ] = useState(scratchPad);
 
+  useEffect(() => {
+    setContent(scratchPad);
+  }, [scratchPad])
 
-  const updateOnType = (update: string) => {
-    setContent(update)
+  useEffect(() => {
+    const onbeforeunload = (ev: BeforeUnloadEvent) => {
+      ev.preventDefault();
+      
+      localStorage.setItem('test', scratchPad);
+      updateOnBlur(content);
+      removeEventListener("beforeunload", onbeforeunload);
+    };
+    addEventListener("beforeunload", onbeforeunload);
+  }, [])
+
+  const updateOnChange = (update: string) => {
+    setContent(update);
+    console.log(update, content)
   }
 
   const updateOnBlur = (update: string) => {
+    console.log('blur', update)
     if (scratchPad !== update) {
       dispatch(updateScratch(update));
     }
@@ -62,7 +78,7 @@ const ScratchPad = () => {
       <TextInput
         value={content}
         onBlur={(ev) => updateOnBlur((ev.target as HTMLTextAreaElement).value)}
-        onChange={e => updateOnType((e.target as HTMLTextAreaElement).value)}
+        onChange={e => updateOnChange((e.target as HTMLTextAreaElement).value)}
       />
     </Wrapper>
   )

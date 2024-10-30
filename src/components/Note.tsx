@@ -128,6 +128,7 @@ const Wrapper = styled.div`
   background-color: var(--black);
   position: fixed;
   inset: 0 0 0 var(--note-width);
+  max-heigt: 100vh;
   display: grid;
   grid-template-rows: auto 1.5rem 1fr;
   box-shadow: -1px 0 0 var(--n-300);

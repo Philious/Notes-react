@@ -1,6 +1,7 @@
 import { BaseInput } from '@/assets/styles/styledComponents';
 import { InputStatus } from '@/types/enums';
 import styled from 'styled-components';
+
 type TextFieldProps = {
   value: string;
   setValue: (update: string) => void; 
@@ -9,22 +10,23 @@ type TextFieldProps = {
   label?: string;
   status?: InputStatus;
   assistiveText?: string;
+  className?: string;
 };
 
-function TextField({value, setValue, name, placeholder, label, assistiveText, status = InputStatus.DEFAULT}: TextFieldProps) {
+function TextField({value, setValue, name, placeholder, label, assistiveText, className, status = InputStatus.DEFAULT}: TextFieldProps) {
 
   return (
-    <Wrapper>
+    <Wrapper className={className}>
       { label && <Label>{label}</Label> }
       <TextInput
         name={name}
-        className="input-field"
+        className={className}
         value={value}
         placeholder={placeholder}
         onChange={ (ev) => setValue(ev.target.value) }
         $status={status}
       />
-      <AssistiveText $status={status}>{assistiveText}</AssistiveText>
+      {assistiveText && <AssistiveText $status={status}>{assistiveText}</AssistiveText> }
     </Wrapper>
   )
 }

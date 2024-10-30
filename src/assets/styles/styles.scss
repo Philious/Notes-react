@@ -24,3 +24,7 @@ body, button, input, textarea {
 body { 
   background-color: var(--black);
 }
+
+input, textarea {
+  -webkit-text-size-adjust: none;
+}

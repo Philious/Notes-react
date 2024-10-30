@@ -37,6 +37,8 @@ function NewUserPage() {
         <LoginButton
           type={ButtonEnum.Border}
           icon={IconEnum.Right}
+          iconSize="2rem"
+          buttonSize="2.5rem"
           action={createAccount}
         />
         <Back action={() => navigate(PageEnum.LOGIN)}>Back</Back>
@@ -46,26 +48,19 @@ function NewUserPage() {
 
 export default NewUserPage;
 
-const Wrapper = styled(PageWrapper)`
-  grid-template-rows: 1fr auto auto auto 1fr min-content;
-  grid-template-columns: 3rem 1fr 3.5rem;
-`;
-
-const Title = styled(H1)`
-  grid-area: 2 / 1 / 3 / 4;
-`;
-
-const Name = styled(TextField)`
-  grid-area: 3 / 1 / 4 / 3;
-`;
-
-const Password = styled(TextField)`
-  grid-area: 4 / 1 / 5 / 3;
-`;
-
+const Title = styled(H1)``;
+const Name = styled(TextField)``;
+const Password = styled(TextField)``;
 const LoginButton = styled(IconButton)`
-  grid-area: 4 / 3 / 5 / 4;
   margin-left: auto;  
+`;
+const Wrapper = styled(PageWrapper)`
+  grid-template-rows: 1fr 2.5rem 2.5rem 2.5rem 1fr;
+  place-content: initial;
+  & > ${Title} { grid-area: 2 / 1 / 3 / 4; }
+  & > ${Name} { grid-area: 3 / 1 / 4 / 3; }
+  & > ${Password} { grid-area: 4 / 1 / 5 / 3; }
+  & > ${LoginButton} { grid-area: 4 / 3 / 5 / 4; }
 `;
 
 const Vertical = styled(Pressable)`

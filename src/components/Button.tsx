@@ -1,19 +1,17 @@
 import { BaseButton } from "@/assets/styles/styledComponents";
-import { flattenClassName } from "@/utils/sharedUtils";
 import styled from 'styled-components';
 
 type ButtonProps = {
   label: string;
   action: () => void;
-  className?: string | string[],
+  className?: string,
   primary?: boolean
 }
 
 export default ({label, action, className, primary}: ButtonProps) => {
-  const classes = flattenClassName(className, 'btn');
   return (
-    <ButtonElement $primary={!!primary} className={classes} onClick={action}>
-      <span className="btn-txt">{label}</span>
+    <ButtonElement $primary={!!primary} className={className} onClick={action}>
+      <Text>{label}</Text>
     </ButtonElement>
   )
 }
@@ -27,3 +25,5 @@ const ButtonElement = styled(BaseButton)<{$primary?: boolean;}>`
   padding: 0 1rem;
   white-space: nowrap;  
 `;
+
+const Text = styled.span``;

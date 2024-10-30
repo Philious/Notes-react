@@ -77,7 +77,7 @@ export const DayInfo: React.FC = () => {
       <Today className="text date">
         { date }
       </Today>
-      <IconButton
+      <Logout
         type={ButtonEnum.Default}
         icon={IconEnum.LogOut}
         action={logoutMenu}
@@ -89,7 +89,6 @@ export const DayInfo: React.FC = () => {
 const Wrapper = styled.div<{ $image?: string; }>`
   background-image: ${props => props.$image};
   background-size: cover;
-  --shadow: drop-shadow(0 0 1px hsla(0, 0%, 0%, .75)) drop-shadow(0 1px 2px hsla(0, 0%, 0%, .5));
   box-sizing: border-box;
   grid-area: var(--day-area);
   height: var(--day-area-height);
@@ -127,4 +126,11 @@ const Today = styled(Greeting)`
   text-transform: uppercase;
   font-weight: 700;
   font-size: .625rem;
+`;
+
+const Logout = styled(IconButton)`
+  position: absolute;
+  top: 0;
+  right:  0;
+  svg { fill: #fff; }
 `;

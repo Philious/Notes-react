@@ -4,7 +4,7 @@ import { IconEnum, ButtonEnum, PageEnum, InputStatus } from "@/types/enums";
 import TextField from '@/components/TextField';
 import Pressable from '@/components/Pressable';
 import styled from 'styled-components';
-import { H1, PageWrapper } from "@/assets/styles/styledComponents";
+import { PageWrapper } from "@/assets/styles/styledComponents";
 import { useUserState } from "@/hooks/providerHooks";
 import google from '@/assets/images/GoogleIcon.svg';
 import { checkedNavigation } from "@/utils/sharedUtils";
@@ -29,25 +29,26 @@ const LoginPage = () => {
 
   return (
     <Wrapper>
-      <Title>
-        Notes
-      </Title>
-      <Name name="user-name" value={email} setValue={setEmail} placeholder="User name" status={state} />
-      <MessageWrapper>
-      <Password name="user-password" value={password} setValue={setPassword} placeholder="Password" status={state} />
-      {message && <ErrorMessage>{message}</ErrorMessage> }
-
-      </MessageWrapper>
-      <LoginButton
+      <div></div>
+      <LoginWrapper>
+        <Title>Notes</Title>
+        <Name name="user-name" value={email} setValue={setEmail} placeholder="User name" status={state} />
+        <Password name="user-password" value={password} setValue={setPassword} placeholder="Password" status={state} assistiveText={message} />
+        <LoginButton
           type={ButtonEnum.Filled}
           icon={IconEnum.Right}
+          iconSize="2rem"
+          buttonSize="2.5rem"
           action={async () => await loginWithPassword(email, password)}
         />
-      <NewUser action={() =>  navigate(PageEnum.NEW)} label="New user" />
-      <Forgot action={() => navigate(PageEnum.FORGOT)} label={`Forgot\npassword`}/>
-      <GoogleLogin action={signInPopup}>
-        <img src={google} />
-      </GoogleLogin>
+      </LoginWrapper>
+      <OtherOptions>
+        <NewUser action={() => navigate(PageEnum.NEW)} label="New user" />
+        <Forgot action={() => navigate(PageEnum.FORGOT)} label={`Forgot\npassword`}/>
+        <GoogleLogin action={signInPopup}>
+          <img src={google} />
+        </GoogleLogin>
+      </OtherOptions>
     </Wrapper>
   )
 } 
@@ -55,63 +56,58 @@ const LoginPage = () => {
 export default LoginPage;
 
 const Wrapper = styled(PageWrapper)`
-  grid-template-rows: 1fr auto auto auto 1fr min-content;
-  grid-template-columns: 3rem 1fr 3.5rem;
+  grid-template-rows: 1fr auto 1fr;
+  gap: 0;
+  place-content: initial;
 `;
 
-const Title = styled(H1)`
-  grid-area: 2 / 1 / 3 / 4;
-`;
+const Title = styled.div``;
 
-const Name = styled(TextField)`
-  grid-area: 3 / 1 / 4 / 3;
-`;
-
-const MessageWrapper = styled.div`
-  grid-area: 4 / 1 / 5 / 3;
-  position: relative;
-`;
+const Name = styled(TextField)``;
 
 const Password = styled(TextField)``;
 
-const ErrorMessage  = styled.div`
-    text-transform: capitalize;
-    font-size: 0.75rem;
-    color: var(--error);
-    position: absolute;
-    bottom: 0;
-    transform: translateY(calc(100% + 2rem));
-    padding: .5rem 1rem;
-    border: 0.125rem solid var(--error);
-    width: 100%;
-    box-sizing: border-box;
-    border-radius: 24px;
-    text-align: center;
+const LoginWrapper = styled.div`
+  transform: translateY(-2.5rem);
+  width: 100%;
+  grid-template-areas: "title title" "name ." "password button";
+  display: grid;
+  gap: 1rem 0;
+  align-self: start;
+  & > ${Title} {grid-area: title}
+  & > ${Name} {grid-area: name;}
+  & > ${Password} {grid-area: password;}
 `;
 
 const LoginButton = styled(IconButton)`
-  grid-area: 4 / 3 / 5 / 4;
-  margin-left: auto;  
+  margin-left: auto;
+  grid-area: button;
 `;
 
-const Vertical = styled(Pressable)`
-  transform: rotate(270deg) translate(-1rem, 2rem);
-  transform-origin: left bottom;
+const OtherOptions = styled.div`
+  display: flex;
+  width: 100%;
+  align-self: end;
+`;
+
+const VerticalSnippet = styled(Pressable)`
+  transform: rotate(180deg) translateX(1rem);
   font-size: .875rem;
   align-self: end;
   padding: 0 1rem;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
 `;
 
-const NewUser = styled(Vertical)`
-  grid-area: 6 / 1 / 7 / 2;
+const NewUser = styled(VerticalSnippet)`
   white-space: nowrap;
 `;
 
-const Forgot = styled(Vertical)`
-  grid-area: 6 / 2 / 7 / 3;
+const Forgot = styled(VerticalSnippet)`
   white-space: pre-wrap;
 `;
 
 const GoogleLogin = styled(Pressable)`
-  grid-area: 6 / 3 / 7 / 4;
+  flex: 1;
+  justify-content: flex-end;
 `;

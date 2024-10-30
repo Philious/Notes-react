@@ -22,6 +22,8 @@ function EnterRecoveryEmail({ email, setEmail, sendNewPassword }: EnterRecoveryE
       <SendButton
         type={ButtonEnum.Border}
         icon={IconEnum.Right}
+        iconSize="2rem"
+          buttonSize="2.5rem"
         action={sendNewPassword}
       />
     </>
@@ -47,26 +49,24 @@ return(
 
 export default ForgorPasswordPage;
 
+const Title = styled(H1)``;
+
+const Email = styled(TextField)``;
+
+const SendButton = styled(IconButton)`
+  margin-left: auto;  
+`;
+
 const Wrapper = styled(PageWrapper)`
-  grid-template-rows: 1fr auto auto 1fr min-content;
-  grid-template-columns: 3rem 1fr 3.5rem;
-`;
-
-const Title = styled(H1)`
-  grid-area: 2 / 1 / 3 / 4;
-`;
-
-const Email = styled(TextField)`
-  grid-area: 3 / 1 / 4 / 3;
+  grid-template-rows: 1fr 2.5rem 2.5rem 1fr;
+  place-content: initial;
+  & > ${Email} { grid-area: 3 / 1 / 4 / 3; }
+  & > ${Title} { grid-area: 2 / 1 / 3 / 4; }
+  & > ${SendButton} { grid-area: 3 / 3 / 4 / 4; }
 `;
 
 const RecoveryEmailSent = styled.div`
   grid-area: 3 / 1 / 4 / 3;
-`;
-
-const SendButton = styled(IconButton)`
-  grid-area: 3 / 3 / 4 / 4;
-  margin-left: auto;  
 `;
 
 const Vertical = styled(Pressable)`

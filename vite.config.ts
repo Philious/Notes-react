@@ -16,6 +16,7 @@ export default defineConfig((config) => {
     css: {
       preprocessorOptions: {
         scss: {
+          api: 'modern-compiler',
           additionalData: `
           @use '@/assets/styles/_scss_variables' as *;
           @use '@/assets/styles/_mixins.scss' as *;

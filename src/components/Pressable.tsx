@@ -1,19 +1,17 @@
 import { BaseButton } from "@/assets/styles/styledComponents";
-import { flattenClassName } from "@/utils/sharedUtils";
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 
 export type PressableProps = {
   action: () => void;
-  className?: string | string[];
+  className?: string;
   label?: string;
   children?: ReactNode;
 }
 
 function Pressable({children, action, className, label}: PressableProps) {
-  const classes = flattenClassName(className, 'pressable');
   return (
-    <Button className={classes} onClick={action}>
+    <Button className={className} onClick={action}>
       {children ?? label}
     </Button>
   )

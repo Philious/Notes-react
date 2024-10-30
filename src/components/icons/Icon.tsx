@@ -1,52 +1,76 @@
-import { Direction, IconEnum } from "@/types/enums";
+import { IconEnum } from "@/types/enums";
 import styled from 'styled-components';
 
-interface IconType extends React.HTMLAttributes<SVGAElement> { icon: IconEnum }
+interface IconProps extends React.HTMLAttributes<SVGAElement> { icon: IconEnum, className?: string }
 
-const Add = (fill?: string, stroke?: string, strokeWidth?: number) => (
+const Add = (className?: string) => (
   <SVG
     viewBox="0 0 24 24"
-    className="add icn"
+    className={className}
   >
-    <Path $fill={fill} $stroke={stroke} $strokeWidth={strokeWidth} d="M13 7H11V11L7 11V13H11V17H13V13H17V11L13 11V7Z" />
+    <Path d="M13 7H11V11L7 11V13H11V17H13V13H17V11L13 11V7Z" />
   </SVG>
 );
 
-const Arrow = (direction: Direction) => (
+const Up = (className?: string) => (
   <SVG
     viewBox="0 0 24 24"
-    className={`${direction} arrow icn`}
+    className={className}
   >
-    { direction === Direction.UP && <Path d="M14 16L20 12L14 8V11H4V13H14V16Z" /> }
-    { direction === Direction.RIGHT && <Path d="M14 16L20 12L14 8V11L4 11L4 13L14 13V16Z" /> }
-    { direction === Direction.DOWN && <Path d="M8 14L12 20L16 14L13 14L13 4L11 4L11 14L8 14Z" /> }
-    { direction === Direction.LEFT && <Path d="M10 8L4 12L10 16L10 13L20 13L20 11L10 11L10 8Z" /> }
+    <Path transform="rotate(-90, 12, 12)" d="M14 16L20 12L14 8V11H4V13H14V16Z" />
   </SVG>
-)
+);
 
-const Check = () => (
+const Right = (className?: string) => (
+  <SVG
+    viewBox="0 0 24 24"
+    className={className}
+  >
+    <Path d="M14 16L20 12L14 8V11H4V13H14V16Z" />
+  </SVG>
+);
+
+const Down = (className?: string) => (
+  <SVG
+    viewBox="0 0 24 24"
+    className={className}
+  >
+    <Path transform="rotate(90, 12, 12)" d="M14 16L20 12L14 8V11H4V13H14V16Z" />
+  </SVG>
+);
+
+const Left = (className?: string) => (
+  <SVG
+    viewBox="0 0 24 24"
+    className={className}
+  >
+    <Path transform="rotate(180, 12, 12)" d="M14 16L20 12L14 8V11H4V13H14V16Z" />
+  </SVG>
+);
+
+const Check = (className?: string) => (
   <CheckSVG
     viewBox="0 0 24 24"
-    className="check icn"
     strokeLinecap="round"
+    className={className}
   >
     <Path d="M17.6066 8L10.5355 15.0711L7 11.5355" />
   </CheckSVG>
 ) 
 
-const ContextOptions = () => (
+const ContextOptions = (className?: string) => (
   <SVG
     viewBox="0 0 24 24"
-    className="context-options icn"
+    className={className}
   >
     <Path d="M10 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0M10 5a2 2 0 1 0 4 0a2 2 0 1 0 -4 0M10 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
   </SVG>
 )
 
-const LetterSize = () => (
+const LetterSize = (className?: string) => (
   <SVG
     viewBox="0 0 24 24"
-    className="letter-size icn"
+    className={className}
     strokeLinecap="round"
   >
     <path d="M5.24987 12H4L6.27564 5H7.7212L10 12H8.75013L7.02367 6.43555H6.97317L5.24987 12ZM5.2909 9.25537H8.69963V10.2739H5.2909V9.25537Z" />
@@ -54,26 +78,29 @@ const LetterSize = () => (
   </SVG>
 )
 
-const List = () => (
-  <ListSVG viewBox="0 0 16 16" className="list icn">
+const List = (className?: string) => (
+  <ListSVG
+    viewBox="0 0 16 16"
+    className={className}
+  >
     <Path d="M0.5 8a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0ZM0.5 3a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0ZM0.5 13a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0Z" />
     <Path d="M6 3H16M6 8H16M6 13H16" />
   </ListSVG>
 )
 
-const Logout = () => (
+const Logout = (className?: string) => (
   <SVG
     viewBox="0 0 24 24"
-    className="logout icn"
+    className={className}
   >
     <Path d="M16 16L22 12L16 8V11H6V13H16V16ZM2 4C2 2.89543 2.89543 2 4 2H12C13.1046 2 14 2.89543 14 4V6H12V4L4 4V20H12V18H14V20C14 21.1046 13.1046 22 12 22H4C2.89543 22 2 21.1046 2 20V4Z" />
   </SVG>
 )
 
-const Remove = () => (
+const Remove = (className?: string) => (
   <SVG
     viewBox="0 0 24 24"
-    className="remove icn"
+    className={className}
     strokeLinecap="round"
   >        
     <Path
@@ -83,10 +110,10 @@ const Remove = () => (
   </SVG>
 )
 
-const Settings = () => (
+const Settings = (className?: string) => (
   <SVG
     viewBox="0 0 16 16"
-    className="settings icn"
+    className={className}
     strokeLinecap="round"
   >
     <Path
@@ -95,28 +122,24 @@ const Settings = () => (
   </SVG>
 )
 
-const Icon: React.FC<IconType> = (props) => {
+const Icon = ({icon, className}: IconProps): JSX.Element => {
   const iconStack = {
     [IconEnum.Add]: Add,
-    [IconEnum.Down]: () => Arrow(Direction.DOWN),
+    [IconEnum.Down]: Down,
     [IconEnum.Cancel]: Remove,
     [IconEnum.Remove]: Remove,
-    [IconEnum.Left]: () => Arrow(Direction.LEFT),
+    [IconEnum.Left]: Left,
     [IconEnum.List]: List,
     [IconEnum.Options]: ContextOptions,
-    [IconEnum.Right]: () => Arrow(Direction.RIGHT),
+    [IconEnum.Right]: Right,
     [IconEnum.Setting]: Settings,
-    [IconEnum.Up]: () => Arrow(Direction.UP),
+    [IconEnum.Up]: Up,
     [IconEnum.Check]: Check,
     [IconEnum.LetterSize]: LetterSize,
     [IconEnum.LogOut]: Logout,
-  }
+  }[icon];
   
-  return (
-    <>
-      {  iconStack[props.icon]() }
-    </>
-  )
+  return iconStack(className)
 }
 
 export default Icon
@@ -126,11 +149,13 @@ const SVG = styled.svg`
   height: 1.5rem;
   fill: var(--n-500);
 `;
+
 const CheckSVG = styled(SVG)`
   stroke: var(--n-500);
   stroke-width: 2px;
   fill: transparent;
 `;
+
 const ListSVG = styled(SVG)`
   width: 1rem;
   height: 1rem;
@@ -143,9 +168,5 @@ const ListSVG = styled(SVG)`
     fill:var(--n-500);
   }
 `;
-const Path = styled.path<{ $fill?: string, $stroke?: string, $strokeWidth?: number }>`
-  fill: ${props => props.$fill};
-  stroke: ${props => props.$stroke};
-  stroke-with: ${props => props.$strokeWidth };
-  transform-origin: center;
-`;
+
+const Path = styled.path``;

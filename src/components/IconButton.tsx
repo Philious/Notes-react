@@ -1,19 +1,24 @@
 import { IconEnum, ButtonEnum } from "@/types/enums";
 import Icon from '@/components/icons/Icon';
-import { flattenClassName } from '@/utils/sharedUtils';
 import styled from "styled-components";
-import { BaseButton } from "@/assets/styles/styledComponents";
 
-type IconButtonType = { type: ButtonEnum, icon: IconEnum, action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void, className?: string | string[] }
+type IconButtonType = {
+  type: ButtonEnum,
+  icon: IconEnum,
+  action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+  iconSize?: string;
+  buttonSize?: string;
+  className?: string
+}
 
-function IconButton({ type, icon, action, className }: IconButtonType) {
-  const classes = flattenClassName(className, 'btn  icn-btn');
+function IconButton({ type, icon, action, iconSize = '2rem', buttonSize = '3rem', className }: IconButtonType) {
   return (
     <Button
-      className={classes}
+      className={className}
       onClick={action}
+      $size={buttonSize}
     >
-      <Background className={`bkg ${type} ${icon}`}>
+      <Background $type={type} $size={iconSize}>
         <Icon icon={icon}/>
       </Background>
     </Button>
@@ -22,28 +27,30 @@ function IconButton({ type, icon, action, className }: IconButtonType) {
 
 export default IconButton;
 
-const Button = styled.button`
-  ${BaseButton}
-  width: 3rem;
-  height: 3rem;
+const Button = styled.button<{ $size: string }>`
+  width: ${props => props.$size};
+  height: ${props => props.$size};
+  padding: 0;
   display: grid;
   place-content: center;
   background-color: transparent;
   border: none;
 `;
 
-const Background = styled.div`
+const Background = styled.div<{ $type: string, $size: string }>`
   display: grid;
   place-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: ${props => props.$size};
+  height: ${props => props.$size};
   border-radius: 50%;
-  &.filled {
-    background-color: var(--n-500);
-    svg { fill: var(--black); }
-  }
-  &.border {
-    fill: var(--n-500);
-    border: 1px solid var(--n-300);
-  }
+  ${props => {
+    if(props.$type === ButtonEnum.Filled) return (`
+        background-color: var(--n-500);
+        svg { fill: var(--black); }
+      `);
+    if(props.$type === ButtonEnum.Border) return (`
+      fill: var(--n-500);
+      border: 0.0625rem solid var(--n-300);
+    `);
+  }};
 `

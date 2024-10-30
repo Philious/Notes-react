@@ -67,6 +67,7 @@ export const BaseButton = styled.button`
 `;
 
 export const PageWrapper = styled.div`
+position: relative;
   box-sizing: border-box;
   display: grid;
   gap: 1rem 0;
