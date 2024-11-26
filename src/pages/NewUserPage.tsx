@@ -1,29 +1,26 @@
+import { api } from "@/api/api";
 import { H1, PageWrapper } from "@/assets/styles/styledComponents";
 import IconButton from "@/components/IconButton";
 import Pressable from "@/components/Pressable";
 import TextField from "@/components/TextField";
-import { addScratch } from "@/redux/thunks/asyncScratchThunk";
-import { AppDispatch } from "@/redux/store";
-import { userActions} from "@/api/api";
+import { useUserState } from "@/hooks/providerHooks";
 import { ButtonEnum, IconEnum, PageEnum } from "@/types/enums";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 function NewUserPage() {
-  const dispatch = useDispatch<AppDispatch>();
+  const { nav, login } = useUserState();
   const [ email, setHandle ] = useState('');
   const [ password, setPassword ] = useState('');
-  const navigate = useNavigate();
+
   
-  const createAccount = async () => {
-    const response = await userActions.register({ email, password });
-    await dispatch(addScratch())
-    if (response.statusText === 'OK') {
-      await userActions.login({email, password });
-    }
-    navigate(PageEnum.MAIN);
+  const createAccount = async (email: string, password: string) => {
+    api.createUser(email, password)
+      .then((response) => {
+        if (response) {
+          login(email, password);
+        }
+      })
   };
 
   return (
@@ -34,11 +31,11 @@ function NewUserPage() {
       <Name name="user-name" value={email} setValue={setHandle} placeholder="User name or Email"/>
       <Password name="user-password" value={password} setValue={setPassword} placeholder="Password"/>
         <LoginButton
-          type={ButtonEnum.Border}
+          style={ButtonEnum.Border}
           icon={IconEnum.Right}
-          action={createAccount}
+          action={() => createAccount(email, password)}
         />
-        <Back action={() => navigate(PageEnum.LOGIN)}>Back</Back>
+        <Back action={() => nav(PageEnum.LOGIN)}>Back</Back>
     </Wrapper>
   );
 };

@@ -8,7 +8,7 @@ export type NoteProps = {
   tags: string[]
 }
 
-export interface NoteResponse {
+export interface Note {
   id: string;
   title: string;
   content: string;
@@ -48,7 +48,7 @@ export type DialogActionProps = {
   closeOnAction?: boolean;
 }
 
-export type DialogProps = {
+export type DialogContextProps = {
   title: string,
   content: string,
   actions: DialogActionProps[]

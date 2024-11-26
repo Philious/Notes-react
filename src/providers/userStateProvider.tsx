@@ -1,114 +1,79 @@
+import { api } from "@/api/api";
 import { Loader } from "@/components/Loader";
-import useComputedRef from "@/hooks/computedRef";
-import { fetchNotes } from "@/redux/thunks/asyncNoteThunks";
-import { addScratch, fetchScratch } from "@/redux/thunks/asyncScratchThunk";
-import { clearAllNotes } from "@/redux/slices/notesSlice";
-import { AppDispatch } from "@/redux/store";
-import { checkAuthentication, userActions } from "@/api/api";
 import { PageEnum } from "@/types/enums";
-import { intervalHandler } from "@/utils/sharedUtils";
-import { createContext, ReactNode, useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { Note } from "@/types/types";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export type UserStateContextType = {
-  auth: boolean;
-  email?: string;
-  username?: string;
+  token: string | null;
   loading: boolean;
-  setEmail: (update: string) => void,
-  setUsername: (update: string) => void,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  notes: Note[];
   login: (user: string, pass: string) => void;
   logout: () => void;
-  checkedNavigation: (page: PageEnum, exclude?: string[]) => void;
+  nav: (page: PageEnum, exclude?: string[]) => void;
 };
 
 export const UserStateContext = createContext<UserStateContextType | null>(null);
 
 export const UserStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const cycle = useRef(0);
-  const [auth, setAuth] = useComputedRef(false);
-  const [email, setEmail] = useState<string>();
-  const [username, setUsername] = useState<string>();
-  const [loading, setLoading] = useState(true);
-
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const checkedNavigation = (page: PageEnum, exclude?: string[]) => {
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [notes, setNotes] = useState<Note[]>([]);
+
+  const nav = (page: PageEnum, exclude?: string[]) => {
     if (location.pathname !== page && !exclude?.includes(location.pathname)) navigate(page);
   };
 
-  const intervalAuthCheck = useRef(intervalHandler(async () => {
-    const authorized = await checkAuthentication();
-    setAuth(authorized);
-  }, 36000000));
-
-  const getAllNotes = async () => {
-    try {
-      await dispatch(fetchNotes());
-      
-      const scratch = await dispatch(fetchScratch());
-      if (!fetchScratch.fulfilled.match(scratch)) await dispatch(addScratch());
-
-    } catch(e) { 
-      console.error('Error while fetching notes', e);
-    }
-  };
-  
-  useEffect(() => {
-    const check = async () => {
-      try {
-        setLoading(true);
-        const authorized = await checkAuthentication();
-        setAuth(authorized);
-      } finally { setLoading(false) }
-    }
-    if (cycle.current === 0) check();
-    cycle.current += 1;
-  }, []);
-
-  useEffect(() => {
-    const init = async () => {
-      if (auth) {
-        setLoading(true);
-        await getAllNotes(); 
-        intervalAuthCheck.current.start();
-        setLoading(false);
-        checkedNavigation(PageEnum.MAIN);
-        
-      } else {
-        cycle.current = 0;
-        intervalAuthCheck.current.stop();
-        clearAllNotes();
-        checkedNavigation(PageEnum.LOGIN, [PageEnum.FORGOT, PageEnum.NEW]);
-      }
-    }
-    init();
-  }, [auth]);
-
-  const login = async (email: string, password: string) => {
-    if (auth) {
-      checkedNavigation(PageEnum.MAIN);
-      return;
-    }
-    
-    const user = await userActions.login({ email, password });
-    if (user.data) {
-      setAuth(!!user?.data?.id);
-    } else {
-      console.error('Login fail, forgot to press play on tape?')
-    }
+  const login = (email: string, password: string) => {
+    setLoading(true);
+    api.login(email, password)
+      .then(response => {
+        if (response?.data) {
+          setToken(response?.data);
+          localStorage.setItem('localtoken', response?.data ?? '')          
+          nav(PageEnum.MAIN);
+        } else {
+          setToken(null);
+        }
+      }).catch((err) => {
+        console.log(err);
+        setToken(null);
+      }).finally(() => setLoading(false))
   }
   
-  const logout = async () => {
-    await userActions.logout();
-    setAuth(false);
+  const logout = () => {
+    if (token) api.logout(token);
+    localStorage.clear();
+    setToken(null);
   }
+
+  useEffect(() => {
+    const ls = localStorage.getItem('localtoken');
+    api.checkLoginStatus(ls).then(response => {
+      if (response && response?.data) { setToken(ls); }
+      else {
+        localStorage.clear();
+        nav(PageEnum.LOGIN)
+      };
+    })
+  }, [])
 
   return (
-    <UserStateContext.Provider value={{email, username, loading, auth, setEmail, setUsername, login, logout, checkedNavigation}}>
-      { loading ? <Loader /> : children }
+    <UserStateContext.Provider value={{loading, setLoading, token, notes, login, logout, nav }}>
+      { loading && <Loader /> }
+      { children }
     </UserStateContext.Provider>
   )
 }
+
+export const userStateProvider = (): UserStateContextType => {
+  const context = useContext(UserStateContext);
+  if (!context) {
+    throw new Error('useOvelay must be used within a UserStateContext');
+  }
+  return context;
+};

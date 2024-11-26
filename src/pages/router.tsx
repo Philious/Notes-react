@@ -7,14 +7,18 @@ import ForgorPasswordPage from '@/pages/ForgotPasswordPage';
 import styled from 'styled-components';
 
 function Pages() {
+  /*
+            <Route path={PageEnum.MAIN} element={<MainPage />} />
+          <Route path={PageEnum.NEW} element={<NewUserPage />} />
+          <Route path={PageEnum.FORGOT} element={<ForgorPasswordPage />} />
+  */
   return (
     <>
       <Wrapper>
         <Routes>
           <Route path={PageEnum.LOGIN} element={<LoginPage />} />
-          <Route path={PageEnum.MAIN} element={<MainPage />} />
           <Route path={PageEnum.NEW} element={<NewUserPage />} />
-          <Route path={PageEnum.FORGOT} element={<ForgorPasswordPage />} />
+          <Route path={PageEnum.MAIN} element={<MainPage />} />
         </Routes>
       </Wrapper>
     </>

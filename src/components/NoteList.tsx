@@ -1,46 +1,44 @@
 import { IconEnum, ButtonEnum } from "@/types/enums";
-import { NoteResponse } from "@/types/types"
 import IconButton from "@/components/IconButton";
-import toast from "@/services/toastService";
-import { useOverlay } from "@/hooks/providerHooks";
+import { useNotes, useOverlay } from "@/hooks/providerHooks";
 import NoteListItem from "@/components/NoteListItem";
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/redux/store';
-import { newActiveNote, setActiveNote } from '@/redux/slices/activeNoteSlice';
 import styled from 'styled-components';
 import { H3, queryTabletUp } from '@/assets/styles/styledComponents';
 
 const NoteList: React.FC = () => {
-  const notes = useSelector((state: RootState) => state.notes.notes);
-  
-  const dispatch = useDispatch<AppDispatch>();
+  const { notes, setActiveNote } = useNotes()
   const { setLetterSize } = useOverlay();
 
+  const newNote = () => setActiveNote({
+    title: '',
+    content: '',
+    catalog : '',
+    tags: []
+  });
+
   const selectNote = (id: string) => {
-    const note = notes?.find((n) => n.id === id);
+    const note = notes.find(n => n.id === id);
     if (note) {
-      dispatch(setActiveNote(note));
-    } else {
-      toast(`note ${id} seem to not excist ):`);
+      setActiveNote(note);
     }
   };
 
-  return(
+  return (
     <Wrapper>
       <HeaderBar>
         <Header>Notes</Header>
         <Actions>
-          <IconButton type={ButtonEnum.Border}
+          <IconButton style={ButtonEnum.Border}
             icon={IconEnum.LetterSize} action={setLetterSize} />
           <IconButton
-            type={ButtonEnum.Border}
+            style={ButtonEnum.Border}
             icon={IconEnum.Add}
-            action={() => dispatch(newActiveNote())}
+            action={newNote}
           />
         </Actions>
       </HeaderBar>
       <List>
-        { notes?.map((note: NoteResponse) => <NoteListItem note={note} getNote={selectNote} key={note.id} />)}
+        { notes?.map((note) => <NoteListItem note={note} getNote={selectNote} key={note.id} />)}
       </List>
     </Wrapper>
   )

@@ -51,7 +51,7 @@ export const newNote = (note?: Partial<NoteProps>): NoteProps => {
     ...(note ?? {})
   }
 }
-export const equalNotes = (n1?: NoteProps, n2?: NoteProps) => n1 && n2 && (['title', 'content'] as (keyof NoteProps)[]).filter((k) => n1[k] !== n2[k]).length === 0;
+export const isEqualNotes = (n1: NoteProps, n2: NoteProps) => (['title', 'content'] as (keyof NoteProps)[]).filter((k) => n1[k] === n2[k]).length === 2;
 
 export const intervalHandler = (fn: () => void, time: number) => {
   let interval: ReturnType<typeof setInterval>;

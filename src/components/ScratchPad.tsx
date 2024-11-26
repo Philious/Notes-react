@@ -1,33 +1,22 @@
 import { useState } from "react"
 import IconButton from "@/components/IconButton";
 import { IconEnum, ButtonEnum } from "@/types/enums";
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/redux/store';
 import { useOverlay } from '@/hooks/providerHooks';
-import useDebounce from '@/hooks/debounce';
 import styled from 'styled-components';
-import { newActiveNote } from "@/redux/slices/activeNoteSlice";
-import { updateScratch } from "@/redux/thunks/asyncScratchThunk";
 
 const ScratchPad = () => {
-  const dispatch = useDispatch<AppDispatch>();
+
   const { setContextMenu } = useOverlay();
 
   const [ active, setActive ] = useState(false);
-  const scratchPad = useSelector((state: RootState) => state.scratchPad.scratch);
-  const [ content, setContent ] = useState(scratchPad.content);
+  const [ content, setContent ] = useState('');
 
   const quickUpdate = (update: string) => {
-    if (scratchPad && scratchPad.content !== update) {
-      dispatch(updateScratch(content));
-    }
-  }
 
-  const lazyUpdate = useDebounce(quickUpdate, 2000)
+  }
 
   const update = (update: string) => {
     setContent(update);
-    lazyUpdate(update);
   }
 
   const toggle = () => setActive(!active);
@@ -35,10 +24,8 @@ const ScratchPad = () => {
   const openContextMenu = (event:  React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.stopPropagation();
     setContextMenu([
-      { label: 'Clear scratchpad', action: () => dispatch(updateScratch('')) },
-      { label: 'make scratchpad a note', action: () => {
-        dispatch(newActiveNote({ content }));
-      }},
+      { label: 'Clear scratchpad', action: () => {} },
+      { label: 'make scratchpad a note', action: () => {} },
     ]);
   }
 

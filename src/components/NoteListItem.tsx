@@ -1,20 +1,19 @@
-import { NoteResponse } from "@/types/types"
+
 import { dateFormat } from "@/utils/sharedUtils"
 import styled from 'styled-components';
 import Pressable from './Pressable';
 import { H4, Small } from '@/assets/styles/styledComponents';
+import { Note } from "@/types/types";
 
 type PreviewNoteProps = {
-  note: NoteResponse;
+  note: Note;
   getNote: (id: string) => void;
 }
 
 const PreviewNote = ({note, getNote}: PreviewNoteProps) => {
   return (
     <Wrapper key={note.id}>
-      <Item
-        action={() => getNote(note.id)}
-      >
+      <Item action={() => getNote(note.id)}>
         <Header>
           { note.title }
         </Header>

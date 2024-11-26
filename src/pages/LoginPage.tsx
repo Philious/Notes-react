@@ -9,8 +9,8 @@ import { H1, PageWrapper } from "@/assets/styles/styledComponents";
 import { useUserState } from "@/hooks/providerHooks";
 
 const LoginPage = () => {
-  const [ password, setPassword ] = useState('test1234');
-  const [ email, setEmail ] = useState('test@test.test');
+  const [ password, setPassword ] = useState('1234†');
+  const [ email, setEmail ] = useState('conny@carneval.com');
   const { login } = useUserState();
   const navigate = useNavigate();
 
@@ -19,13 +19,16 @@ const LoginPage = () => {
       <Title>
         Notes
       </Title>
-      <Name name="user-name" value={email} setValue={setEmail} placeholder="User name"/>
-      <Password name="user-password" value={password} setValue={setPassword} placeholder="Password"/>
+      <Form onSubmit={(e) => e.preventDefault()}>
+        <Name name="user-name" value={email} setValue={setEmail} placeholder="User name" autocomplete="email"/>
+        <Password type="password" name="user-password" value={password} setValue={setPassword} placeholder="Password" autocomplete="current-password"/>
         <LoginButton
-          type={ButtonEnum.Filled}
+          type="submit"
+          style={ButtonEnum.Filled}
           icon={IconEnum.Right}
           action={async () => await login(email, password)}
         />
+      </Form>
       <NewUser action={() =>  navigate(PageEnum.NEW)} label="New user"/>
       <Forgot action={() => navigate(PageEnum.FORGOT)} label={`Forgot\npassword`}/>
     </Wrapper>
@@ -43,6 +46,7 @@ const Title = styled(H1)`
   grid-area: 2 / 1 / 3 / 4;
 `;
 
+const Form = styled.form`display: contents;`;
 const Name = styled(TextField)`
   grid-area: 3 / 1 / 4 / 3;
 `;

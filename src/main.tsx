@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom/client';
 import Pages from '@/pages/Router';
 import '@/assets/styles/styles.scss';
 import { OverlayProvider } from '@/providers/overLayProvider';
-import { Provider } from 'react-redux';
-import store from '@/redux/store';
 import { UserStateProvider } from './providers/userStateProvider';
 import { BrowserRouter } from 'react-router-dom';
+import { NotesProvider } from './providers/notesProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 
@@ -14,13 +13,13 @@ root.render(
   <React.StrictMode>
     <>
       <BrowserRouter>
-        <Provider store={store}>
-          <UserStateProvider>
+        <UserStateProvider>
+          <NotesProvider>
             <OverlayProvider>
               <Pages />    
             </OverlayProvider>
-          </UserStateProvider>
-        </Provider>
+          </NotesProvider>
+        </UserStateProvider>
       </BrowserRouter>
     </>
   </React.StrictMode>,

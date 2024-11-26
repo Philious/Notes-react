@@ -4,16 +4,17 @@ import { flattenClassName } from '@/utils/sharedUtils';
 import styled from "styled-components";
 import { BaseButton } from "@/assets/styles/styledComponents";
 
-type IconButtonType = { type: ButtonEnum, icon: IconEnum, action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void, className?: string | string[] }
+type IconButtonType = { style: ButtonEnum, icon: IconEnum, action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void, className?: string | string[], type?: "submit" | "button" | "reset" }
 
-function IconButton({ type, icon, action, className }: IconButtonType) {
+function IconButton({ type, style, icon, action, className }: IconButtonType) {
   const classes = flattenClassName(className, 'btn  icn-btn');
   return (
     <Button
+      type={type}
       className={classes}
       onClick={action}
     >
-      <Background className={`bkg ${type} ${icon}`}>
+      <Background className={`bkg ${style} ${icon}`}>
         <Icon icon={icon}/>
       </Background>
     </Button>
