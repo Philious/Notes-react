@@ -1,66 +1,60 @@
-import React, { useEffect, useState } from 'react';
-import { DialogProps, DialogActionProps } from '@/types/types';
-import { useOverlay } from '@/hooks/providerHooks';
+import React, { useEffect, useRef, useState } from 'react';
+import { DialogContextProps, DialogActionProps } from '@/types/types';
 import styled from 'styled-components';
 import Button from '@/components/Button';
 import { easing } from '@/assets/styles/styledComponents';
+import { MountState } from '@/hooks/componentUnmountDelay';
 
-const Dialog: React.FC = () => {
+type DialogProps = {
+  mountState: MountState;
+  dialogContextProps: DialogContextProps | null;
+  close: () => void;
+}
+
+const Dialog = ({ mountState, dialogContextProps, close }: DialogProps) => {
   const animationSpeed = 250;
-  const { setDialog, dialog } = useOverlay();
-  const [dialogRef, setDialogRef] = useState<DialogProps | null>(dialog ?? null);
+
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const [DialogContextPropsRef, setDialogContextPropsRef] = useState<DialogContextProps | null>(dialogContextProps ?? null);
   const [ active, setActive] = useState(false);
-  const [show, setShow ] = useState(false);
   const actionHandler = (action: DialogActionProps) => {
     action.action();
-    if (action.closeOnAction !== false) setDialog()
+    if (action.closeOnAction !== false) close()
   }
 
   useEffect(() => {
-    if (dialog) {
-      setDialogRef(dialog);
+    if (dialogContextProps) {
+      setDialogContextPropsRef(dialogContextProps);
       setActive(true)
       setTimeout(() => { 
-        setShow(true);
+        dialogRef.current?.showModal()
       }, 10);
     } else {
-      setShow(false);
+      dialogRef.current?.close()
       setTimeout(() => {
         setActive(false);
-        setDialogRef(null);
+        setDialogContextPropsRef(null);
       }, animationSpeed);
     }
-  }, [dialog, setActive, active, show])
+  }, [dialogContextProps, setActive, active])
 
   if (active)
     return (
-      <Wrapper onClick={() => setDialog()}>
-        <Container $show={show} $speed={animationSpeed}>
-          {dialogRef?.title && <Title className="dialog-title">{dialogRef.title}</Title>}
-          {dialogRef?.content && <Content className="dialog-content">{dialogRef.content}</Content>}
-          <Footer className="dialog-footer">
-            {dialogRef?.actions.map((action) => (
-              <Button key={action.name} primary={true} label={action.name} action={() => actionHandler(action)} />
-            ))}
-          </Footer>
-        </Container>
-      </Wrapper>
+      <Container $speed={animationSpeed} ref={dialogRef}>
+        {DialogContextPropsRef?.title && <Title className="dialog-title">{DialogContextPropsRef.title}</Title>}
+        {DialogContextPropsRef?.content && <Content className="dialog-content">{DialogContextPropsRef.content}</Content>}
+        <Footer className="dialog-footer">
+          {DialogContextPropsRef?.actions.map((action) => (
+            <Button key={action.name} primary={true} label={action.name} action={() => actionHandler(action)} />
+          ))}
+        </Footer>
+      </Container>
     );
 };
 
 export default Dialog;
 
-const Wrapper = styled.div`
-  position: fixed;
-  max-width: 100vw;
-  max-height: 100vh;
-  inset: 0;
-  display: grid;
-  place-content: center;
-  z-index: 1;
-`;
-
-const Container = styled.div<{$speed: number, $show?: boolean}>`
+const Container = styled.dialog<{$speed: number}>`
   display: grid;
   max-height: 90vw;
   grid-template-rows: repeat(3, auto);
@@ -71,13 +65,24 @@ const Container = styled.div<{$speed: number, $show?: boolean}>`
     0 2px 6px hsla(0,0%,0%, .24),
     0 6px 18px hsla(0,0%,0%, .12),
     0 18px 54px hsla(0,0%,0%, .06);
+  &[open] {
+    transform: translateY(0);
+    opacity: 1;
+  }
   opacity: 0;
-  transition-property: opacity, transform;
+  transform: transform(3rem);
+  transition-behavior: normal, normal, allow-discrete, allow-discrete;
+  transition-property: opacity, transform, overlay, display;
   transition-duration: ${$props => $props.$speed}ms;
-  transform: translateY(3rem);
-  transition-timing-function: ${easing.easeOutQuint};
-  opacity: ${props => props.$show ? 1 : 0 };
-  transform: ${props => props.$show ? 'translateY(0)' : 'translateY(3rem)' };
+  transition-timing-function: linear, ${easing.easeOutQuint}, linear, linaer;
+
+  @starting-style {
+    dialog[open] {
+      opacity: 0;
+      transform: transform(3rem);
+    }
+  }
+}
 `;
 
 const Title = styled.div`

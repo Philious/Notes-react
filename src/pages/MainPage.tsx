@@ -1,9 +1,6 @@
 import { DayInfo } from "@/components/DayInfo";
 import NoteList from '@/components/NoteList';
 import ScratchPad from '@/components/ScratchPad';
-import ContextMenu from '@/components/ContextMenu';
-import Dialog from '@/components/Dialog';
-import Note from '@/components/Note';
 import styled from 'styled-components';
 import { queryTabletUp } from '@/assets/styles/styledComponents';
 
@@ -14,11 +11,6 @@ const MainPage = () => {
       <NoteList/>
       <ScratchPad />
     </Wrapper>
-    <div id="overlays" className="overlays">
-      <Note />
-      <Dialog />
-      <ContextMenu />
-    </div>
   </>
 } 
 

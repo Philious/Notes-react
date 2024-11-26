@@ -1,28 +1,31 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { IconEnum } from "@/types/enums"
-import { dateFormat, equalNotes } from '@/utils/sharedUtils';
-import { useOverlay } from "@/hooks/providerHooks";
-import toast from '@/services/toastService';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/redux/store';
+import { dateFormat, isEqualNotes } from '@/utils/sharedUtils';
+import { useNotes } from "@/hooks/providerHooks";
 import NoteToolbar from '@/components/NoteToolbar';
 import styled from 'styled-components';
-import { clearActiveNote, setActiveNote } from "@/redux/slices/activeNoteSlice";
-import { addNote, deleteNote, updateNote } from "@/redux/thunks/asyncNoteThunks";
+import { ContextMenuItemProps, DialogContextProps, Note } from "@/types/types";
+import { MountState } from "@/hooks/componentUnmountDelay";
+import { ToggleOverlay } from "@/providers/overLayProvider";
 
-const Note: React.FC = () => {
-  const activeNote = useSelector((state: RootState) => state.activeNote);
-  const [ active, setActive] = useState(false);
-  const [show, setShow ] = useState(false);
-  const notes = useSelector((state: RootState) => state.notes.notes);
-  const dbNote = notes?.find(n => n.id === activeNote.id);
+type NoteViewProps = {
+  mountState: MountState;
+  close: () => void;
+  contextMenu: ToggleOverlay<ContextMenuItemProps[]>;
+  dialog: ToggleOverlay<DialogContextProps>;
+  setLetterSize: () => void;
+}
 
-  const dispatch = useDispatch<AppDispatch>();
-  const clear = () => dispatch(clearActiveNote());
-  const { setDialog, setContextMenu, setLetterSize } = useOverlay();
-  
+const NoteView = ({mountState, close, dialog, contextMenu, setLetterSize}: NoteViewProps) => {
+  const { setActiveNote, notes, activeNote, addNote, updateNote, deleteNote } = useNotes();
+
+  const noteRef = useRef<Note | null>(notes.find(n => n.id === activeNote?.id) ?? null);
+
+  const [active, setActive] = useState(false);
+  const [show, setShow ] = useState(false);  
+
   useEffect(() => {
-    if (activeNote.id) {
+    if (activeNote) {
       setActive(true)
       setTimeout(() => { 
         setShow(true);
@@ -31,26 +34,35 @@ const Note: React.FC = () => {
       setShow(false);
       setTimeout(() => { setActive(false)}, 500);
     }
-  }, [activeNote, activeNote.id, setActive, active, show])
+  }, [activeNote, active, show])
 
-  const updateTitle = (title: string) => dispatch(setActiveNote({...activeNote, title }));
-  const updateBody = (content: string) => dispatch(setActiveNote({...activeNote, content }));
+  const clear = () => {
+    setActiveNote(null);
+    setActive(false)
+  };
+
+  const updateTitle = (title: string) => {
+    if (activeNote) setActiveNote({...activeNote, title})
+  }
+  const updateContent = (content: string) => {
+    if (activeNote) setActiveNote({...activeNote, content})
+  }
 
   const saveNote = () => {
-    if (activeNote) dbNote ? dispatch(updateNote({...dbNote, ...activeNote})) : dispatch(addNote(activeNote)); 
+    if (activeNote) activeNote?.id ? updateNote({...noteRef.current as Note, ...activeNote}) : addNote(activeNote); 
     clear();
   }
 
-  const close = () => {
-    if (equalNotes(activeNote, dbNote)) {
-      clear();
+  const closeDialog = () => {
+    if (activeNote && noteRef.current && isEqualNotes(activeNote, noteRef.current) || !activeNote?.title && !activeNote?.content) {
+      close();
     } else {
-      setDialog({
+      dialog.open({
         title: 'Save before closing?',
         content: '',
         actions: [
           { name: 'Cancel', action: () => {} }, 
-          { name: 'No', action: clear },
+          { name: 'No', action: close },
           { name: 'Yes', action: saveNote }
         ]
       })
@@ -58,15 +70,15 @@ const Note: React.FC = () => {
   };
 
   const remove = () => {
-    setDialog({
+    dialog.open({
       title: 'Remove permanently?', 
       content: '',
       actions: [
         { name: 'No', action: () => {} },
         { name: 'Yes', action: () => { 
           if (activeNote?.id) {
-              dispatch(deleteNote(activeNote.id));
-              clear();
+              deleteNote(activeNote.id);
+              close();
             }
           }
         }
@@ -74,13 +86,8 @@ const Note: React.FC = () => {
     })
   };
 
-  const save = () => {
-    toast('Save');
-    saveNote();
-  }
-
   const options = () => {
-    setContextMenu([
+    contextMenu.open([
       {
         label: 'Letter size',
         icon: IconEnum.LetterSize,
@@ -94,34 +101,36 @@ const Note: React.FC = () => {
     ])
   }
 
-  const noteFragment = () => (
-    <Wrapper id="note" className={show ? 'note show' : 'note'}>
-      <TitleInput
-        name="titleInput"
-        value={activeNote?.title}
-        className="title-input"
-        autoFocus
-        onChange={ (e) => updateTitle(e.target.value) }
-        placeholder="Title"
-      />
-      <DatesContainer className="date">
-        <span>Created: { dateFormat(dbNote?.createdAt ?? 0) }</span>
-        <span>Updated: { dateFormat(dbNote?.updatedAt ?? 0) }</span>
-      </DatesContainer>
-      <BodyInput
-        className="body-input"
-        name="bodyInput"
-        value={ activeNote?.content }
-        onChange={ (e) => updateBody(e.target.value) }
-        placeholder='Content...'
-      />
-      <NoteToolbar close={close} save={save} options={options}/>
-  </Wrapper> 
-  )
- return ( active && noteFragment() )
+  return (
+    <> { active &&
+      <Wrapper id="note" className={show ? 'note show' : 'note'}>
+        <TitleInput
+          name="titleInput"
+          value={activeNote?.title}
+          className="title-input"
+          autoFocus
+          onChange={ (e) => updateTitle(e.target.value) }
+          placeholder="Title"
+        />
+        <DatesContainer className="date">
+          <span>Created: { dateFormat(noteRef.current?.createdAt ?? 0) }</span>
+          <span>Updated: { dateFormat(noteRef.current?.updatedAt ?? 0) }</span>
+        </DatesContainer>
+        <BodyInput
+          className="body-input"
+          name="bodyInput"
+          value={ activeNote?.content }
+          onChange={ (e) => updateContent(e.target.value) }
+          placeholder='Content...'
+        />
+        <NoteToolbar close={closeDialog} save={saveNote} options={options}/>
+      </Wrapper> 
+  } </>
+)
+ 
 }
 
-export default Note
+export default NoteView
 
 const Wrapper = styled.div`
   grid-area: var(--note-area);

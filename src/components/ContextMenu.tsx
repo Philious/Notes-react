@@ -1,9 +1,15 @@
 import { ContextMenuItemProps } from '@/types/types';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Icon from "@/components/icons/Icon";
-import { useOverlay } from '@/hooks/providerHooks';
 import styled from 'styled-components';
 import { easing } from '@/assets/styles/styledComponents';
+import { MountState } from '@/hooks/componentUnmountDelay';
+
+export type ContextMenuProps = {
+  mountState: MountState
+  contextMenuItems: ContextMenuItemProps[] | null
+  close: () => void;
+}
 
 const ContextMenuItem = ({label, icon, keepOpen, action}: ContextMenuItemProps) => {
   const click = (e:  React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -20,23 +26,26 @@ const ContextMenuItem = ({label, icon, keepOpen, action}: ContextMenuItemProps) 
   )
 }
 
-const ContextMenu: React.FC = () => {
-  const { setContextMenu, contextMenu} = useOverlay()
-  const [ contextMenuRef, setContextMenuRef ] = useState<ContextMenuItemProps[]>();
-
-  if (contextMenu) {
-    setTimeout(() => { 
-      setContextMenuRef(contextMenu)
+const ContextMenu: React.FC<ContextMenuProps> = ({ mountState, contextMenuItems, close}) => {
+  const [ contextMenuRef, setContextMenuRef ] = useState<ContextMenuItemProps[] | null>();
+  console.log(MountState[mountState]);
+  useEffect(() => {
+    console.log(MountState[mountState]);
+  }, [mountState]);
+  if (contextMenuItems) {
+    // Delay to populate
+    setTimeout(() => {
+      setContextMenuRef(contextMenuItems)
     }, 1);
   } else {
-    setTimeout(() => { setContextMenuRef(contextMenu)}, 250);
+    setTimeout(() => { setContextMenuRef(contextMenuItems)}, 250);
   }
 
-  if (contextMenu || contextMenuRef) {
+  if (contextMenuItems || contextMenuRef) {
     return (
-      <Wrapper $show={!!contextMenuRef && !!contextMenu} onClick={() => setContextMenu()}>
-        <List $show={!!contextMenuRef && !!contextMenu}>
-          {(contextMenu ?? contextMenuRef!).map((menuItem: ContextMenuItemProps) => ContextMenuItem(menuItem))}
+      <Wrapper $show={!!contextMenuRef && !!contextMenuItems} onClick={close}>
+        <List $show={!!contextMenuRef && !!contextMenuItems}>
+          {(contextMenuItems ?? contextMenuRef!).map((menuItem: ContextMenuItemProps) => ContextMenuItem(menuItem))}
         </List>
       </Wrapper>
     );
