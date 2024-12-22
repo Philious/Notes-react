@@ -1,8 +1,9 @@
 import ContextMenu from "@/components/ContextMenu";
 import Dialog from "@/components/Dialog";
 import NoteView from "@/components/Note";
-import { useMountingDelays, MountState } from "@/hooks/componentUnmountDelay";
-import { ContextMenuItemProps, DialogContextProps } from "@/types/types";
+import { useMountingDelays } from "@/hooks/componentUnmountDelay";
+import { useNotes } from "@/hooks/providerHooks";
+import { ContextMenuItemProps, DialogContextProps, NoteProps } from "@/types/types";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 export type ToggleOverlay<T> = {
@@ -19,14 +20,16 @@ export type OverlayContextType = {
 export const OverlayContext = createContext<OverlayContextType | null>(null);
 
 export const OverlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  console.log('overay update');
+  const { setActiveNote } = useNotes();
   const [contextMenuProps, setContextMenuProps] = useState<ContextMenuItemProps[] | null>(null);
   const [dialogContextProps, setDialogContextProps] = useState<DialogContextProps | null>(null);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
-  const [noteViewVisible, oteViewVisible] = useState(false);
-  const contextMenuMountingState = useMountingDelays(!!contextMenuVisible, 250, 250);
-  const dialogMountingState = useMountingDelays(!!dialogVisible, 250, 250);
-  const noteViewMountingState = useMountingDelays(!!noteViewVisible, 250, 500);
+  const [noteViewVisible, setNoteViewVisible] = useState(false);
+  const contextMenuMountingState = useMountingDelays(!!contextMenuVisible, 250, 250, 'context menu');
+  const dialogMountingState = useMountingDelays(!!dialogVisible, 250, 250, 'dialog');
+  const noteViewMountingState = useMountingDelays(!!noteViewVisible, 250, 500, 'active note');
 
   const contextMenu = {
     open: (props: ContextMenuItemProps[]) => {
@@ -40,13 +43,23 @@ export const OverlayProvider: React.FC<{ children: ReactNode }> = ({ children })
   }
 
   const dialog = {
-    open: (props: DialogContextProps) => {},
-    close: () => {}
+    open: (props: DialogContextProps) => {
+      setDialogContextProps(props);
+      setDialogVisible(true);
+    },
+    close: () => {
+      setDialogVisible(false);
+    }
   }
 
   const noteView = {
-    open: (props: DialogContextProps) => {},
-    close: () => {}
+    open: (props: NoteProps) => {
+      setActiveNote(props);
+      setNoteViewVisible(true);
+    },
+    close: () => {
+      setNoteViewVisible(false);
+    }
   }
 
   const setLetterSize = () => contextMenu.open([

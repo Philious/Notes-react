@@ -39,7 +39,8 @@ export const uid = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
 
-export const flattenClassName = (a?: string | string[], s?: string) => a ? (Array.isArray(a) ? [...a, s] : [a, s]).join(' ') : s ?? '';
+// Remove
+export const flattenArrray = (a?: string | string[], s?: string) => a ? (Array.isArray(a) ? [...a, s] : [a, s]).join(' ') : s ?? '';
 
 export const newNote = (note?: Partial<NoteProps>): NoteProps => {
   return {

@@ -1,17 +1,21 @@
 import { IconEnum, ButtonEnum } from "@/types/enums";
 import Icon from '@/components/icons/Icon';
-import { flattenClassName } from '@/utils/sharedUtils';
 import styled from "styled-components";
 import { BaseButton } from "@/assets/styles/styledComponents";
 
-type IconButtonType = { style: ButtonEnum, icon: IconEnum, action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void, className?: string | string[], type?: "submit" | "button" | "reset" }
+type IconButtonType = {
+  style: ButtonEnum,
+  icon: IconEnum,
+  action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+  className?: string,
+  type?: "submit" | "button" | "reset"
+}
 
 function IconButton({ type, style, icon, action, className }: IconButtonType) {
-  const classes = flattenClassName(className, 'btn  icn-btn');
   return (
     <Button
       type={type}
-      className={classes}
+      className={className}
       onClick={action}
     >
       <Background className={`bkg ${style} ${icon}`}>

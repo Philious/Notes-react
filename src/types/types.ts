@@ -8,7 +8,7 @@ export type NoteProps = {
   tags: string[]
 }
 
-export interface Note {
+export type Note = {
   id: string;
   title: string;
   content: string;

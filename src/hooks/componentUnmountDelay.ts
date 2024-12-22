@@ -6,9 +6,9 @@ export enum MountState {
   Out,
   UnMounted
 }
-export function useMountingDelays(isMounted: boolean, inDelay: number, outDelay: number) {
+export function useMountingDelays(isMounted: boolean, inDelay: number, outDelay: number, identifier?: string) {
   const [shouldRender, setShouldRender] = useState<MountState>(MountState.Mounting);
-
+  console.log(identifier ? `Init ${identifier}` : '');
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     if (isMounted && !shouldRender) {

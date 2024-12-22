@@ -1,7 +1,6 @@
 import { api } from "@/api/api";
 import { Loader } from "@/components/Loader";
 import { PageEnum } from "@/types/enums";
-import { Note } from "@/types/types";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +8,6 @@ export type UserStateContextType = {
   token: string | null;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  notes: Note[];
   login: (user: string, pass: string) => void;
   logout: () => void;
   nav: (page: PageEnum, exclude?: string[]) => void;
@@ -22,7 +20,6 @@ export const UserStateProvider: React.FC<{ children: ReactNode }> = ({ children 
 
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [notes, setNotes] = useState<Note[]>([]);
 
   const nav = (page: PageEnum, exclude?: string[]) => {
     if (location.pathname !== page && !exclude?.includes(location.pathname)) navigate(page);
@@ -63,7 +60,7 @@ export const UserStateProvider: React.FC<{ children: ReactNode }> = ({ children 
   }, [])
 
   return (
-    <UserStateContext.Provider value={{loading, setLoading, token, notes, login, logout, nav }}>
+    <UserStateContext.Provider value={{loading, setLoading, token, login, logout, nav }}>
       { loading && <Loader /> }
       { children }
     </UserStateContext.Provider>
