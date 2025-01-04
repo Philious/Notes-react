@@ -1,3 +1,5 @@
+@use 'mixins' as mix;
+
 :root {
   --toolbar-height: 3rem;
   --main-tab-bar-height: 4rem;
@@ -33,7 +35,7 @@
   --n-600: hsl(0, 0%, 80%);
   --white: #fff;
 
-  @include tabletUp {
+  @include mix.tabletUp() {
     --toolbar-height: 3rem;
     --main-tab-bar-height: 4rem;
     --main-columns: 20rem;

@@ -14,19 +14,19 @@ function NoteToolbar({close, save, options}: NoteToolbarProps) {
     <Toolbar>
       <Group>
         <IconButton
-          type={ButtonEnum.Border}
+          style={ButtonEnum.Border}
           icon={IconEnum.Left}
           action={close}
         />
         <IconButton 
-          type={ButtonEnum.Border}
+          style={ButtonEnum.Border}
           icon={IconEnum.Check}
           action={save}
         />
       </Group>
       <Group>
         <IconButton 
-          type={ButtonEnum.Border}
+          style={ButtonEnum.Border}
           icon={IconEnum.Options}
           action={options}  
         />
@@ -43,15 +43,7 @@ const Toolbar = styled.div`
   justify-content: space-between;
   border-top: 1px solid var(--n-300);
 `;
+
 const Group = styled.div`
 display: flex;
 `;
-`
-  .back {
-    overflow: visible;
-    fill:transparent;
-    width: 1rem;
-    height: 1rem;
-    stroke: var(--primary);
-    stroke-width: 2;
-  }`

@@ -4,14 +4,14 @@ import styled from "styled-components";
 import { BaseButton } from "@/assets/styles/styledComponents";
 
 type IconButtonType = {
-  style: ButtonEnum,
   icon: IconEnum,
   action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
   className?: string,
   type?: "submit" | "button" | "reset"
+  style?: ButtonEnum,
 }
 
-function IconButton({ type, style, icon, action, className }: IconButtonType) {
+function IconButton({ type, icon, action, className, style = ButtonEnum.Default, }: IconButtonType) {
   return (
     <Button
       type={type}

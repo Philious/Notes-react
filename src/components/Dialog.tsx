@@ -1,17 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DialogContextProps, DialogActionProps } from '@/types/types';
 import styled from 'styled-components';
 import Button from '@/components/Button';
 import { easing } from '@/assets/styles/styledComponents';
-import { MountState } from '@/hooks/componentUnmountDelay';
 
 type DialogProps = {
-  mountState: MountState;
   dialogContextProps: DialogContextProps | null;
   close: () => void;
 }
 
-const Dialog = ({ mountState, dialogContextProps, close }: DialogProps) => {
+const Dialog = ({ dialogContextProps, close }: DialogProps) => {
   const animationSpeed = 250;
 
   const dialogRef = useRef<HTMLDialogElement>(null);

@@ -25,8 +25,8 @@ const PreviewNote = ({note, getNote}: PreviewNoteProps) => {
         </ItemDate>
       </Item>
     </Wrapper>
-    )
-}
+  )
+};
 
 export default PreviewNote
 

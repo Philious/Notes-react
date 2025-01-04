@@ -42,3 +42,7 @@ export enum IconEnum {
   LetterSize = 'letter-size',
   LogOut = 'logout'
 }
+
+export enum AnimationEnum {
+  FadeInSwipeUp,
+}

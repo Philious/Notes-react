@@ -1,6 +1,8 @@
 import { api } from "@/api/api";
+import { HttpClient } from "@/api/httpClient";
 import { Loader } from "@/components/Loader";
 import { PageEnum } from "@/types/enums";
+import { getCookie } from "@/utils/sharedUtils";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -15,23 +17,22 @@ export type UserStateContextType = {
 
 export const UserStateContext = createContext<UserStateContextType | null>(null);
 
-export const UserStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const navigate = useNavigate();
-
+export const UserStateProvider = ({ children }: { children: ReactNode }) => {
+  const httpClient = new HttpClient(import.meta.env.VITE_APP_BASE_URL);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
   const nav = (page: PageEnum, exclude?: string[]) => {
     if (location.pathname !== page && !exclude?.includes(location.pathname)) navigate(page);
   };
 
-  const login = (email: string, password: string) => {
+  const login = async (email: string, password: string) => {
     setLoading(true);
-    api.login(email, password)
+    httpClient.get<string>(`users/login/${email}/${password}`)
       .then(response => {
-        if (response?.data) {
-          setToken(response?.data);
-          localStorage.setItem('localtoken', response?.data ?? '')          
+        if (response?.body) {
+          setToken(response.body);
           nav(PageEnum.MAIN);
         } else {
           setToken(null);
@@ -43,20 +44,25 @@ export const UserStateProvider: React.FC<{ children: ReactNode }> = ({ children 
   }
   
   const logout = () => {
-    if (token) api.logout(token);
-    localStorage.clear();
+    api.logout(token);
     setToken(null);
   }
 
   useEffect(() => {
-    const ls = localStorage.getItem('localtoken');
-    api.checkLoginStatus(ls).then(response => {
-      if (response && response?.data) { setToken(ls); }
-      else {
-        localStorage.clear();
-        nav(PageEnum.LOGIN)
-      };
-    })
+    if (token) return;
+    const savedToken = getCookie("note-cookie");
+
+    if (savedToken) {
+      setLoading(true)
+      api.checkLoginStatus(savedToken)
+        .then((response) => {
+          if (response) { nav(PageEnum.MAIN); setToken(savedToken) }
+          else nav(PageEnum.LOGIN); 
+        })
+        .catch((err) => console.error(err))
+        .finally(() => setLoading(false));
+    } else nav(PageEnum.LOGIN);
+    
   }, [])
 
   return (

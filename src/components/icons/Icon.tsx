@@ -80,8 +80,7 @@ const Remove = () => (
     strokeLinecap="round"
   >        
     <Path
-      transform="rotate(45)"
-      transform-origin="center"
+      className="rotate45"
       d="M13 7H11V11L7 11V13H11V17H13V13H17V11L13 11V7Z"
     />
   </SVG>
@@ -150,5 +149,9 @@ const ListSVG = styled(SVG)`
 const Path = styled.path<{ $fill?: string, $stroke?: string, $strokeWidth?: number }>`
   fill: ${props => props.$fill};
   stroke: ${props => props.$stroke};
-  stroke-with: ${props => props.$strokeWidth }
+  stroke-with: ${props => props.$strokeWidth };
+  &.rotate45 {
+    transform: rotate(45deg);
+    transform-origin: center;
+  }
 `;

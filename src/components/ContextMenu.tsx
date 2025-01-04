@@ -3,10 +3,8 @@ import { useEffect, useState } from "react";
 import Icon from "@/components/icons/Icon";
 import styled from 'styled-components';
 import { easing } from '@/assets/styles/styledComponents';
-import { MountState } from '@/hooks/componentUnmountDelay';
 
 export type ContextMenuProps = {
-  mountState: MountState
   contextMenuItems: ContextMenuItemProps[] | null
   close: () => void;
 }
@@ -26,12 +24,10 @@ const ContextMenuItem = ({label, icon, keepOpen, action}: ContextMenuItemProps) 
   )
 }
 
-const ContextMenu: React.FC<ContextMenuProps> = ({ mountState, contextMenuItems, close}) => {
+const ContextMenu = ({ contextMenuItems, close}: ContextMenuProps) => {
   const [ contextMenuRef, setContextMenuRef ] = useState<ContextMenuItemProps[] | null>();
-  console.log(MountState[mountState]);
   useEffect(() => {
-    console.log(MountState[mountState]);
-  }, [mountState]);
+  }, []);
   if (contextMenuItems) {
     // Delay to populate
     setTimeout(() => {

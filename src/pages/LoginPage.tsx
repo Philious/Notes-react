@@ -9,8 +9,10 @@ import { H1, PageWrapper } from "@/assets/styles/styledComponents";
 import { useUserState } from "@/hooks/providerHooks";
 
 const LoginPage = () => {
+  const [ setPage, page] = useState(PageEnum.LOGIN);
   const [ password, setPassword ] = useState('1234†');
   const [ email, setEmail ] = useState('conny@carneval.com');
+  
   const { login } = useUserState();
   const navigate = useNavigate();
 

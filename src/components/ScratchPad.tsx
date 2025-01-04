@@ -11,10 +11,6 @@ const ScratchPad = () => {
   const [ active, setActive ] = useState(false);
   const [ content, setContent ] = useState('');
 
-  const quickUpdate = (update: string) => {
-
-  }
-
   const update = (update: string) => {
     setContent(update);
   }
@@ -23,7 +19,7 @@ const ScratchPad = () => {
 
   const openContextMenu = (event:  React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.stopPropagation();
-    setContextMenu([
+    setContextMenu.open([
       { label: 'Clear scratchpad', action: () => {} },
       { label: 'make scratchpad a note', action: () => {} },
     ]);
@@ -37,12 +33,12 @@ const ScratchPad = () => {
         <Title className="header">Scratch pad</Title>
         <ActionWrapper>
           <Options $active={active}
-            type={ButtonEnum.Border}
+            style={ButtonEnum.Border}
             icon={IconEnum.Options}
             action={openContextMenu}
           />
           <Arrow $active={active}
-            type={ButtonEnum.Border}
+            style={ButtonEnum.Border}
             icon={IconEnum.Up}
             action={() => undefined}
           />
@@ -50,7 +46,7 @@ const ScratchPad = () => {
       </Header>
       <TextInput
         value={content}
-        onBlur={(ev) => quickUpdate((ev.target as HTMLTextAreaElement).value)}
+        onBlur={(ev) => update((ev.target as HTMLTextAreaElement).value)}
         onChange={e => update((e.target as HTMLTextAreaElement).value)}
       />
     </Wrapper>

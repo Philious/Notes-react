@@ -1,7 +1,6 @@
 import ContextMenu from "@/components/ContextMenu";
 import Dialog from "@/components/Dialog";
 import NoteView from "@/components/Note";
-import { useMountingDelays } from "@/hooks/componentUnmountDelay";
 import { useNotes } from "@/hooks/providerHooks";
 import { ContextMenuItemProps, DialogContextProps, NoteProps } from "@/types/types";
 import { createContext, ReactNode, useContext, useState } from "react";
@@ -12,57 +11,52 @@ export type ToggleOverlay<T> = {
 }
 
 export type OverlayContextType = {
-  contextMenu: ToggleOverlay<ContextMenuItemProps[]>;
-  dialog: ToggleOverlay<DialogContextProps>;
+  setContextMenu: ToggleOverlay<ContextMenuItemProps[]>;
+  setDialog: ToggleOverlay<DialogContextProps>;
+  setNoteView: ToggleOverlay<NoteProps>
   setLetterSize: () => void
 }
 
 export const OverlayContext = createContext<OverlayContextType | null>(null);
 
-export const OverlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  console.log('overay update');
-  const { setActiveNote } = useNotes();
+export const OverlayProvider = ({ children }: { children: ReactNode }) => {
+  const { setActiveNote, activeNote } = useNotes();
   const [contextMenuProps, setContextMenuProps] = useState<ContextMenuItemProps[] | null>(null);
   const [dialogContextProps, setDialogContextProps] = useState<DialogContextProps | null>(null);
-  const [contextMenuVisible, setContextMenuVisible] = useState(false);
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [noteViewVisible, setNoteViewVisible] = useState(false);
-  const contextMenuMountingState = useMountingDelays(!!contextMenuVisible, 250, 250, 'context menu');
-  const dialogMountingState = useMountingDelays(!!dialogVisible, 250, 250, 'dialog');
-  const noteViewMountingState = useMountingDelays(!!noteViewVisible, 250, 500, 'active note');
 
-  const contextMenu = {
+  const [noteViewVisible, setNoteViewVisible] = useState(false);
+
+  const setContextMenu = {
     open: (props: ContextMenuItemProps[]) => {
       setContextMenuProps(props);
-      setContextMenuVisible(true);
-      return contextMenuVisible;
     },
     close: () => {
-      setContextMenuVisible(false);
+      setContextMenuProps(null);
     }
   }
 
-  const dialog = {
+  const setDialog = {
     open: (props: DialogContextProps) => {
       setDialogContextProps(props);
-      setDialogVisible(true);
     },
     close: () => {
-      setDialogVisible(false);
+      setDialogContextProps(null);
     }
   }
 
-  const noteView = {
+  const setNoteView = {
     open: (props: NoteProps) => {
+      console.log('open notge view');
       setActiveNote(props);
-      setNoteViewVisible(true);
+      setTimeout(() => setNoteViewVisible(true));
     },
     close: () => {
       setNoteViewVisible(false);
+      setTimeout(() => setActiveNote(null), 500)
     }
   }
 
-  const setLetterSize = () => contextMenu.open([
+  const setLetterSize = () => setContextMenu.open([
     { label: 'Larger', action: () => document.body.parentElement?.setAttribute('style', 'font-size: larger') },
     { label: 'Large', action: () => document.body.parentElement?.setAttribute('style', 'font-size: large') },
     { label: 'Medium',  action: () => document.body.parentElement?.setAttribute('style', 'font-size: medium') },
@@ -72,14 +66,15 @@ export const OverlayProvider: React.FC<{ children: ReactNode }> = ({ children })
   return (
     <>
     <OverlayContext.Provider value={{
-      contextMenu,
-      dialog,
+      setContextMenu,
+      setDialog,
+      setNoteView,
       setLetterSize
     }}>
       {children}
-      <NoteView {...{mountState: noteViewMountingState, contextMenu, dialog, close: noteView.close, setLetterSize }} />
-      <Dialog {...{ mountState: dialogMountingState, dialogContextProps, close: dialog.close }}/>
-      <ContextMenu {...{ mountState: contextMenuMountingState, contextMenuItems: contextMenuProps, close: contextMenu.close}}/>
+      { activeNote && <NoteView {...{setContextMenu, show: noteViewVisible, setDialog, close: setNoteView.close, setLetterSize}} /> }
+      <Dialog {...{dialogContextProps: dialogContextProps,  close: setDialog.close}} />
+      <ContextMenu {...{contextMenuItems: contextMenuProps, close: setContextMenu.close}} />
     </OverlayContext.Provider>
     </>
   );

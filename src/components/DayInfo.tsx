@@ -36,7 +36,7 @@ export const DayInfo: React.FC = () => {
     );
   }
 
-  const logoutMenu = () => setDialog({
+  const logoutMenu = () => setDialog.open({
     title: 'Logout?',
     content: '',
     actions: [
@@ -71,8 +71,8 @@ export const DayInfo: React.FC = () => {
       <Today className="text date">
         { date }
       </Today>
-      <IconButton
-        type={ButtonEnum.Default}
+      <LogoutBtn
+        style={ButtonEnum.Default}
         icon={IconEnum.LogOut}
         action={logoutMenu}
       />
@@ -121,4 +121,10 @@ const Today = styled(Greeting)`
   text-transform: uppercase;
   font-weight: 700;
   font-size: .625rem;
+`;
+
+const LogoutBtn = styled(IconButton)`
+  position: absolute;
+  top: 0;
+  right: 0;
 `;

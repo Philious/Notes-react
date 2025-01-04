@@ -1,63 +1,46 @@
-import { useEffect, useRef, useState } from "react"
+import { useDeferredValue } from "react"
 import { IconEnum } from "@/types/enums"
 import { dateFormat, isEqualNotes } from '@/utils/sharedUtils';
 import { useNotes } from "@/hooks/providerHooks";
 import NoteToolbar from '@/components/NoteToolbar';
 import styled from 'styled-components';
 import { ContextMenuItemProps, DialogContextProps, Note } from "@/types/types";
-import { MountState } from "@/hooks/componentUnmountDelay";
 import { ToggleOverlay } from "@/providers/overLayProvider";
 
 type NoteViewProps = {
-  mountState: MountState;
   close: () => void;
-  contextMenu: ToggleOverlay<ContextMenuItemProps[]>;
-  dialog: ToggleOverlay<DialogContextProps>;
+  show: boolean;
+  setContextMenu: ToggleOverlay<ContextMenuItemProps[]>;
+  setDialog: ToggleOverlay<DialogContextProps>;
   setLetterSize: () => void;
 }
 
-const NoteView = ({mountState, close, dialog, contextMenu, setLetterSize}: NoteViewProps) => {
+const NoteView = ({close, show, setDialog, setContextMenu, setLetterSize}: NoteViewProps) => {
   const { setActiveNote, notes, activeNote, addNote, updateNote, deleteNote } = useNotes();
-
-  const noteRef = useRef<Note | null>(notes.find(n => n.id === activeNote?.id) ?? null);
-
-  const [active, setActive] = useState(false);
-  const [show, setShow ] = useState(false);  
-
-  useEffect(() => {
-    if (activeNote) {
-      setActive(true)
-      setTimeout(() => { 
-        setShow(true);
-      }, 1);
-    } else {
-      setShow(false);
-      setTimeout(() => { setActive(false)}, 500);
-    }
-  }, [activeNote, active, show])
-
-  const clear = () => {
-    setActiveNote(null);
-    setActive(false)
-  };
+  const delay = 500;
+  const deferredNote = useDeferredValue<Note | null>(notes.find(n => n.id === activeNote?.id) ?? null);
 
   const updateTitle = (title: string) => {
     if (activeNote) setActiveNote({...activeNote, title})
   }
+
   const updateContent = (content: string) => {
     if (activeNote) setActiveNote({...activeNote, content})
   }
 
   const saveNote = () => {
-    if (activeNote) activeNote?.id ? updateNote({...noteRef.current as Note, ...activeNote}) : addNote(activeNote); 
-    clear();
+    if (activeNote) {
+      if(activeNote?.id) { console.log('update'); updateNote({...deferredNote as Note, ...activeNote}) }
+      else { console.log('add'); addNote(activeNote); }
+    }
+    close();
   }
 
   const closeDialog = () => {
-    if (activeNote && noteRef.current && isEqualNotes(activeNote, noteRef.current) || !activeNote?.title && !activeNote?.content) {
+    if (activeNote && deferredNote && isEqualNotes(activeNote, deferredNote) || !activeNote?.title && !activeNote?.content) {
       close();
     } else {
-      dialog.open({
+      setDialog.open({
         title: 'Save before closing?',
         content: '',
         actions: [
@@ -70,7 +53,7 @@ const NoteView = ({mountState, close, dialog, contextMenu, setLetterSize}: NoteV
   };
 
   const remove = () => {
-    dialog.open({
+    setDialog.open({
       title: 'Remove permanently?', 
       content: '',
       actions: [
@@ -87,7 +70,7 @@ const NoteView = ({mountState, close, dialog, contextMenu, setLetterSize}: NoteV
   };
 
   const options = () => {
-    contextMenu.open([
+    setContextMenu.open([
       {
         label: 'Letter size',
         icon: IconEnum.LetterSize,
@@ -102,37 +85,35 @@ const NoteView = ({mountState, close, dialog, contextMenu, setLetterSize}: NoteV
   }
 
   return (
-    <> { active &&
-      <Wrapper id="note" className={show ? 'note show' : 'note'}>
-        <TitleInput
-          name="titleInput"
-          value={activeNote?.title}
-          className="title-input"
-          autoFocus
-          onChange={ (e) => updateTitle(e.target.value) }
-          placeholder="Title"
-        />
-        <DatesContainer className="date">
-          <span>Created: { dateFormat(noteRef.current?.createdAt ?? 0) }</span>
-          <span>Updated: { dateFormat(noteRef.current?.updatedAt ?? 0) }</span>
-        </DatesContainer>
-        <BodyInput
-          className="body-input"
-          name="bodyInput"
-          value={ activeNote?.content }
-          onChange={ (e) => updateContent(e.target.value) }
-          placeholder='Content...'
-        />
-        <NoteToolbar close={closeDialog} save={saveNote} options={options}/>
-      </Wrapper> 
-  } </>
-)
+    <Wrapper id="note" $show={show} $duration={delay}>
+      <TitleInput
+        name="titleInput"
+        value={activeNote?.title}
+        className="title-input"
+        autoFocus
+        onChange={ (e) => updateTitle(e.target.value) }
+        placeholder="Title"
+      />
+      <DatesContainer className="date">
+        <span>Created: { dateFormat(deferredNote?.createdAt ?? 0) }</span>
+        <span>Updated: { dateFormat(deferredNote?.updatedAt ?? 0) }</span>
+      </DatesContainer>
+      <BodyInput
+        className="body-input"
+        name="bodyInput"
+        value={ activeNote?.content }
+        onChange={ (e) => updateContent(e.target.value) }
+        placeholder='Content...'
+      />
+      <NoteToolbar close={closeDialog} save={saveNote} options={options}/>
+    </Wrapper>
+    )
  
 }
 
 export default NoteView
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $show: boolean, $duration: number}>`
   grid-area: var(--note-area);
   background-color: var(--black);
   position: fixed;
@@ -141,14 +122,14 @@ const Wrapper = styled.div`
   grid-template-rows: auto 1.5rem 1fr;
   box-shadow: -1px 0 0 var(--n-300);
   z-index: 1;
-  opacity: 0;
-  transform: translateY(3rem);
   transition-property: opacity, transform;
-  transition-duration: .5s;
+  transition-duration: ${ (props) => props.$duration }ms;
   transition-timing-function: $easeOutQuint,;
-  &.show {
-    opacity: 1;
-    transform: translateY(0)
+  ${ (props) => `
+    opacity: ${props.$show ? 1 : 0 };
+    transform: translateY(${props.$show ? '0' : '3rem'})
+  `}
+    
   }
 `
 const TitleInput = styled.input.attrs({type: "text"})`

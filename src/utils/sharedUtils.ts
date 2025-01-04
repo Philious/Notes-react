@@ -67,3 +67,14 @@ export const intervalHandler = (fn: () => void, time: number) => {
 
   return { start, stop };
 }
+
+export const getCookie = (name: string): string | undefined => {
+  const cookieString: string = document.cookie || "";
+  const cookies: Record<string, string> = cookieString.split("; ").reduce((acc, cookie) => {
+    const [key, value] = cookie.split("=");
+    acc[key] = value;
+    return acc;
+  }, {} as Record<string, string>);
+
+  return cookies[name];
+}

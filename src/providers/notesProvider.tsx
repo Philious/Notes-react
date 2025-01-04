@@ -15,40 +15,40 @@ export type UserStateContextType = {
 
 export const NotesContext = createContext<UserStateContextType | null>(null);
 
-export const NotesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { setLoading, token } = useUserState();
+export const NotesProvider = ({ children }: { children: ReactNode }) => {
+  const { token } = useUserState();
   const [activeNote, setActiveNote] = useState<NoteProps | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
 
-  const onNotesUpdate = () => {}
-  const addNote = (note: NoteProps) => {
+  const addNote = async (note: NoteProps) => {
       if (!token) return;
-      api.addNote(token, note);
-      onNotesUpdate()
+      const response = await api.addNote(token, note);
+      setNotes(lokalNotes => response.body ?? lokalNotes);
   }
+  
   const updateNote = (update: Partial<NoteProps> & {id: string }) => {
     if (!token) return;
     api.updateNote(token, update)
-    onNotesUpdate()
+    setNotes(lokalNotes => lokalNotes.map(n => n.id === update.id ? {...n, ...update} : n));
   }
+
   const deleteNote = (id: string) => {
     if (!token) return;
-    api.deleteNote(token,id);
-    onNotesUpdate()
+    api.deleteNote(token, id);
+    setNotes(lokalNotes => lokalNotes.filter(n => n.id !== id))
   } 
 
   useEffect(() => {
     if (token) {
       api.getAllNotes(token)
         .then((response) => {
-          if (response) {
-            setNotes(response.data);
+          if (response.body) {
+            setNotes(response.body);
           }
         }).catch((err) => console.log(err));
       }
       else {
         setNotes([]);
-
       }
   }, [token])
   

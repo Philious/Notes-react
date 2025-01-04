@@ -6,10 +6,10 @@ import styled from 'styled-components';
 import { H3, queryTabletUp } from '@/assets/styles/styledComponents';
 
 const NoteList: React.FC = () => {
-  const { notes, setActiveNote } = useNotes()
-  const { setLetterSize } = useOverlay();
+  const { notes } = useNotes()
+  const { setLetterSize, setNoteView } = useOverlay();
 
-  const newNote = () => setActiveNote({
+  const newNote = () => setNoteView.open({
     title: '',
     content: '',
     catalog : '',
@@ -19,7 +19,7 @@ const NoteList: React.FC = () => {
   const selectNote = (id: string) => {
     const note = notes.find(n => n.id === id);
     if (note) {
-      setActiveNote(note);
+      setNoteView.open(note);
     }
   };
 
