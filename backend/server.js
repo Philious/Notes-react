@@ -16,6 +16,12 @@ app.use(
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+app.use(express.static("./public"));
+
+// Simulate Server delay
+const sim = (fn, err, delay = 0) => {
+  setTimeout(() => (Math.random() > 0 ? fn() : err()), delay);
+};
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
@@ -57,7 +63,10 @@ app.get("/users/login/:email/:password", (req, res) => {
       expires: new Date(Date.now() + 900000),
       maxAge: 1800000,
     });
-    res.status(200).json(token);
+    sim(
+      () => res.status(200).json(token),
+      () => res.status(500).json({ error: "Simulated Server Error" })
+    );
   } else {
     res.status(401).json({ error: "Invalid credentials" });
   }
@@ -78,15 +87,10 @@ app.delete("/users/logout/:token", (req, res) => {
 /// Checktoken
 app.get("/users/check/:token", (req, res) => {
   const user = users.find((u) => u.token === req.params.token);
-  console.log(
-    "check token",
-    req.params.token,
-    "\nusers: ",
-    users,
-    "\nnotes: ",
-    notes
+  sim(
+    () => res.status(200).json(!!user),
+    () => res.status(500).json({ error: "Simulated Server Error" })
   );
-  res.status(200).json(!!user);
 });
 
 // Get all notes
@@ -99,7 +103,10 @@ app.get("/notes/:token", (req, res) => {
   const userId = users[userIndex]?.uuid;
   const userNotes = notes[userId];
 
-  res.status(200).json(userNotes);
+  sim(
+    () => res.status(200).json(userNotes),
+    () => res.status(500).json({ error: "Simulated Server Error" })
+  );
 });
 
 // Create a new note
@@ -123,7 +130,9 @@ app.post("/notes/:token", (req, res) => {
   notes[userId].push(newNote);
   const userNotes = notes[userId];
 
-  res.status(200).json(userNotes);
+  sim(res.status(200).json(userNotes), () =>
+    res.status(500).json({ error: "Simulated Server Error" })
+  );
 });
 
 // Modify an existing note
@@ -149,7 +158,10 @@ app.put("/notes/:token/", (req, res) => {
     updatedAt: new Date().toISOString(),
   };
 
-  res.status(200).json(notes[userId]);
+  sim(
+    () => res.status(200).json(notes[userId]),
+    () => res.status(500).json({ error: "Simulated Server Error" })
+  );
 });
 
 // Delete an existing note # id string
@@ -168,7 +180,10 @@ app.delete("/notes/:token/:noteId", (req, res) => {
   } else {
     notes[userId].splice(noteIndex, 1);
     const userNotes = notes[userId];
-    res.status(200).json(userNotes);
+    sim(
+      () => res.status(200).json(userNotes),
+      () => res.status(500).json({ error: "Simulated Server Error" })
+    );
   }
 });
 

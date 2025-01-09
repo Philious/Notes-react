@@ -15,6 +15,8 @@ if ("serviceWorker" in navigator) {
     .catch((err) => console.error("Service Worker registration failed:", err));
 }
 
+
+
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 
 root.render(

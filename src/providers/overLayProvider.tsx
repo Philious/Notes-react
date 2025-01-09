@@ -46,7 +46,6 @@ export const OverlayProvider = ({ children }: { children: ReactNode }) => {
 
   const setNoteView = {
     open: (props: NoteProps) => {
-      console.log('open notge view');
       setActiveNote(props);
       setTimeout(() => setNoteViewVisible(true));
     },

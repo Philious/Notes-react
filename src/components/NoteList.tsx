@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { H3, queryTabletUp } from '@/assets/styles/styledComponents';
 
 const NoteList: React.FC = () => {
-  const { notes } = useNotes()
+  const { notes } = useNotes();
   const { setLetterSize, setNoteView } = useOverlay();
 
   const newNote = () => setNoteView.open({

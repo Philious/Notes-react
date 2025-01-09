@@ -67,7 +67,7 @@ export const UserStateProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <UserStateContext.Provider value={{loading, setLoading, token, login, logout, nav }}>
-      { loading && <Loader /> }
+      <Loader loading={loading} />
       { children }
     </UserStateContext.Provider>
   )

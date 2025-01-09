@@ -4,13 +4,14 @@ import styled from 'styled-components';
 import Pressable from './Pressable';
 import { H4, Small } from '@/assets/styles/styledComponents';
 import { Note } from "@/types/types";
+import { memo } from "react";
 
 type PreviewNoteProps = {
   note: Note;
   getNote: (id: string) => void;
 }
 
-const PreviewNote = ({note, getNote}: PreviewNoteProps) => {
+const PreviewNote = memo(function PreviewNote({note, getNote}: PreviewNoteProps) {
   return (
     <Wrapper key={note.id}>
       <Item action={() => getNote(note.id)}>
@@ -26,7 +27,7 @@ const PreviewNote = ({note, getNote}: PreviewNoteProps) => {
       </Item>
     </Wrapper>
   )
-};
+});
 
 export default PreviewNote
 

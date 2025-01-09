@@ -49,6 +49,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
       }
       else {
         setNotes([]);
+        setActiveNote(null)
       }
   }, [token])
   
