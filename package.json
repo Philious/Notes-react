@@ -9,30 +9,32 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "check": "tsc --noEmit -p tsconfig.json --composite false",
-    "backend": "cd backend && npm run start && cd ..",
-    "start": "npm run backend && npm run build && npm run preview"
+    "start:backend": "cd backend && npm run start && cd ..",
+    "start:frontend": "npm run dev",
+    "start": "concurrently --names 'Backend,Frontend' \"npm run start:backend\" \"npm run start:frontend\""
   },
   "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-redux": "^9.1.2",
-    "react-router-dom": "^6.28.1",
-    "styled-components": "^6.1.14",
-    "uuid": "^11.0.2"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.13.1",
+    "styled-components": "^6.3.11",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
-    "@types/node": "^22.8.4",
-    "@types/react-dom": "^18.3.1",
-    "@types/react": "^18.3.18",
-    "@vitejs/plugin-react": "^4.3.2",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
     "babel-plugin-styled-components": "^2.1.4",
-    "eslint-plugin-react": "^7.37.3",
-    "eslint": "^9.17.0",
-    "globals": "^15.14.0",
-    "sass-embedded": "^1.83.1",
-    "typescript-eslint": "^8.19.0",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.9"
+    "concurrently": "^9.2.1",
+    "eslint": "^10.0.3",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^17.4.0",
+    "sass-embedded": "^1.98.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.1",
+    "vite": "^8.0.0"
   }
 }
